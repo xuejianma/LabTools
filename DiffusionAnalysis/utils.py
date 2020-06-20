@@ -250,3 +250,52 @@ def calibrate_ylist(yList,coeff1 = 0.04583333333333334, coeff2 = 3.5000000000000
     for y in yList:
         new_yList.append(undistort_1D(y,coeff1,coeff2)*extra_scale_y)
     return new_yList
+
+
+def resampleTraditionalMethod(img,X,Y,xmin,xmax,ymin,ymax,size):
+    x_list = np.linspace(xmin,xmax,size)
+    y_list = np.linspace(ymin,ymax,size)
+    new_X,new_Y = np.meshgrid(x_list,y_list)
+    new_img = np.zeros(new_X.shape)
+    for i in tqdm(range(new_img.shape[0])):
+        for j in range(new_img.shape[1]):
+            min_list = []
+            for ii in range(img.shape[0]):
+                for jj in range(img.shape[1]):
+                    if xmin<=X[ii][jj]<=xmax and ymin<=Y[ii][jj]<=ymax:
+                        min_list.append([np.linalg.norm([new_X[i][j]-X[ii][jj],new_Y[i][j]-Y[ii][jj]]),[ii,jj]])
+            target_ii,target_jj = sorted(min_list)[0][1]
+            new_img[i,j] = img[target_ii,target_jj]
+    return new_img,x_list,y_list
+
+def resample(img,X,Y,xmin,xmax,ymin,ymax,size=None):
+    if size==None:
+        size=0
+        for item in X[0]:
+            if xmin<=item<=xmax:
+                size+=1
+    #print(size)
+    x_list = np.linspace(xmin,xmax,size)
+    y_list = np.linspace(ymin,ymax,size)
+    new_X,new_Y = np.meshgrid(x_list,y_list)
+    new_img = np.zeros(new_X.shape)
+    new_img[:]=np.nan
+    for ii in tqdm(range(img.shape[0])):
+        for jj in range(img.shape[1]):
+            xmin_list = []
+            ymin_list = []
+            if xmin<=X[ii][jj]<=xmax and ymin<=Y[ii][jj]<=ymax:
+                for i in range(len(x_list)):
+                    xmin_list.append([abs(X[ii][jj]-x_list[i]),i])
+                for j in range(len(y_list)):
+                    ymin_list.append([abs(Y[ii][jj]-y_list[j]),j])
+                target_i = sorted(xmin_list)[0][1]
+                target_j = sorted(ymin_list)[0][1]
+                new_img[target_j,target_i] = img[ii,jj]
+    for i in range(new_img.shape[0]):
+        for j in range(new_img.shape[1]):
+            if np.isnan(new_img[i,j]):
+                new_img[i,j]=np.nanmean([new_img[(i-1)%size,j],new_img[(i+1)%size,j],new_img[i,(j-1)%size],new_img[i,(j+1)%size],
+                                        new_img[(i-1)%size,(j-1)%size],new_img[(i+1)%size,(j+1)%size],new_img[(i+1)%size,(j-1)%size],new_img[(i-1)%size,(j+1)%size]])
+                #print(new_img[i,j])
+    return new_img,x_list,y_list

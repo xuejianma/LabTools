@@ -3,6 +3,7 @@ Created by Xuejian Ma at 6/18/2020.
 All rights reserved.
 
 This file defines global setting parameters and useful folder/file paths.
+50Vx50V scan window, 300x300 resolution by default.
 """
 import numpy as np
 naiveScale = 1000 # The original data in txt files are in unit V. We need to convert them to mV here for convenience.
@@ -21,11 +22,12 @@ saveFigPath = "../../Perovskite/imgs/"
 diffusionCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/Untitled_R28_1degree.csv"
 trCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/tr2.csv"
 
-# intensityListForPhaseDiagram = ["00000","00004","00013","00022","00044","00073"] #00007 is excluded due to a bad line
-# rootPath = '../../Perovskite/1.1/1.1_50Vx50V/201912/pos2/'
+intensityListForPhaseDiagram = ["00004","00007","00013","00022","00044","00073"] #00007 is excluded due to a bad line
 
-rootPath = '../../Perovskite\HTL_ETL\HTL_firstBatchAfterStayAtHome/20200617/'
-intensityListForPhaseDiagram = ["00004","00044","00073"]
+rootPath = '../../Perovskite/1.1/1.1_50Vx50V/201912/pos2/'
+
+# rootPath = '../../Perovskite\HTL_ETL\HTL_firstBatchAfterStayAtHome/20200617/'
+# intensityListForPhaseDiagram = ["00004","00044","00073"]
 
 fileNameIm = 'Ch2 retrace.txt' # channel 2 for im signal for the perovskite experiment. Check it before set it.
 fileNameRe = 'Ch1 retrace.txt' # same thing
