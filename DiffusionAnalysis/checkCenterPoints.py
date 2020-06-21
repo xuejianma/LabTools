@@ -6,8 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.anchored_artists import AnchoredSizeBar
 import matplotlib.font_manager as fm
-from calibratedCoords50V import conductivity_all_cropped,x_list_all,y_list_all
-from config import saveFigPath
+from calibratedCoords import conductivity_all_cropped,x_list_all,y_list_all,conductivity_all_average_y
+from config import savePath
 
 width_num = 2
 heigh_num = int(np.ceil(len(conductivity_all_cropped)/width_num))
@@ -42,4 +42,19 @@ for ind in range(len(conductivity_all_cropped)):
                                fontproperties=fontprops)
 
     axs[ind % heigh_num, ind // heigh_num].add_artist(scalebar)
-plt.savefig(saveFigPath+"/checkCenterPoints.png")
+plt.savefig(savePath+"/checkCenterPoints0.png")
+
+plt.figure(figsize=(10, 5))
+for ind, conductivity_average in enumerate(conductivity_all_average_y):
+    if True:#ind in [0, 1, 2, 3, 4, 5]:
+        y_axis = np.array(y_list_all[ind])
+        #         z_axis = (conductivity_average-conductivity_average.min())/(conductivity_average.max()-conductivity_average.min())
+        z_axis = conductivity_average / conductivity_average.max()
+
+        plt.plot(y_axis, z_axis)
+#        plt.plot(np.linspace(-30,30,301),z_axis)
+plt.title("Normalized averaging over axis=2. Doesn't reflect the real diffusion at all! Only for center and shape "
+          "checking.")
+plt.legend(list(range(len(conductivity_all_average_y))))
+plt.plot((0, 0), (0, 1.1))
+plt.savefig(savePath+"/checkCenterPoints1.png")

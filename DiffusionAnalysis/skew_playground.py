@@ -1,11 +1,14 @@
 """
 Created by Xuejian Ma at 6/19/2020.
 All rights reserved.
+
+This file is for determining skew parameters to eliminate simple linear distortion. You may or may not need it for
+the analysis. This file itself is only a playground. Please go to calibratedSkewedCoords50V for real changes.
 """
 import numpy as np
 import matplotlib.pyplot as plt
 from readConductivities import conductivity_all,im_img_all,re_img_all
-from calibratedCoords50V import x_list_all,y_list_all
+from calibratedCoords import x_list_all,y_list_all
 
 X_shift = []
 Y_shift = []

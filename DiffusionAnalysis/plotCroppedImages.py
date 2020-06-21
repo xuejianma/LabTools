@@ -8,8 +8,11 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.anchored_artists import AnchoredSizeBar
 import matplotlib.font_manager as fm
 from matplotlib.colors import LinearSegmentedColormap
-from calibratedCoords50V import im_img_all_cropped,re_img_all_cropped,x_list_all_cropped,y_list_all_cropped
-from config import saveFigPath
+from config import savePath,unskewFlag
+if unskewFlag==0:
+    from calibratedCoords import im_img_all_cropped,re_img_all_cropped,x_list_all_cropped,y_list_all_cropped,conductivity_all_cropped
+else:
+    from calibratedUnskewedCoords import im_img_all_cropped,re_img_all_cropped,x_list_all_cropped,y_list_all_cropped,conductivity_all_cropped
 
 
 colors = [(0, 0, 0), (50 / 256, 100 / 256, 251 / 256), (72 / 256, 151 / 256, 247 / 256),
@@ -17,11 +20,11 @@ colors = [(0, 0, 0), (50 / 256, 100 / 256, 251 / 256), (72 / 256, 151 / 256, 247
 aqua = LinearSegmentedColormap.from_list(
     'aqua', colors, N=100)
 
-fig, axs = plt.subplots(1, 6, figsize=(60, 10))
+fig, axs = plt.subplots(1, len(conductivity_all_cropped), figsize=(10*len(conductivity_all_cropped), 10))
 plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.05, hspace=None)
 
 # ind = 5
-for ind in range(6):
+for ind in range(len(conductivity_all_cropped)):
     # ax = axs[ind//2,ind%2]
     ax = axs[ind]
     # img = conductivity_all_cropped[ind].copy(); vmin = 0; vmax=10; cmap=aqua #conductivity images
@@ -61,7 +64,7 @@ for ind in range(6):
     ax.set_yticks([])
     ax.set_aspect(1)
 
-plt.savefig(saveFigPath+'/im.png')
+plt.savefig(savePath+'/im.png')
 # fig.colorbar(im) #You can uncomment the line to get an image with a COLOR BAR.
 
 # plt.pcolormesh(X,Y,Z)
