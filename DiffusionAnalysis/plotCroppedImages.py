@@ -24,47 +24,56 @@ fig, axs = plt.subplots(1, len(conductivity_all_cropped), figsize=(10*len(conduc
 plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.05, hspace=None)
 
 # ind = 5
-for ind in range(len(conductivity_all_cropped)):
-    # ax = axs[ind//2,ind%2]
-    ax = axs[ind]
-    # img = conductivity_all_cropped[ind].copy(); vmin = 0; vmax=10; cmap=aqua #conductivity images
-    img = im_img_all_cropped[ind].copy();
-    vmin = 0;
-    vmax = 1100;
-    cmap = "afmhot"  # imaginary images
-    # img = re_img_all_cropped[ind].copy(); vmin = 0; vmax=600; cmap="afmhot"# real images
+print()
 
-    X, Y = np.meshgrid(x_list_all_cropped[ind], y_list_all_cropped[ind])
-    # X = X_all[ind]
-    # Y = Y_all[ind]
+for j in range(3):# 3 represents im,re and conductivity
+    if j == 0:
+        vmin = 0; vmax = 1.041667*np.max(im_img_all_cropped);cmap = "afmhot"  #vmax=1000, imaginary images
+    elif j ==1:
+        vmin = 0; vmax=1/1.04*np.max(re_img_all_cropped); cmap="afmhot"# real images
+    elif j ==2:
+        vmin = 0; vmax=1/2.009233*np.max(conductivity_all_cropped); cmap=aqua #conductivity images
+    for ind in range(len(conductivity_all_cropped)):
+        if j == 0:
+            img = im_img_all_cropped[ind].copy();
+        elif j == 1:
+            img = re_img_all_cropped[ind].copy();
+        elif j == 2:
+            img = conductivity_all_cropped[ind].copy();
+        # ax = axs[ind//2,ind%2]
+        ax = axs[ind]
 
-    Z = np.array(np.array(img))[:, :-1]
+        X, Y = np.meshgrid(x_list_all_cropped[ind], y_list_all_cropped[ind])
+        # X = X_all[ind]
+        # Y = Y_all[ind]
 
-    # Plot the density map using nearest-neighbor interpolation
+        Z = np.array(np.array(img))[:, :-1]
 
-    # plt.figure(figsize=((np.max(x_list_real)-np.min(x_list_real))/8,(np.max(y_list_real)-np.min(y_list_real))/8))
-    im = ax.pcolormesh(X, Y, Z, vmin=vmin, vmax=vmax, cmap=cmap)
-    # ax.scatter([0],[0],color='red')
-    ax.set_xlim(-15, 15)
-    ax.set_ylim(-15, 15)
-    # fontprops = fm.FontProperties(weight=1000,size=60,)
-    fontprops = fm.FontProperties(size=60, )
-    scalebar = AnchoredSizeBar(ax.transData,
-                               10, '10 $\mu m$', 'lower right',
-                               pad=0.2,
-                               sep=10,
-                               color='white',
-                               frameon=False,
-                               size_vertical=1,
-                               fontproperties=fontprops)
+        # Plot the density map using nearest-neighbor interpolation
 
-    # if ind ==0:
-    #    ax.add_artist(scalebar)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_aspect(1)
+        # plt.figure(figsize=((np.max(x_list_real)-np.min(x_list_real))/8,(np.max(y_list_real)-np.min(y_list_real))/8))
+        im = ax.pcolormesh(X, Y, Z, vmin=vmin, vmax=vmax, cmap=cmap)
+        # ax.scatter([0],[0],color='red')
+        ax.set_xlim(-15, 15)
+        ax.set_ylim(-15, 15)
+        # fontprops = fm.FontProperties(weight=1000,size=60,)
+        fontprops = fm.FontProperties(size=60, )
+        scalebar = AnchoredSizeBar(ax.transData,
+                                   10, '10 $\mu m$', 'lower right',
+                                   pad=0.2,
+                                   sep=10,
+                                   color='white',
+                                   frameon=False,
+                                   size_vertical=1,
+                                   fontproperties=fontprops)
 
-plt.savefig(savePath+'/im.png')
+        # if ind ==0:
+        #    ax.add_artist(scalebar)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_aspect(1)
+
+    plt.savefig(savePath+'/ImReConductivity'+str(j)+'.png')
 # fig.colorbar(im) #You can uncomment the line to get an image with a COLOR BAR.
 
 # plt.pcolormesh(X,Y,Z)

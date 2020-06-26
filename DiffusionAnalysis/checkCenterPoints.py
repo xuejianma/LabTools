@@ -24,9 +24,9 @@ for ind in range(len(conductivity_all_cropped)):
     Z = np.array(np.array(img))[:, :-1]
 
     # Plot the density map using nearest-neighbor interpolation
-
+    zlim = np.max(np.array(img))/1.1
     # plt.figure(figsize=((np.max(x_list_real)-np.min(x_list_real))/8,(np.max(y_list_real)-np.min(y_list_real))/8))
-    ax.pcolormesh(X, Y, -Z, vmin=-15, vmax=-0, cmap="Blues")
+    ax.pcolormesh(X, Y, -Z, vmin=-zlim, vmax=-0, cmap="Blues")
     ax.scatter([0], [0], color='red',s=500)
     ax.set(adjustable='box', aspect='equal')
     ax.set_xlim(-10, 10)

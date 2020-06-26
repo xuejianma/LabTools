@@ -10,8 +10,16 @@ other files automatically.
 import numpy as np
 import matplotlib.pyplot as plt
 from readConductivities import conductivity_all
-from config import saveFigPath
+from config import savePath
 from utils import calibrate_xlist,calibrate_ylist
+
+
+theta = 48 * np.pi / 180
+theta2 = theta
+affine_matrix = np.array([[np.cos(-theta2), -np.sin(-theta2)], [np.sin(-theta2), np.cos(-theta2)]]).dot(
+    np.array([[1, 0.0], [0.0, 1 / 1.16]])).dot(
+    np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]]))
+
 
 # https://stackoverflow.com/questions/45757280/solving-systems-of-equations-in-two-variables-python
 def read_calibration_original_file(root_dir,calibration_original_file_name):
@@ -101,7 +109,7 @@ Z = np.array(np.array(img))[:, :-1]
 plt.figure(figsize=((np.max(x_list_real) - np.min(x_list_real)) / 8, (np.max(y_list_real) - np.min(y_list_real)) / 8))
 plt.pcolormesh([np.max(Z) / 4 - (line - np.min(line)) for line in Z], vmin=0.0, vmax=1.2)
 plt.title("un-calibrated distorted raw Al figure")
-plt.savefig(saveFigPath+'/calibrations/calibrate0.png')
+plt.savefig(savePath+'/calibrations/calibrate0.png')
 
 
 
@@ -113,7 +121,27 @@ plt.pcolormesh(X, Y, [np.max(Z) / 4 - (line - np.min(line)) for line in Z], vmin
 
 # plt.colorbar()
 # plt.show()
-plt.savefig(saveFigPath+'/calibrations/calibrate1.png')
+plt.savefig(savePath+'/calibrations/calibrate1.png')
+
+
+
+
+X,Y = np.meshgrid(x_list_real,y_list_real)
+for xi in range(len(X)):
+    for yi in range(len(X[0])):
+        X[xi,yi],Y[xi,yi] = np.matmul(affine_matrix,np.asarray([X[xi,yi],Y[xi,yi]]))
+
+
+# Plot the density map using nearest-neighbor interpolation
+plt.figure(figsize=((np.max(X)-np.min(X))/12,(np.max(Y)-np.min(Y))/12))
+#plt.subplot(122)
+plt.title('Calibrated Image, Skewed')
+plt.pcolormesh(X, Y, [np.max(Z) / 4 - (line - np.min(line)) for line in Z], vmin=0.0, vmax=1.2)
+plt.savefig(savePath+'/calibrations/calibrate10.png')
+
+
+
+
 
 img = conductivity_all[-1].copy()
 
@@ -124,7 +152,7 @@ Z = np.array(np.array(img))[:, :-1]
 plt.figure(figsize=((np.max(x_list_real) - np.min(x_list_real)) / 8, (np.max(y_list_real) - np.min(y_list_real)) / 8))
 plt.pcolormesh(-Z, vmin=-3, vmax=-0, cmap="Blues")
 plt.title("Calibrated Undistorted Conductivity")
-plt.savefig(saveFigPath+'/calibrations/calibrate2.png')
+plt.savefig(savePath+'/calibrations/calibrate2.png')
 
 # Plot the density map using nearest-neighbor interpolation
 plt.figure(figsize=((np.max(x_list_real) - np.min(x_list_real)) / 8, (np.max(y_list_real) - np.min(y_list_real)) / 8))
@@ -134,20 +162,20 @@ plt.pcolormesh(X, Y, -Z, vmin=-3, vmax=-0, cmap="Blues")
 # plt.colorbar()
 # plt.show()
 plt.title("Calibrated Undistorted Conductivity")
-plt.savefig(saveFigPath+'/calibrations/calibrate3.png')
+plt.savefig(savePath+'/calibrations/calibrate3.png')
 
 plt.figure()
 plt.plot(y_list_real, np.mean(Z, axis=1), label='undistorted')
 plt.plot(y_list_real, np.mean(Z, axis=1), label='undistorted2')
 
 plt.legend()
-plt.savefig(saveFigPath+'/calibrations/calibrate4.png')
+plt.savefig(savePath+'/calibrations/calibrate4.png')
 
 
 plt.figure()
 plt.plot(y_list_appear, np.mean(img, axis=1), label='distorted')
 plt.legend()
-plt.savefig(saveFigPath+'/calibrations/calibrate5.png')
+plt.savefig(savePath+'/calibrations/calibrate5.png')
 
 
 ind = -1
@@ -164,10 +192,7 @@ plt.figure(figsize=((np.max(X)-np.min(X))/12,(np.max(Y)-np.min(Y))/12))
 plt.title('Calibrated Image, Unskewed')
 plt.pcolormesh(X,Y,-Z,vmin=-20,vmax=-0,cmap="Blues")
 
-theta = np.pi/4
-affine_matrix=np.array([[np.cos(-theta),-np.sin(-theta)],[np.sin(-theta),np.cos(-theta)]]).dot(
-                        np.array([[1.1,0.0],[0.0,1]])).dot(
-                        np.array([[np.cos(theta),-np.sin(theta)],[np.sin(theta),np.cos(theta)]]))
+
 X,Y = np.meshgrid(x_list_real,y_list_real)
 for xi in range(len(X)):
     for yi in range(len(X[0])):
@@ -179,4 +204,4 @@ plt.figure(figsize=((np.max(X)-np.min(X))/12,(np.max(Y)-np.min(Y))/12))
 #plt.subplot(122)
 plt.title('Calibrated Image, Skewed')
 plt.pcolormesh(X,Y,-Z,vmin=-3,vmax=-0,cmap="Blues")
-plt.savefig(saveFigPath+'/calibrations/calibrate6.png')
+plt.savefig(savePath+'/calibrations/calibrate6.png')

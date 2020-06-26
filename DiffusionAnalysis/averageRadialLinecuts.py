@@ -33,4 +33,3 @@ for ind, graph in enumerate(conductivity_all_cropped):
               'want, as it could help you understand how radialAverageByLinecuts is implemented.]\n')
     print("Averaging Radial Linecuts Ongoing: ",ind+1,"/",len(conductivity_all_cropped))
 #    plt.plot(rList,zList)
-

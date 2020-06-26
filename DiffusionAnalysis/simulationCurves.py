@@ -12,7 +12,7 @@ im_all, re_all = readImRePhase(folderPathList,fileNameIm,fileNameRe,naiveScale=n
 cond_array, im_sim, re_sim = readSimulatedImReCSV(diffusionCOMSOLCSV,comsolScale=diffusionCOMSOLScale)
 plotPhaseAndSimulatedCurves(im_all,re_all,im_sim, re_sim,savePath)
 
-plotSimulatedImReCurves(diffusionCOMSOLCSV, savePath,comsolScale=diffusionCOMSOLScale)#for iMIM diffusion
+# plotSimulatedImReCurves(diffusionCOMSOLCSV, savePath,comsolScale=diffusionCOMSOLScale)#for iMIM diffusion
 
-# plotSimulatedImReCurves(trCOMSOLCSV, savePath,comsolScale=trCOMSOLScale) #for TR-iMIM
+plotSimulatedImReCurves(trCOMSOLCSV, savePath,comsolScale=trCOMSOLScale) #for TR-iMIM
 # plotSimulatedImReCurves_Linear(trCOMSOLCSV, savePath,comsolScale=trCOMSOLScale) #for TR-iMIM

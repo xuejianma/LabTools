@@ -115,7 +115,7 @@ def plotSimulatedImReCurves(filePath, savePath, comsolScale):
     # plt.plot(cond_array,re_sim,'.')
     plt.plot(cond_array, im_sim, color='red', linewidth=6, label="iMIM-Im")
     plt.plot(cond_array, re_sim, color='green', linewidth=6, label="iMIM-Re")
-    plt.xlabel("Local σ (nS)")
+    plt.xlabel("Local σ (S/m)")
     plt.ylabel("Simulated Signals (mV)")
     plt.legend()
     plt.tight_layout()
@@ -436,6 +436,7 @@ def fit1(x_axis,z_axis,diffusion_simulation_database,extra_multiply):
         if R2_score>threshold:
             R2_score_list_selected.append((R2_score,length))
 #     print(R2_score_list_selected)
+#     print(R2_score_list_selected,23333)
     score_lower,lower_boundary = R2_score_list_selected[0]
     score_upper,upper_boundary = R2_score_list_selected[-1]
     score_best,best_fit = max(R2_score_list_selected)

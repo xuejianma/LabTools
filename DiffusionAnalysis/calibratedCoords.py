@@ -13,13 +13,25 @@ conductivity_all_average_y = np.mean(conductivity_all,axis=2)
 
 x_list = np.array(range(conductivity_all_average_x.shape[1]))
 x_list_real = calibrate_xlist(x_list)
-x_shift_max = x_list_real[int(np.mean([item.argmax() for item in conductivity_all_average_x]))]
-x_list_all = [[x-x_shift_max+x_extra_shift for x in x_list_real] for x_extra_shift in x_extra_shift_list]
+# x_shift_max = x_list_real[int(np.mean([item.argmax() for item in conductivity_all_average_x]))]
+# x_list_all = [[x-x_shift_max+x_extra_shift for x in x_list_real] for x_extra_shift in x_extra_shift_list]
+# print([-x_shift_max+x_extra_shift for x_extra_shift in x_extra_shift_list])
+
+x_shift_max = np.asarray(x_list_real)[[item.argmax() for item in conductivity_all_average_x]]
+x_list_all = [[x-x_shift_max[i]+x_extra_shift_list[i] for x in x_list_real] for i in range(len(conductivity_all_average_x))]
+# print([-x_shift_max[i]+x_extra_shift_list[i] for i in range(len(conductivity_all_average_x))])
 
 y_list = np.array(range(conductivity_all_average_y.shape[1]))
 y_list_real = calibrate_ylist(y_list)
-y_shift_max = y_list_real[int(np.mean([item.argmax() for item in conductivity_all_average_y]))]
-y_list_all = [[y-y_shift_max+y_extra_shift for y in y_list_real] for y_extra_shift in y_extra_shift_list]
+# y_shift_max = y_list_real[int(np.mean([item.argmax() for item in conductivity_all_average_y]))]
+# y_list_all = [[y-y_shift_max+y_extra_shift for y in y_list_real] for y_extra_shift in y_extra_shift_list]
+# print([-y_shift_max+y_extra_shift for y_extra_shift in y_extra_shift_list])
+y_shift_max = np.asarray(y_list_real)[[item.argmax() for item in conductivity_all_average_y]]
+y_list_all = [[y-y_shift_max[i]+y_extra_shift_list[i] for y in y_list_real] for i in range(len(conductivity_all_average_y))]
+# print([-y_shift_max[i]+y_extra_shift_list[i] for i in range(len(conductivity_all_average_y))])
+
+# print(x_shift_max)
+# print(y_shift_max)
 ####################################
 conductivity_all_cropped = np.copy(conductivity_all)
 #here *_cropped and * are actually the same. The suffix is for skewing, which does not work
