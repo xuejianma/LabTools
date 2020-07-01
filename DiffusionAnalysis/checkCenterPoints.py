@@ -15,7 +15,10 @@ fig, axs = plt.subplots(heigh_num, width_num, figsize=(20, 30))
 
 # ind = 5
 for ind in range(len(conductivity_all_cropped)):
-    ax = axs[ind // width_num, ind % width_num]
+    if len(conductivity_all_cropped) == 1:
+        ax = axs[0]
+    else:
+        ax = axs[ind // width_num, ind % width_num]
     img = conductivity_all_cropped[ind].copy()
     X, Y = np.meshgrid(x_list_all[ind], y_list_all[ind])
     # X = X_all[ind]
@@ -41,7 +44,8 @@ for ind in range(len(conductivity_all_cropped)):
                                size_vertical=0.5,
                                fontproperties=fontprops)
 
-    axs[ind % heigh_num, ind // heigh_num].add_artist(scalebar)
+    # axs[ind % heigh_num, ind // heigh_num].add_artist(scalebar)
+    ax.add_artist(scalebar)
 plt.savefig(savePath+"/checkCenterPoints0.png")
 
 plt.figure(figsize=(10, 5))

@@ -24,7 +24,7 @@ if not os.path.exists(savePath):
 # if not os.path.exists(savePath+"/diffusion_simulation_database.pickle"):
 #     print("\n[WARNING: You may run diffusionSimulations_preRun.py for the first time to get diffusion_simulation_database.pickle.]")
 
-naiveScale = 2300 # The original data in txt files are in unit V. We need to convert them to mV here for convenience.
+naiveScale = 1000 # The original data in txt files are in unit V. We need to convert them to mV here for convenience.
 
 """
 comsolScale = 3.5*10 for diffusion. 3.5 is the default calibrated coefficient,
@@ -38,10 +38,11 @@ diffusionCOMSOLScale = 3.5*10
 
 diffusionCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/Untitled_R28_1degree.csv"
 trCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/tr2.csv"
-
 intensityListForPhaseDiagram = ["00004","00007","00013","00022","00044","00073"] #00007 is excluded due to a bad line
 power_label = ["1.0x10² mW/cm²","3.0x10² mW/cm²","8.0x10² mW/cm²","20x10² mW/cm²","50x10² mW/cm²","100x10² mW/cm²"]
 power_list =[100,300,800,2000,5000,10000]
+# power_label = ["100x10² mW/cm²"]
+# power_list =[10000]
 
 
 # rootPath = '../../Perovskite\HTL_ETL\HTL_firstBatchAfterStayAtHome/20200617/'
@@ -77,3 +78,5 @@ Remember, that is just a playground to test influcences of different parameters.
 convert2Unskewed_preRun.py and rerun the file, which again, takes a while.
 """
 unskewFlag = 0
+
+angleSteps = 10

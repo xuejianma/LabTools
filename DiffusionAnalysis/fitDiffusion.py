@@ -143,8 +143,8 @@ for ind,power in enumerate(power_list):
      plt.errorbar(power,error_list[ind],color = 'black',fmt='-_',linewidth=1,capsize=20)
 plt.yticks(np.arange(0, 10, step=1))
 plt.xscale('log')
-ymin = error_list[-1][0]-0.1
-ymax = error_list[0][1]+0.1
+ymin = error_list[-1][0]-0.1-0.25
+ymax = error_list[0][1]+0.1+0.25
 plt.ylim(ymin,ymax)
 plt.xlabel("$P_c$ (mW/cm²)")
 plt.ylabel("Diffusion Length (µm)",labelpad=15)
