@@ -27,7 +27,10 @@ plt.rc('xtick.major',size=5,width=3)
 plt.rc('ytick.major',size=5,width=3)
 
 extra_shift_list = [0, 0, 0, 0, 0, 0]  # [-0.2,-0.2,0,0,0,0]
-extra_multiply_list = [0.994] * 6  # [0.99,0.99,0.999,0.96,0.999,0.97]
+extra_multiply_list = [0.994] * 6
+#[0.994] * 6  # [0.99,0.99,0.999,0.96,0.999,0.97]
+#[0.994,0.994,0.95,0.994,0.994,0.994] for ETL
+
 # power = [100,300,800,2000,5000,10000]
 # power_label = ["1.0x10²", "3.0x10²", "8.0x10²", "20x10²", "50x10²", "100x10²"]
 # power_list =[100,300,800,2000,5000,10000]
@@ -54,10 +57,20 @@ for ind in range(len(zList_all)):
     # ind = 5
     x_axis = rList_all[ind] + extra_shift_list[ind]
     z_axis = ((zList_all[ind] - np.min(zList_all[ind])))
-    lower_boundary, best_fit, upper_boundary, score_lower, score_best, score_upper = fit1(x_axis, z_axis,
-                                                                                          diffusion_simulation_database,
-                                                                                          extra_multiply=
-                                                                                          extra_multiply_list[ind])
+    try:
+        lower_boundary, best_fit, upper_boundary, score_lower, score_best, score_upper = fit1(x_axis, z_axis,
+                                                                                              diffusion_simulation_database,
+                                                                                              extra_multiply=
+                                                                                              extra_multiply_list[ind],
+                                                                                              threshold = 0.97)
+        print('threshold = 0.97')
+    except:
+        lower_boundary, best_fit, upper_boundary, score_lower, score_best, score_upper = fit1(x_axis, z_axis,
+                                                                                              diffusion_simulation_database,
+                                                                                              extra_multiply=
+                                                                                              extra_multiply_list[ind],
+                                                                                              threshold=0.94)
+        print('threshold = 0.94')
     # temp = fit2(x_axis,z_axis,diffusion_simulation_database,extra_multiply=extra_multiply_list[ind])
 
     # diffusion_simulation_R2_score = dict.fromkeys(diffusion_simulation_database.keys(),None)

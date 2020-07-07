@@ -14,10 +14,11 @@ import numpy as np
 
 """
 rootPath records:
-'../../Perovskite/1.1/1.1_50Vx50V/201912/pos2/'
-'../../Perovskite/HTL_ETL/HTL_firstBatchAfterStayAtHome/20200617'
+'../../Perovskite/1.1/1.1_50Vx50V/201912/pos2/' 1000
+'../../Perovskite/HTL_ETL/HTL_firstBatchAfterStayAtHome/20200617/' 2700
+'../../Perovskite/HTL_ETL/ETL_TiO2_firstBatchAfterStayAtHome_IncompletePiece_GloveBox/' 3500
 """
-rootPath = '../../Perovskite/1.1/1.1_50Vx50V/201912/pos2/'
+rootPath = '../../Perovskite/HTL_ETL/ETL_TiO2_firstBatchAfterStayAtHome_IncompletePiece_GloveBox/'
 savePath = rootPath+"/processFiles/"
 if not os.path.exists(savePath):
     os.mkdir(savePath)
@@ -36,7 +37,7 @@ comsolScale=  3.5/1000*125 for TR-iMIM signals. 3.5 is still default calibrated 
 trCOMSOLScale = 3.5/1000*125
 diffusionCOMSOLScale = 3.5*10
 
-diffusionCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/Untitled_R28_1degree.csv"
+diffusionCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/Untitled_R28_1degree_HTL.csv"
 trCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/tr2.csv"
 intensityListForPhaseDiagram = ["00004","00007","00013","00022","00044","00073"] #00007 is excluded due to a bad line
 power_label = ["1.0x10² mW/cm²","3.0x10² mW/cm²","8.0x10² mW/cm²","20x10² mW/cm²","50x10² mW/cm²","100x10² mW/cm²"]
@@ -62,13 +63,14 @@ Hisotry records:
         x_extra_shift_list = np.array([0.27,0.09,-0.2,-0.3,0.0-0.45,-0.75-0.45])+np.asarray([-0.76276169,-0.45913387,-0.15354331,-0.15354331, 0.,2.36675187])
         y_extra_shift_list = np.array([-0.55,0.75,0.4,0.5,0.0+0.25,-0.25-0.05])+np.asarray([ 1.05682016,-0.45771987,-0.91839836,-0.15224807,-0.6109478,1.05682016])
     HTL Sample
-        x_extra_shift_list = np.array([0.75,0,0.75,0,0,0.5])
-        y_extra_shift_list = np.array([0,0.5,0.5,0,-0.25,0.5])
+        x_extra_shift_list = np.array([-0.2, 0, 0.65, -0.65, 0, 0.6])
+        y_extra_shift_list = np.array([-0.1, 0.75, 0.5, 0, -0.25, 0.5])
+    ETL Sample
+        x_extra_shift_list = np.array([0.2, 0.3, 0.45, -0.85, -0.1 , 0.15])
+        y_extra_shift_list = np.array([-0.3, 0., -0.35, -0.1, 0.2, 0.4])
 """
-x_extra_shift_list = np.array([0.27, 0.09, -0.2, -0.3, 0.0 - 0.45, -0.75 - 0.45]) + np.asarray(
-    [-0.76276169, -0.45913387, -0.15354331, -0.15354331, 0., 2.36675187])
-y_extra_shift_list = np.array([-0.55, 0.75, 0.4, 0.5, 0.0 + 0.25, -0.25 - 0.05]) + np.asarray(
-    [1.05682016, -0.45771987, -0.91839836, -0.15224807, -0.6109478, 1.05682016])
+x_extra_shift_list = np.array([0.2, 0.3, 0.45, -0.85, -0.1, 0.15])
+y_extra_shift_list = np.array([-0.3, 0., -0.35, -0.1, 0.2, 0.4])
 
 """
 Usually we set unskewFlag = 0. If you consider yourself a perfectionist, try set unskewFlag = 1, and change skew 

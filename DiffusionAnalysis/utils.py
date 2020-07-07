@@ -412,7 +412,7 @@ def R2(y_real_list,y_fit_list):
     R2 = 1 - SS_res/SS_tot
     return R2
 
-def fit1(x_axis,z_axis,diffusion_simulation_database,extra_multiply):
+def fit1(x_axis,z_axis,diffusion_simulation_database,extra_multiply,threshold = 0.97):
     z_axis_norm = (np.array(z_axis)-np.min(z_axis))/(np.max(z_axis)-np.min(z_axis))/extra_multiply
     R2_score_list = []
     for length in diffusion_simulation_database:
@@ -430,12 +430,13 @@ def fit1(x_axis,z_axis,diffusion_simulation_database,extra_multiply):
 #         print((z_axis_fit_for_R2))
         R2_score_list.append((R2_score,length))
 
-    threshold = 0.97 # you could adjust the threshold here to control the fitting range.
+    #threshold = 0.97 # you could adjust the threshold here to control the fitting range.
     R2_score_list_selected = []
     for R2_score,length in R2_score_list:
         if R2_score>threshold:
             R2_score_list_selected.append((R2_score,length))
-#     print(R2_score_list_selected)
+    print(R2_score_list)
+    print(R2_score_list_selected)
 #     print(R2_score_list_selected,23333)
     score_lower,lower_boundary = R2_score_list_selected[0]
     score_upper,upper_boundary = R2_score_list_selected[-1]

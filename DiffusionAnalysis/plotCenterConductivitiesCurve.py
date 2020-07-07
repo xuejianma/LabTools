@@ -72,3 +72,5 @@ plt.ylabel("Center σ (S/m)")
 plt.tight_layout()
 
 plt.savefig(savePath+"/centerConductivitiesCurve.png")
+print("powers:",list(power_list))
+print("center conductivities: ",list(np.array(signal_center_list)[:,0]))

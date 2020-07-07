@@ -25,14 +25,18 @@ plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.05, h
 
 # ind = 5
 print()
-
+maxscale_mim = 1.2
+maxscale_cond = 1.75#maxscale_mim
 for j in range(3):# 3 represents im,re and conductivity
     if j == 0:
-        vmin = 0; vmax = 1.041667*np.max(im_img_all_cropped);cmap = "afmhot"  #vmax=1000, imaginary images
+        vmin = 0; vmax = int(maxscale_mim*1.041667*np.max(im_img_all_cropped)/10)*10;cmap = "afmhot"  #vmax=1000, imaginary images
+        print("im range:",(vmin,vmax))
     elif j ==1:
-        vmin = 0; vmax=1/1.04*np.max(re_img_all_cropped); cmap="afmhot"# real images
+        vmin = 0; vmax=int(maxscale_mim*1/1.04*np.max(re_img_all_cropped)/10)*10; cmap="afmhot"# real images
+        print("re range:", (vmin, vmax))
     elif j ==2:
-        vmin = 0; vmax=1/2.009233*np.max(conductivity_all_cropped); cmap=aqua #conductivity images
+        vmin = 0; vmax=int(maxscale_cond*1/2.009233*np.max(conductivity_all_cropped)); cmap=aqua #conductivity images
+        print("conductivity range:", (vmin, vmax))
     for ind in range(len(conductivity_all_cropped)):
         if j == 0:
             img = im_img_all_cropped[ind].copy();
