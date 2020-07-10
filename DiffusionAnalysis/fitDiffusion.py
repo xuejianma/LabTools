@@ -27,7 +27,7 @@ plt.rc('xtick.major',size=5,width=3)
 plt.rc('ytick.major',size=5,width=3)
 
 extra_shift_list = [0, 0, 0, 0, 0, 0]  # [-0.2,-0.2,0,0,0,0]
-extra_multiply_list = [0.994] * 6
+extra_multiply_list = [0.994,0.994,0.94,0.994,0.994,0.994]#HTL: [0.95,0.98,0.994,0.95,0.994,0.99]
 #[0.994] * 6  # [0.99,0.99,0.999,0.96,0.999,0.97]
 #[0.994,0.994,0.95,0.994,0.994,0.994] for ETL
 
@@ -62,8 +62,8 @@ for ind in range(len(zList_all)):
                                                                                               diffusion_simulation_database,
                                                                                               extra_multiply=
                                                                                               extra_multiply_list[ind],
-                                                                                              threshold = 0.97)
-        print('threshold = 0.97')
+                                                                                              threshold = 0.98)
+        print('threshold = 0.98')
     except:
         lower_boundary, best_fit, upper_boundary, score_lower, score_best, score_upper = fit1(x_axis, z_axis,
                                                                                               diffusion_simulation_database,
@@ -156,7 +156,7 @@ for ind,power in enumerate(power_list):
      plt.errorbar(power,error_list[ind],color = 'black',fmt='-_',linewidth=1,capsize=20)
 plt.yticks(np.arange(0, 10, step=1))
 plt.xscale('log')
-ymin = error_list[-1][0]-0.1-0.25
+ymin = error_list[-1][0]-0.1-0.55
 ymax = error_list[0][1]+0.1+0.25
 plt.ylim(ymin,ymax)
 plt.xlabel("$P_c$ (mW/cm²)")

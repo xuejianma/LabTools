@@ -32,10 +32,11 @@ for j in range(3):# 3 represents im,re and conductivity
         vmin = 0; vmax = int(maxscale_mim*1.041667*np.max(im_img_all_cropped)/10)*10;cmap = "afmhot"  #vmax=1000, imaginary images
         print("im range:",(vmin,vmax))
     elif j ==1:
-        vmin = 0; vmax=int(maxscale_mim*1/1.04*np.max(re_img_all_cropped)/10)*10; cmap="afmhot"# real images
+        vmin = 0; vmax=int(0.95*maxscale_mim*1/1.04*np.max(re_img_all_cropped)/10)*10; cmap="afmhot"# real images
+        #HTL vim = 40
         print("re range:", (vmin, vmax))
     elif j ==2:
-        vmin = 0; vmax=int(maxscale_cond*1/2.009233*np.max(conductivity_all_cropped)); cmap=aqua #conductivity images
+        vmin = 0; vmax=int(0.8*maxscale_cond*1/2.009233*np.max(conductivity_all_cropped)); cmap=aqua #conductivity images
         print("conductivity range:", (vmin, vmax))
     for ind in range(len(conductivity_all_cropped)):
         if j == 0:
