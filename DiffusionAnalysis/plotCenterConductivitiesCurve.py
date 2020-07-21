@@ -65,6 +65,7 @@ k2 = ((np.exp(m*np.log(power_list[-1])+b))-(np.exp(m*np.log(power_list[0])+b)))/
 print('red k2:',k2)
 ml,bl = np.polyfit(power_list, signal_center_list, 1)
 print("orange ml,bl:",ml,bl)
+print('y/x:',[item2/item1 for item1,item2 in zip(power_list,signal_center_list)])
 
 #plt.plot([100,10000],[signal_center_list[0],signal_center_list[-1]],color="black",linestyle="dashed")
 plt.plot([power_list[0],power_list[-1]],[np.exp(m*np.log(power_list[0])+b),np.exp(m*np.log(power_list[-1])+b)],color="gray",linestyle="dashed",linewidth=4)
