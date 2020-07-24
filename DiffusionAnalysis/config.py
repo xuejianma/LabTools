@@ -18,7 +18,7 @@ rootPath records:
 '../../Perovskite/HTL_ETL/HTL_firstBatchAfterStayAtHome/20200617/' 2100
 '../../Perovskite/HTL_ETL/ETL_TiO2_firstBatchAfterStayAtHome_IncompletePiece_GloveBox/' 3500
 """
-rootPath = '../../Perovskite/1.1/1.1_50Vx50V/201912/pos2/'
+rootPath = '../../Perovskite/HTL_ETL/ETL_TiO2_firstBatchAfterStayAtHome_IncompletePiece_GloveBox/'
 savePath = rootPath+"/processFiles/"
 if not os.path.exists(savePath):
     os.mkdir(savePath)
@@ -69,10 +69,8 @@ Hisotry records:
         x_extra_shift_list = np.array([0.2, 0.3, 0.45, -0.85, -0.1 , 0.15])
         y_extra_shift_list = np.array([-0.3, 0., -0.35, -0.1, 0.2, 0.4])
 """
-x_extra_shift_list = np.array([0.27, 0.09, -0.2, -0.3, 0.0 - 0.45, -0.75 - 0.45]) + np.asarray(
-    [-0.76276169, -0.45913387, -0.15354331, -0.15354331, 0., 2.36675187])
-y_extra_shift_list = np.array([-0.55, 0.75, 0.4, 0.5, 0.0 + 0.25, -0.25 - 0.05]) + np.asarray(
-    [1.05682016, -0.45771987, -0.91839836, -0.15224807, -0.6109478, 1.05682016])
+x_extra_shift_list = np.array([0.2, 0.3, 0.45, -0.85, -0.1, 0.15])
+y_extra_shift_list = np.array([-0.3, 0., -0.35, -0.1, 0.2, 0.4])
 
 """
 Usually we set unskewFlag = 0. If you consider yourself a perfectionist, try set unskewFlag = 1, and change skew 

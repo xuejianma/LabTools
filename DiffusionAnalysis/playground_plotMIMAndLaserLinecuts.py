@@ -80,6 +80,7 @@ plt.savefig(savePath+"/ImRe.png")
 
 # conductivity_rList,conductivity_zList,_ = radialAverageByLinecuts(conductivity_img,(0,0),X,Y,radialSteps=300,threshold=1/6*1,angleSteps=10)
 plt.figure(figsize=(7,4))
+
 plt.scatter(xtemp,ztemp,marker=(5,1),color='royalblue',zorder=10,alpha=0.8,s=125,label='Conductivity')
 plt.xlim(-15,15)
 plt.legend(loc='upper left')
@@ -101,3 +102,10 @@ plt.xlabel("Position (µm)")
 plt.xlim(-15,15)
 plt.tight_layout()
 plt.savefig(savePath+"/laserAndConductivity.png")
+
+
+
+
+import pandas as pd
+df = pd.DataFrame([im_rList, np.asarray(im_zList).astype(np.float), re_rList, np.asarray(re_zList).astype(np.float), xtemp, np.asarray(ztemp).astype(np.float), laser_rList[::4], np.asarray(laser_zList_edgesupress[::4]).astype(np.float), laser_rList, gaussian(laser_rList,w=2)]).T
+df.to_csv(savePath+'/linecuts.csv')

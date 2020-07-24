@@ -37,3 +37,11 @@ plt.yticks([])
 # plt.scatter([0],[0],color='red',s=10)
 plt.title("Laser spot, 30um x 30um")
 plt.savefig(savePath+"/laserSpotCropped.png")
+
+with open(savePath+'/laserSpotCropped_30x30.txt','w') as f:
+    for line in laserimg_cropped_edgesupress:
+        string = ''
+        for item in line:
+            string+=str(item)+'\t'
+        string+='\n'
+        f.write(string)

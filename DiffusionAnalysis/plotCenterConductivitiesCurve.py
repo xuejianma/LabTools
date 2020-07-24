@@ -69,8 +69,8 @@ print('y/x:',[item2/item1 for item1,item2 in zip(power_list,signal_center_list)]
 
 #plt.plot([100,10000],[signal_center_list[0],signal_center_list[-1]],color="black",linestyle="dashed")
 plt.plot([power_list[0],power_list[-1]],[np.exp(m*np.log(power_list[0])+b),np.exp(m*np.log(power_list[-1])+b)],color="gray",linestyle="dashed",linewidth=4)
-plt.plot([power_list[0],power_list[-1]],[ml*power_list[0]+bl,ml*power_list[-1]+bl],color="orange",linestyle="dashed",linewidth=4)
-plt.plot([power_list[0],power_list[-1]],[k2*power_list[0],k2*power_list[-1]],color="red",linestyle="dashed",linewidth=4)
+# plt.plot([power_list[0],power_list[-1]],[ml*power_list[0]+bl,ml*power_list[-1]+bl],color="orange",linestyle="dashed",linewidth=4)
+# plt.plot([power_list[0],power_list[-1]],[k2*power_list[0],k2*power_list[-1]],color="red",linestyle="dashed",linewidth=4)
 
 for ind,power in enumerate(power_list):
     plt.errorbar(power,signal_center_error_list[ind],fmt='-_',color='blue',linewidth=2,markersize=15,markeredgewidth=2)
@@ -85,3 +85,4 @@ plt.tight_layout()
 plt.savefig(savePath+"/centerConductivitiesCurve.png")
 print("powers:",list(power_list))
 print("center conductivities: ",list(np.array(signal_center_list)[:,0]))
+print("center conductivities Errors: ",signal_center_error_list)

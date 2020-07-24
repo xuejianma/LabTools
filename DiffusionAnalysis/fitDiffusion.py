@@ -27,7 +27,11 @@ plt.rc('xtick.major',size=5,width=3)
 plt.rc('ytick.major',size=5,width=3)
 
 extra_shift_list = [0, 0, 0, 0, 0, 0]  # [-0.2,-0.2,0,0,0,0]
-extra_multiply_list = [0.994]*6#[0.994,0.994,0.94,0.994,0.994,0.994]#HTL: [0.95,0.98,0.994,0.95,0.994,0.99]
+extra_multiply_list = [0.994,0.994,0.94,0.994,0.994,0.994]
+#no transport layer:[0.994]*6#[0.994,0.994,0.94,0.994,0.994,0.994]#HTL: [0.994]*6 #wrong HTL:[0.95,0.98,0.994,0.95,0.994,0.99]
+#ETL: [0.994,0.994,0.94,0.994,0.994,0.994]
+
+#wasted:
 #[0.994] * 6  # [0.99,0.99,0.999,0.96,0.999,0.97]
 #[0.994,0.994,0.95,0.994,0.994,0.994] for ETL
 
@@ -49,9 +53,10 @@ verbose = 0
 
 plt.figure(figsize=(widthPerInset*colNum, heightPerInset*rowNum))
 
-
+buffer_list = []
 # for ind in range(len(power_label)):
 for ind in range(len(zList_all)):
+    buffer = []
     print()
     print("Diffusion Fitting Errorbar and Length "+str(ind+1)+"/"+str(len(zList_all)))
     # ind = 5
@@ -83,6 +88,8 @@ for ind in range(len(zList_all)):
         #         plt.figure(figsize=(6,3))
         plt.subplot(rowNum, colNum, ind + 1)
         plt.scatter(x_axis, z_axis, marker=(5, 1), color='royalblue', zorder=10, alpha=0.7, s=200)
+        buffer.append(x_axis)
+        buffer.append(np.asarray(z_axis).astype(np.float))
         plt.tight_layout(pad=1)
         # laser_r = 2
         # length_list = [2.6,3.4,4.3]
@@ -104,26 +111,38 @@ for ind in range(len(zList_all)):
 
                 plt.plot(x_axis_fit, z_axis_fit, linestyle='-.', label=str(round(length, 1)) + " µm", color="gray",
                          linewidth=5)  # , R²="+str(round(score_lower[0],3)) #,dashes=[5,4]
+                buffer.append(x_axis_fit)
+                buffer.append(z_axis_fit)
             elif index == 1:
                 plt.plot(x_axis_fit, z_axis_fit, label=str(round(length, 1)) + " µm", color="black", linewidth=6,
                          zorder=9)  # , R²="+str(round(score_best[0],3))
+                buffer.append(x_axis_fit)
+                buffer.append(z_axis_fit)
             elif index == 2:
                 plt.plot(x_axis_fit, z_axis_fit, linestyle='dashed', label=str(round(length, 1)) + " µm", color="gray",
                          linewidth=5)  # , R²="+str(round(score_upper[0],3))
+                buffer.append(x_axis_fit)
+                buffer.append(z_axis_fit)
         plt.xlim(-15, 15)
         if verbose != 0:
             plt.legend(loc='upper right')
             # plt.xticks([])
             plt.title("$P_c$ = " + power_label[ind] + " mW/cm²")
             plt.xlabel("Position (µm)")
-            plt.ylabel("Local σ (nS)")
+            plt.ylabel("Local σ (S/m)")
             handles, labels = plt.gca().get_legend_handles_labels()
             plt.legend(handles[::-1], labels[::-1], )  # loc='upper left')
 
         if ind == 3:
             xtemp = x_axis
             ztemp = z_axis
+        buffer_list.append(buffer)
 plt.savefig(savePath+"/diffusionFittings.png")
+
+import pandas as pd
+for ind,buffer in enumerate(buffer_list):
+    df = pd.DataFrame(buffer).T
+    df.to_csv(savePath+'/conductivityLinecut_'+str(ind+1)+'.csv')
 
 """
 diffusion length vs laser power curve
