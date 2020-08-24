@@ -14,15 +14,24 @@ from readConductivities import conductivity_all,im_img_all,re_img_all
 from calibratedCoords import x_list_all,y_list_all
 from utils import resample
 from config import folderPathList
+from PyParkTiff import SaveParkTiff
 
 X_shift = []
 Y_shift = []
 
-theta = 48*np.pi/180
+# sample w/o transport layers
+# theta = 48*np.pi/180
+# theta2=theta
+# affine_matrix=np.array([[np.cos(-theta2),-np.sin(-theta2)],[np.sin(-theta2),np.cos(-theta2)]]).dot(
+#                         np.array([[1,0.0],[0.0,1/1.16]])).dot(
+#                         np.array([[np.cos(theta),-np.sin(theta)],[np.sin(theta),np.cos(theta)]]))
+
+#sample with HTL
+theta = 0*np.pi/180
 theta2=theta
 affine_matrix=np.array([[np.cos(-theta2),-np.sin(-theta2)],[np.sin(-theta2),np.cos(-theta2)]]).dot(
-                        np.array([[1,0.0],[0.0,1/1.16]])).dot(
-                        np.array([[np.cos(theta),-np.sin(theta)],[np.sin(theta),np.cos(theta)]]))
+                       np.array([[1,0.0],[0.0,1]])).dot(
+                       np.array([[np.cos(theta),-np.sin(theta)],[np.sin(theta),np.cos(theta)]]))
 X_all = []; Y_all = [];
 for ind in range(len(conductivity_all)):
     X,Y = np.meshgrid(x_list_all[ind],y_list_all[ind]).copy()
@@ -42,7 +51,7 @@ im_img_all_cropped = []
 re_img_all_cropped = []
 conductivity_all_cropped = []
 length = int(len(conductivity_all[0]) / 2)
-xmin, xmax, ymin, ymax = [-15, 15, -15, 15]
+xmin, xmax, ymin, ymax = [-20, 20, -20, 20]
 
 size_list = []
 for ind in range(len(conductivity_all)):
@@ -58,7 +67,8 @@ print('size:', size)
 
 for ind,folderPath in enumerate(folderPathList):
 # for ind in range(len(conductivity_all)):
-    # ind=5
+#     ind=5
+
     print()
     print("Ongoing Resampling Conversion: ",ind + 1, '/', len(conductivity_all))
     X = X_all[ind].astype(np.float32)
@@ -80,6 +90,24 @@ for ind,folderPath in enumerate(folderPathList):
     with open(folderPath+'/skewed_data.pickle', 'wb') as f:
         pickle.dump([x_list, y_list, new_conductivity_img, \
                      new_im_img, new_re_img], f)
+
+    # with open(folderPath + '/skewed_data.pickle', 'rb') as f:
+    #     [x_list, y_list, new_conductivity_img,new_im_img, new_re_img]=pickle.load(f)
+    new_conductivity_img = np.nan_to_num(new_conductivity_img)
+    new_re_img = np.nan_to_num(new_re_img)
+    new_im_img = np.nan_to_num(new_im_img)
+    txtsave_cond = folderPath+'/new_conductivity_img.txt'
+    txtsave_re = folderPath+'/new_re_img.txt'
+    txtsave_im = folderPath+'/new_im_img.txt'
+    np.savetxt(txtsave_cond,new_conductivity_img)
+    np.savetxt(txtsave_re,new_re_img)
+    np.savetxt(txtsave_im,new_im_img)
+    data = np.loadtxt(txtsave_cond)
+    SaveParkTiff(data, xmax-xmin, ymax-ymin, folderPath+'/new_conductivity_img.tiff')
+    data = np.loadtxt(txtsave_re)
+    SaveParkTiff(data, xmax-xmin, ymax-ymin, folderPath+'/new_re_img.tiff')
+    data = np.loadtxt(txtsave_im)
+    SaveParkTiff(data, xmax-xmin, ymax-ymin, folderPath+'/new_im_img.tiff')
 
 # conductivity_all_average_x = np.mean(np.array(conductivity_all_cropped)[:,length-10:length+10,:],axis=1)
 # conductivity_all_average_y = np.mean(conductivity_all_cropped,axis=2)

@@ -303,6 +303,7 @@ def resample(img,X,Y,xmin,xmax,ymin,ymax,size=None):
                 new_img[i,j]=np.nanmean([new_img[(i-1)%size,j],new_img[(i+1)%size,j],new_img[i,(j-1)%size],new_img[i,(j+1)%size],
                                         new_img[(i-1)%size,(j-1)%size],new_img[(i+1)%size,(j+1)%size],new_img[(i+1)%size,(j-1)%size],new_img[(i-1)%size,(j+1)%size]])
                 #print(new_img[i,j])
+                # new_img=np.nan_to_num(new_img)
     return new_img,x_list,y_list
 
 def radialAverageByLinecuts(graph,center,xAxis_or_xMeshgrid,yAxis_or_yMeshgrid,radialSteps=100,threshold=1.0,angleSteps = None,angleThreshold=0.01):

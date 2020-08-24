@@ -12,7 +12,7 @@ from tqdm import tqdm
 diffusion_simulation_database = {}
 length_list=np.linspace(1,7,61)
 t1 = time.time()
-laser_r=2
+laser_r=2*np.sqrt(2)
 
 plt.figure(figsize=(5,5))
 xx,yy,z = diffusion_map(length_list[0],laser_r,pos_max =40,point_num=150)

@@ -27,9 +27,11 @@ plt.rc('xtick.major',size=5,width=3)
 plt.rc('ytick.major',size=5,width=3)
 
 extra_shift_list = [0, 0, 0, 0, 0, 0]  # [-0.2,-0.2,0,0,0,0]
-extra_multiply_list = [0.994,0.994,0.94,0.994,0.994,0.994]
-#no transport layer:[0.994]*6#[0.994,0.994,0.94,0.994,0.994,0.994]#HTL: [0.994]*6 #wrong HTL:[0.95,0.98,0.994,0.95,0.994,0.99]
-#ETL: [0.994,0.994,0.94,0.994,0.994,0.994]
+trial=True
+extra_multiply_list = [0.96,0.97,0.98,0.97,0.97,0.97]
+#no transport layer:[0.994]*6#[0.994,0.994,0.94,0.994,0.994,0.994]
+#HTL: [0.96,0.97,0.98,0.97,0.97,0.97] wrong: [0.994]*6 #wrong HTL:[0.95,0.98,0.994,0.95,0.994,0.99]
+#ETL: [0.95,0.994,0.94,0.994,0.994,0.994] wrong:[0.994,0.994,0.94,0.994,0.994,0.994]
 
 #wasted:
 #[0.994] * 6  # [0.99,0.99,0.999,0.96,0.999,0.97]
@@ -62,12 +64,15 @@ for ind in range(len(zList_all)):
     # ind = 5
     x_axis = rList_all[ind] + extra_shift_list[ind]
     z_axis = ((zList_all[ind] - np.min(zList_all[ind])))
+    if ind==0 and trial==True:
+        secondmin = sorted(zList_all[ind])[2]
+        z_axis = ((zList_all[ind] - secondmin))
     try:
         lower_boundary, best_fit, upper_boundary, score_lower, score_best, score_upper = fit1(x_axis, z_axis,
                                                                                               diffusion_simulation_database,
                                                                                               extra_multiply=
                                                                                               extra_multiply_list[ind],
-                                                                                              threshold = 0.98)
+                                                                                              threshold = 0.985)
         print('threshold = 0.98')
     except:
         lower_boundary, best_fit, upper_boundary, score_lower, score_best, score_upper = fit1(x_axis, z_axis,
