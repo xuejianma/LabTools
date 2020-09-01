@@ -28,7 +28,7 @@ plt.rc('ytick.major',size=5,width=3)
 
 extra_shift_list = [0, 0, 0, 0, 0, 0]  # [-0.2,-0.2,0,0,0,0]
 trial=True
-extra_multiply_list = [0.95,0.994,0.94,0.994,0.994,0.994]
+extra_multiply_list = [0.994]*6
 #no transport layer:[0.994]*6#[0.994,0.994,0.94,0.994,0.994,0.994]
 #HTL: [0.96,0.97,0.98,0.97,0.97,0.97] wrong: [0.994]*6 #wrong HTL:[0.95,0.98,0.994,0.95,0.994,0.99]
 #ETL: [0.95,0.994,0.94,0.994,0.994,0.994] wrong:[0.994,0.994,0.94,0.994,0.994,0.994]
@@ -145,9 +145,23 @@ for ind in range(len(zList_all)):
 plt.savefig(savePath+"/diffusionFittings.png")
 
 import pandas as pd
+conductivityLinecut_list = []
 for ind,buffer in enumerate(buffer_list):
     df = pd.DataFrame(buffer).T
-    df.to_csv(savePath+'/conductivityLinecut_'+str(ind+1)+'.csv')
+    # df.to_csv(savePath+'/conductivityLinecut_'+str(ind+1)+'.csv')
+    df = df.rename(
+        columns={'0': 'x1', '1': 'y1(data)', '2': 'x2', '3': 'y2(lower)', '4': 'x3', '5': 'y3(best)', '6': 'x4',
+                 '7': 'y4(upper)'})
+    conductivityLinecut_list.append(df)
+
+headerintensities=np.asarray(np.asarray(range(len(buffer_list)))+1).astype(str)
+header = pd.MultiIndex.from_product([power_list,
+                                     ['x1', 'y1(data)', 'x2', 'y2(lower)', 'x3', 'y3(best)', 'x4', 'y4(upper)']],
+                                    names=['intensities', 'entries'])
+df = pd.DataFrame(pd.concat(conductivityLinecut_list, axis=1).values, columns=header)
+df.to_excel(savePath + 'diffusionLinecuts.xlsx')
+
+
 
 """
 diffusion length vs laser power curve

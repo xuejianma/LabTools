@@ -189,7 +189,6 @@ def TiffAddTag(file_object, field_tag, field_type, field_num, field_value):
 def SaveParkTiff(data, X_scan_size, Y_scan_size, file_path):
     #data must be a numpy array
 
-
     tag_num = 9
 
     ImageWidth = data.shape[1]
