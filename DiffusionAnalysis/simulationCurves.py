@@ -15,4 +15,5 @@ plotPhaseAndSimulatedCurves(im_all,re_all,im_sim, re_sim,savePath)
 # plotSimulatedImReCurves(diffusionCOMSOLCSV, savePath,comsolScale=diffusionCOMSOLScale)#for iMIM diffusion
 
 # plotSimulatedImReCurves(trCOMSOLCSV, savePath,comsolScale=trCOMSOLScale) #for TR-iMIM
-plotSimulatedImReCurves_Linear(diffusionCOMSOLCSV, savePath,comsolScale=diffusionCOMSOLScale) #for diffusion-iMIM
+# plotSimulatedImReCurves_Linear(diffusionCOMSOLCSV, savePath,comsolScale=diffusionCOMSOLScale) #for diffusion-iMIM
+plotSimulatedImReCurves(diffusionCOMSOLCSV, savePath,comsolScale=diffusionCOMSOLScale) #for diffusion-iMIM

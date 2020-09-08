@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from averageRadialLinecuts import zList_all,rList_all
 from utils import fit1,fit2
 from config import savePath,power_list,power_label
+from playground_plotMIMAndLaserLinecuts import select_index
 import pickle
 
 with open(savePath+"/diffusion_simulation_database.pickle","rb") as f:
@@ -27,11 +28,19 @@ plt.rc('xtick.major',size=5,width=3)
 plt.rc('ytick.major',size=5,width=3)
 
 extra_shift_list = [0, 0, 0, 0, 0, 0]  # [-0.2,-0.2,0,0,0,0]
-trial=True
-extra_multiply_list = [0.994]*6
+
+
+
+trial=False
+extra_multiply_list = [0.994,0.994,0.95,0.994,0.994,0.994]
+
 #no transport layer:[0.994]*6#[0.994,0.994,0.94,0.994,0.994,0.994]
 #HTL: [0.96,0.97,0.98,0.97,0.97,0.97] wrong: [0.994]*6 #wrong HTL:[0.95,0.98,0.994,0.95,0.994,0.99]
 #ETL: [0.95,0.994,0.94,0.994,0.994,0.994] wrong:[0.994,0.994,0.94,0.994,0.994,0.994]
+
+#pvk "mixer":[0.994,0.994,0.95,0.994,0.994,0.994]   #[0.994]*6#[0.994,0.994,0.94,0.994,0.994,0.994]
+#HTL "mixer": [0.94,0.98,0.98,0.97,0.97,0.97]
+#ETL "mixer": [0.95,0.94,0.94,0.994,0.994,0.994] wrong:[0.994,0.994,0.94,0.994,0.994,0.994]
 
 #wasted:
 #[0.994] * 6  # [0.99,0.99,0.999,0.96,0.999,0.97]
@@ -64,23 +73,43 @@ for ind in range(len(zList_all)):
     # ind = 5
     x_axis = rList_all[ind] + extra_shift_list[ind]
     z_axis = ((zList_all[ind] - np.min(zList_all[ind])))
-    if ind==0 and trial==True:
-        secondmin = sorted(zList_all[ind])[2]
+    fitrange = (-15,15)
+    threshold=0.98
+    if ind<=1 and trial==True:
+        fitrange = (-15, 15)
+        secondmin = sorted(zList_all[ind])[15]
         z_axis = ((zList_all[ind] - secondmin))
+
+        if ind==0:
+            # x_axis *= 0.8
+            x_axis = np.asarray([x_axis[j] * (0.5 + np.abs(x_axis[j]) ** 2 / np.max(x_axis) ** 2) / 0.5 * 0.8 for j in
+                                 range(len(x_axis))])
+            fitrange = (4,8)
+            threshold = 0.3
+        elif ind==1:
+            x_axis *= 0.85
+            fitrange = (2,5)
+            threshold = 0.85
+        # x_axis = np.asarray([x_axis[j]/(1+np.abs(x_axis[j])**3/np.max(x_axis)**3)*1.0 for j in range(len(x_axis))])
+        # x_axis = np.asarray([x_axis[j]*(0.5+np.abs(x_axis[j])**2/np.max(x_axis)**2)/0.5*0.8 for j in range(len(x_axis))])
+        # x_axis = np.asarray([x_axis[j]*np.exp(-(np.max(x_axis)-np.abs(x_axis[j]))**5/np.max(x_axis)**5/5)*1.0 for j in range(len(x_axis))])
+
     try:
         lower_boundary, best_fit, upper_boundary, score_lower, score_best, score_upper = fit1(x_axis, z_axis,
                                                                                               diffusion_simulation_database,
                                                                                               extra_multiply=
                                                                                               extra_multiply_list[ind],
-                                                                                              threshold = 0.985)
-        print('threshold = 0.98')
+                                                                                              threshold = threshold,
+                                                                                              fitrange=fitrange)
+        print('threshold = {}'.format(threshold))
     except:
         lower_boundary, best_fit, upper_boundary, score_lower, score_best, score_upper = fit1(x_axis, z_axis,
                                                                                               diffusion_simulation_database,
                                                                                               extra_multiply=
                                                                                               extra_multiply_list[ind],
-                                                                                              threshold=0.94)
-        print('threshold = 0.94')
+                                                                                              threshold=0.98,
+                                                                                              fitrange=fitrange)#4 7
+        print('threshold = 0.98')
     # temp = fit2(x_axis,z_axis,diffusion_simulation_database,extra_multiply=extra_multiply_list[ind])
 
     # diffusion_simulation_R2_score = dict.fromkeys(diffusion_simulation_database.keys(),None)
@@ -93,8 +122,13 @@ for ind in range(len(zList_all)):
         #         plt.figure(figsize=(6,3))
         plt.subplot(rowNum, colNum, ind + 1)
         plt.scatter(x_axis, z_axis, marker=(5, 1), color='royalblue', zorder=10, alpha=0.7, s=200)
-        buffer.append(x_axis)
-        buffer.append(np.asarray(z_axis).astype(np.float))
+        if trial == True and ind<=1:
+            selected_indices = [kind for kind in range(len(x_axis)) if x_axis[kind]<30 and x_axis[kind]>-41]
+            buffer.append(np.asarray(x_axis)[selected_indices])
+            buffer.append(np.asarray(z_axis).astype(np.float)[selected_indices])
+        else:
+            buffer.append(x_axis)
+            buffer.append(np.asarray(z_axis).astype(np.float))
         plt.tight_layout(pad=1)
         # laser_r = 2
         # length_list = [2.6,3.4,4.3]
@@ -138,7 +172,7 @@ for ind in range(len(zList_all)):
             handles, labels = plt.gca().get_legend_handles_labels()
             plt.legend(handles[::-1], labels[::-1], )  # loc='upper left')
 
-        if ind == 3:
+        if ind == select_index:
             xtemp = x_axis
             ztemp = z_axis
         buffer_list.append(buffer)

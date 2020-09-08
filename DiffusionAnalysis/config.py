@@ -18,9 +18,9 @@ rootPath records:
 '../../Perovskite/HTL_ETL/HTL_firstBatchAfterStayAtHome/20200617/' 2100
 '../../Perovskite/HTL_ETL/ETL_TiO2_firstBatchAfterStayAtHome_IncompletePiece_GloveBox/' 3500
 """
-rootPath = '../../Perovskite/1.1/1.1_50Vx50V/201912/pos2/'
-# savePath = rootPath+"/processFiles/"
-savePath = rootPath+"/processFiles_new/"
+rootPath = '../../Perovskite/diffusion_summary/mixer/pvk_maps/'
+savePath = rootPath+"/processFiles/"
+# savePath = rootPath+"/processFiles_new/"
 if not os.path.exists(savePath):
     os.mkdir(savePath)
 # if not os.path.exists(savePath+"/diffusion_simulation_database.pickle"):
@@ -40,7 +40,9 @@ diffusionCOMSOLScale = 3.5*10
 
 diffusionCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/Untitled_R28_1degree_999.csv"#sfdawee
 trCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/tr2.csv"
-intensityListForPhaseDiagram = ["00004","00007","00013","00022","00044","00073"] #00007 is excluded due to a bad line
+# intensityListForPhaseDiagram = ["00004","00007","00013","00022","00044","00073"] #00007 is excluded due to a bad line
+intensityListForPhaseDiagram = ["100","300","800","2000","5000","10000"] #00007 is excluded due to a bad line
+
 
 power_label = ["1.0x10² mW/cm²","3.0x10² mW/cm²","8.0x10² mW/cm²","20x10² mW/cm²","50x10² mW/cm²","100x10² mW/cm²"]
 power_list =[100,300,800,2000,5000,10000]
@@ -53,8 +55,8 @@ power_list =[100,300,800,2000,5000,10000]
 
 fileNameIm = 'Ch2 retrace.txt' # channel 2 for im signal for the perovskite experiment. Check it before set it.
 fileNameRe = 'Ch1 retrace.txt' # same thing
-# folderPathList = [rootPath+'/'+intensity for intensity in intensityListForPhaseDiagram]
-folderPathList = [rootPath+'/'+intensity+'/new' for intensity in intensityListForPhaseDiagram]
+folderPathList = [rootPath+'/'+intensity for intensity in intensityListForPhaseDiagram]
+# folderPathList = [rootPath+'/'+intensity+'/new' for intensity in intensityListForPhaseDiagram]
 
 """
 x_extra_shift_list and y_extra_shift_list are for manually determining centers for diffusions.
@@ -71,10 +73,24 @@ Hisotry records:
     ETL Sample
         x_extra_shift_list = np.array([0.2, 0.3, 0.45, -0.85, -0.1 , 0.15])
         y_extra_shift_list = np.array([-0.3, 0., -0.35, -0.1, 0.2, 0.4])
+        
+    Perovskite "mixer"
+        x_extra_shift_list = np.array([0.27, 0.09, -0.2, -0.3, 0.0 - 0.45, -0.75 - 0.45]) + np.asarray(
+            [-0.76276169, -0.45913387, -0.15354331, -0.15354331, 0., 2.36675187])
+        y_extra_shift_list = np.array([-0.55, 0.75-0.3, 0.4+0.1, 0.5+0.2, 0.0 + 0.25, -0.25 - 0.05]) + np.asarray(
+            [1.05682016, -0.45771987, -0.91839836, -0.15224807, -0.6109478, 1.05682016])
+    HTL "mixer"
+        x_extra_shift_list = np.array([-0.3, 0, 0.65 - 0.1, -0.65 + 0.3, 0 - 0.25, 0.6])
+        y_extra_shift_list = np.array([-0.1, 0.75, 0.5 - 0.2, 0 + 0.2, -0.25, 0.5])
+    ETL "mixer"
+        x_extra_shift_list = np.array([0.2, -0.7, 0.45, -0.85, -0.1, 0.15])
+        y_extra_shift_list = np.array([-0.3, 0., -0.35, -0.1, 1, 0.4])
+x_extra_shift_list = np.array([0.2, -0.6, 0.45, -0.85, -0.1, 0.15])
+y_extra_shift_list = np.array([-0.3, 0., -0.35, -0.1, 0.2, 0.4])
 """
 x_extra_shift_list = np.array([0.27, 0.09, -0.2, -0.3, 0.0 - 0.45, -0.75 - 0.45]) + np.asarray(
     [-0.76276169, -0.45913387, -0.15354331, -0.15354331, 0., 2.36675187])
-y_extra_shift_list = np.array([-0.55, 0.75, 0.4, 0.5, 0.0 + 0.25, -0.25 - 0.05]) + np.asarray(
+y_extra_shift_list = np.array([-0.55, 0.75 - 0.3, 0.4 + 0.1, 0.5 + 0.2, 0.0 + 0.25, -0.25 - 0.05]) + np.asarray(
     [1.05682016, -0.45771987, -0.91839836, -0.15224807, -0.6109478, 1.05682016])
 """
 Usually we set unskewFlag = 0. If you consider yourself a perfectionist, try set unskewFlag = 1, and change skew 

@@ -74,8 +74,8 @@ plt.plot([power_list[0],power_list[-1]],[np.exp(m*np.log(power_list[0])+b),np.ex
 
 for ind,power in enumerate(power_list):
     plt.errorbar(power,signal_center_error_list[ind],fmt='-_',color='blue',linewidth=2,markersize=15,markeredgewidth=2)
-# plt.xscale('log')
-# plt.yscale('log')
+plt.xscale('log')
+plt.yscale('log')
 plt.xlabel("$P_c$ (mW/cm²)")
 plt.ylabel("Center σ (S/m)")
 # plt.xlim(8e1,1.2e4)
@@ -86,3 +86,8 @@ plt.savefig(savePath+"/centerConductivitiesCurve.png")
 print("powers:",list(power_list))
 print("center conductivities: ",list(np.array(signal_center_list)[:,0]))
 print("center conductivities Errors: ",signal_center_error_list)
+
+import pandas as pd
+df = pd.DataFrame([list(np.array(signal_center_list)[:,0]),np.asarray(signal_center_error_list)[:,0],np.asarray(signal_center_error_list)[:,0]]).T
+df = df.rename(columns={0:'center',1:'lower limit',2:'upper limit'})
+df.to_csv(savePath+'/centerConductivities.csv',index=False)

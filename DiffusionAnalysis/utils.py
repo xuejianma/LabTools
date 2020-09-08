@@ -9,7 +9,7 @@ from tqdm.auto import tqdm
 from scipy import interpolate
 from collections import defaultdict
 from scipy.interpolate import interp1d
-
+from PyParkTiff import SaveParkTiff
 
 
 
@@ -24,7 +24,10 @@ def readTXT(filePath):
     lines = data.split("\n")
     matrix = []
     for line in lines:
-        matrix.append(np.array(line.split("\t")).astype(float))
+        try:
+            matrix.append(np.array(line.split("\t")).astype(float))
+        except:
+            matrix.append(np.array(line.split(" ")).astype(float))
     return np.asarray(matrix)
 
 
@@ -196,13 +199,19 @@ def readImRe(folderPath, fileNameIm, fileNameRe, naiveScale):
         data = f.read()[:-1]
         lines = data.split("\n")
         for line in lines:
-            im_img_array.append(np.array(line.split("\t")).astype(float) * naiveScale)
+            try:
+                im_img_array.append(np.array(line.split("\t")).astype(float) * naiveScale)
+            except:
+                im_img_array.append(np.array(line.split(" ")).astype(float) * naiveScale)
     re_img_array = []
     with open(filePathRe) as f:
         data = f.read()[:-1]
         lines = data.split("\n")
         for line in lines:
-            re_img_array.append(np.array(line.split("\t")).astype(float) * naiveScale)
+            try:
+                re_img_array.append(np.array(line.split("\t")).astype(float) * naiveScale)
+            except:
+                re_img_array.append(np.array(line.split(" ")).astype(float) * naiveScale)
     return np.asarray(im_img_array), np.asarray(re_img_array)
 
 
@@ -225,6 +234,8 @@ def mim2Conductivity(folderPath, fileNameIm, fileNameRe, csvFilePath, comsolScal
         conductivity_img_array.append(img_line)
 
     np.savetxt(folderPath + "/conductivity.txt", conductivity_img_array)
+    data = np.loadtxt(folderPath + "/conductivity.txt")
+    SaveParkTiff(data, data.shape[1], data.shape[0], folderPath+'/conductivity.tiff')
     return None
 
 
@@ -413,9 +424,12 @@ def R2(y_real_list,y_fit_list):
     R2 = 1 - SS_res/SS_tot
     return R2
 
-def fit1(x_axis,z_axis,diffusion_simulation_database,extra_multiply,threshold = 0.97):
+def fit1(x_axis,z_axis,diffusion_simulation_database,extra_multiply,threshold = 0.97,fitrange=None):
     z_axis_norm = (np.array(z_axis)-np.min(z_axis))/(np.max(z_axis)-np.min(z_axis))/extra_multiply
     R2_score_list = []
+    if fitrange != None:
+        index_list1 = [item for item in range(len(x_axis)) if x_axis[item] >= fitrange[0] and x_axis[item] <= fitrange[1]]
+        z_axis_norm = z_axis_norm[index_list1]
     for length in diffusion_simulation_database:
         xx,yy,z = diffusion_simulation_database[length]
         x_axis_fit = xx[0]
@@ -426,6 +440,12 @@ def fit1(x_axis,z_axis,diffusion_simulation_database,extra_multiply,threshold = 
         x_axis_clip = x_axis.clip(np.min(x_axis_fit),np.max(x_axis_fit))
 #         print(x_axis_clip)
         z_axis_fit_for_R2 = fit_func(x_axis_clip)
+        if fitrange!= None:
+            index_list2 = [item for item in range(len(x_axis_clip)) if x_axis_clip[item]>=fitrange[0] and x_axis_clip[item]<=fitrange[1]]
+        # print(len(x_axis),len(x_axis_clip),len(z_axis_norm),len(z_axis_fit_for_R2))
+        # print(z_axis_norm[len(z_axis_norm)-1])
+        # z_axis_norm = z_axis_norm[index_list1]
+            z_axis_fit_for_R2 = z_axis_fit_for_R2[index_list2]
         R2_score = R2(z_axis_norm,z_axis_fit_for_R2)
 #         diffusion_simulation_R2_score[length] = R2_score
 #         print((z_axis_fit_for_R2))
