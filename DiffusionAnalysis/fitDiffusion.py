@@ -30,8 +30,8 @@ plt.rc('ytick.major',size=5,width=3)
 extra_shift_list = [0, 0, 0, 0, 0, 0]  # [-0.2,-0.2,0,0,0,0]
 
 
-
-trial=False
+fig_x_range = 20
+trial = False
 extra_multiply_list = [0.994,0.994,0.95,0.994,0.994,0.994]
 
 #no transport layer:[0.994]*6#[0.994,0.994,0.94,0.994,0.994,0.994]
@@ -162,7 +162,7 @@ for ind in range(len(zList_all)):
                          linewidth=5)  # , R²="+str(round(score_upper[0],3))
                 buffer.append(x_axis_fit)
                 buffer.append(z_axis_fit)
-        plt.xlim(-15, 15)
+        plt.xlim(-fig_x_range, fig_x_range)
         if verbose != 0:
             plt.legend(loc='upper right')
             # plt.xticks([])
