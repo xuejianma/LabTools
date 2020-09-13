@@ -88,6 +88,9 @@ print("center conductivities: ",list(np.array(signal_center_list)[:,0]))
 print("center conductivities Errors: ",signal_center_error_list)
 
 import pandas as pd
-df = pd.DataFrame([list(np.array(signal_center_list)[:,0]),np.asarray(signal_center_error_list)[:,0],np.asarray(signal_center_error_list)[:,0]]).T
+df = pd.DataFrame([list(np.array(signal_center_list)[:,0]),np.asarray(signal_center_error_list)[:,0],np.asarray(signal_center_error_list)[:,1]]).T
 df = df.rename(columns={0:'center',1:'lower limit',2:'upper limit'})
 df.to_csv(savePath+'/centerConductivities.csv',index=False)
+df1 = pd.DataFrame([[63,15848],[np.exp(m*np.log(63)+b)[0],np.exp(m*np.log(15848)+b)[0]]]).T
+df1 = df1.rename(columns={0:'power',1:'sigma'})
+df1.to_csv(savePath+'/centerConductivitiesFitting.csv',index=False)

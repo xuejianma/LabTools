@@ -14,7 +14,7 @@ with open(savePath+"/diffusion_simulation_database.pickle","rb") as f:
     diffusion_simulation_database = pickle.load(f)
 SMALL_SIZE = 8
 MEDIUM_SIZE = 25
-BIGGER_SIZE = 35
+BIGGER_SIZE = 44#35
 
 plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
@@ -121,7 +121,7 @@ for ind in range(len(zList_all)):
 
         #         plt.figure(figsize=(6,3))
         plt.subplot(rowNum, colNum, ind + 1)
-        plt.scatter(x_axis, z_axis, marker=(5, 1), color='royalblue', zorder=10, alpha=0.7, s=200)
+        plt.scatter(x_axis, z_axis, marker=(5, 1), color=[(32/255,160/255,255/255)], zorder=10, alpha=1, s=300)#alpha=0.7,color='royalblue'
         if trial == True and ind<=1:
             selected_indices = [kind for kind in range(len(x_axis)) if x_axis[kind]<30 and x_axis[kind]>-41]
             buffer.append(np.asarray(x_axis)[selected_indices])
@@ -149,17 +149,17 @@ for ind in range(len(zList_all)):
             if index == 0:
 
                 plt.plot(x_axis_fit, z_axis_fit, linestyle='-.', label=str(round(length, 1)) + " µm", color="gray",
-                         linewidth=5)  # , R²="+str(round(score_lower[0],3)) #,dashes=[5,4]
+                         linewidth=3,zorder=99)  # , R²="+str(round(score_lower[0],3)) #,dashes=[5,4]
                 buffer.append(x_axis_fit)
                 buffer.append(z_axis_fit)
             elif index == 1:
-                plt.plot(x_axis_fit, z_axis_fit, label=str(round(length, 1)) + " µm", color="black", linewidth=6,
-                         zorder=9)  # , R²="+str(round(score_best[0],3))
+                plt.plot(x_axis_fit, z_axis_fit, label=str(round(length, 1)) + " µm", color="black", linewidth=3,
+                         zorder=99)  # , R²="+str(round(score_best[0],3))
                 buffer.append(x_axis_fit)
                 buffer.append(z_axis_fit)
             elif index == 2:
                 plt.plot(x_axis_fit, z_axis_fit, linestyle='dashed', label=str(round(length, 1)) + " µm", color="gray",
-                         linewidth=5)  # , R²="+str(round(score_upper[0],3))
+                         linewidth=3,zorder=99)  # , R²="+str(round(score_upper[0],3))
                 buffer.append(x_axis_fit)
                 buffer.append(z_axis_fit)
         plt.xlim(-fig_x_range, fig_x_range)
