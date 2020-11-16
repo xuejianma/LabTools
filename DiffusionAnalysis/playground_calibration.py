@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 from readConductivities import conductivity_all
 from config import savePath
 from utils import calibrate_xlist,calibrate_ylist
+import os
+
+
 
 
 theta = 48 * np.pi / 180
@@ -104,6 +107,9 @@ for y in y_list_appear:
 
 X, Y = np.meshgrid(x_list_real[:-1], y_list_real)
 Z = np.array(np.array(img))[:, :-1]
+
+if not os.path.exists(savePath+'/calibrations/'):
+    os.mkdir(savePath+'/calibrations/')
 
 #Plot un-calibrated distorted raw Al figure
 plt.figure(figsize=((np.max(x_list_real) - np.min(x_list_real)) / 8, (np.max(y_list_real) - np.min(y_list_real)) / 8))

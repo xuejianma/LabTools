@@ -32,8 +32,8 @@ for ind in range(len(conductivity_all_cropped)):
     ax.pcolormesh(X, Y, -Z, vmin=-zlim, vmax=-0, cmap="Blues")
     ax.scatter([0], [0], color='red',s=500)
     ax.set(adjustable='box', aspect='equal')
-    ax.set_xlim(-10, 10)
-    ax.set_ylim(-10, 10)
+    ax.set_xlim(-25, 25)
+    ax.set_ylim(-25, 25)
     fontprops = fm.FontProperties(size=30)
     scalebar = AnchoredSizeBar(ax.transData,
                                10, '10 $\mu m$', 'lower right',

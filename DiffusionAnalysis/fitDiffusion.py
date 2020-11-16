@@ -14,7 +14,7 @@ with open(savePath+"/diffusion_simulation_database.pickle","rb") as f:
     diffusion_simulation_database = pickle.load(f)
 SMALL_SIZE = 8
 MEDIUM_SIZE = 25
-BIGGER_SIZE = 44#35
+BIGGER_SIZE = 44    #35
 
 plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
@@ -32,7 +32,7 @@ extra_shift_list = [0, 0, 0, 0, 0, 0]  # [-0.2,-0.2,0,0,0,0]
 
 fig_x_range = 20
 trial = False
-extra_multiply_list = [0.994,0.994,0.95,0.994,0.994,0.994]
+extra_multiply_list = [0.95,0.95,0.95,0.95]#[0.994,0.994,0.95,0.994,0.994,0.994]
 
 #no transport layer:[0.994]*6#[0.994,0.994,0.94,0.994,0.994,0.994]
 #HTL: [0.96,0.97,0.98,0.97,0.97,0.97] wrong: [0.994]*6 #wrong HTL:[0.95,0.98,0.994,0.95,0.994,0.99]
@@ -107,7 +107,7 @@ for ind in range(len(zList_all)):
                                                                                               diffusion_simulation_database,
                                                                                               extra_multiply=
                                                                                               extra_multiply_list[ind],
-                                                                                              threshold=0.98,
+                                                                                              threshold=0.90,
                                                                                               fitrange=fitrange)#4 7
         print('threshold = 0.98')
     # temp = fit2(x_axis,z_axis,diffusion_simulation_database,extra_multiply=extra_multiply_list[ind])

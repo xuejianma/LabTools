@@ -18,7 +18,7 @@ rootPath records:
 '../../Perovskite/HTL_ETL/HTL_firstBatchAfterStayAtHome/20200617/' 2100
 '../../Perovskite/HTL_ETL/ETL_TiO2_firstBatchAfterStayAtHome_IncompletePiece_GloveBox/' 3500
 """
-rootPath = '../../Perovskite/diffusion_summary/mixer/pvk_maps/'
+rootPath = '../../Perovskite/3(among123456)/'#'../../Perovskite/diffusion_summary/mixer/pvk_maps2/'
 savePath = rootPath+"/processFiles/"
 # savePath = rootPath+"/processFiles_new/"
 if not os.path.exists(savePath):
@@ -26,7 +26,7 @@ if not os.path.exists(savePath):
 # if not os.path.exists(savePath+"/diffusion_simulation_database.pickle"):
 #     print("\n[WARNING: You may run diffusionSimulations_preRun.py for the first time to get diffusion_simulation_database.pickle.]")
 
-naiveScale = 1000 # The original data in txt files are in unit V. We need to convert them to mV here for convenience.
+naiveScale = 500 # The original data in txt files are in unit V. We need to convert them to mV here for convenience.
 
 """
 comsolScale = 3.5*10 for diffusion. 3.5 is the default calibrated coefficient,
@@ -38,14 +38,16 @@ comsolScale=  3.5/1000*125 for TR-iMIM signals. 3.5 is still default calibrated 
 trCOMSOLScale = 3.5/1000*125
 diffusionCOMSOLScale = 3.5*10
 
-diffusionCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/Untitled_R28_1degree_999.csv"#sfdawee
+# diffusionCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/Untitled_R28_1degree_999.csv"#sfdawee
+diffusionCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/diffTip1.csv"#sfdawee
+
 trCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/tr2.csv"
 # intensityListForPhaseDiagram = ["00004","00007","00013","00022","00044","00073"] #00007 is excluded due to a bad line
-intensityListForPhaseDiagram = ["100","300","800","2000","5000","10000"] #00007 is excluded due to a bad line
+intensityListForPhaseDiagram = ['00020','00031','00057','00083',]#["100","300","800","2000","5000","10000"] #00007 is excluded due to a bad line
 
 
-power_label = ["1.0x10² mW/cm²","3.0x10² mW/cm²","8.0x10² mW/cm²","20x10² mW/cm²","50x10² mW/cm²","100x10² mW/cm²"]
-power_list =[100,300,800,2000,5000,10000]
+power_label = ["1.0x10² mW/cm²","3.0x10² mW/cm²","8.0x10² mW/cm²","20x10² mW/cm²",]#"50x10² mW/cm²","100x10² mW/cm²"]
+power_list =[100,300,800,2000]#,5000,10000]
 # power_label = ["100x10² mW/cm²"]
 # power_list =[10000]
 
@@ -88,10 +90,8 @@ Hisotry records:
 x_extra_shift_list = np.array([0.2, -0.6, 0.45, -0.85, -0.1, 0.15])
 y_extra_shift_list = np.array([-0.3, 0., -0.35, -0.1, 0.2, 0.4])
 """
-x_extra_shift_list = np.array([0.27, 0.09, -0.2, -0.3, 0.0 - 0.45, -0.75 - 0.45]) + np.asarray(
-    [-0.76276169, -0.45913387, -0.15354331, -0.15354331, 0., 2.36675187])
-y_extra_shift_list = np.array([-0.55, 0.75 - 0.3, 0.4 + 0.1, 0.5 + 0.2, 0.0 + 0.25, -0.25 - 0.05]) + np.asarray(
-    [1.05682016, -0.45771987, -0.91839836, -0.15224807, -0.6109478, 1.05682016])
+x_extra_shift_list = np.array([0,0,0,0])
+y_extra_shift_list = np.array([0.5,0.5,0.5,0.5])
 """
 Usually we set unskewFlag = 0. If you consider yourself a perfectionist, try set unskewFlag = 1, and change skew 
 parameters in convert2Unskewed_preRun.py. Run it first. It takes a while. Then the program will extract unskewed coordinates with 
