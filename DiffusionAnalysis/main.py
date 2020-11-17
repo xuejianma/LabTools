@@ -14,23 +14,28 @@ class gui(QWidget):
         self.load_ui()
         self.connect()
         self.center = QPolygon()
+        self.piximg = None
+
 
     def load_ui(self):
         path = os.path.join(os.path.dirname(__file__), "form.ui")
         uic.loadUi(path, self)
 
     def connect(self):
-        self.pushButton_selectImageFile.clicked.connect(self.clicked_selectImageFile)
+        self.pushButton_selectImageFile.clicked.connect(self.selectDirectory)
         self.label_image.mousePressEvent = self.findDotPos
+        self.pushButton_tmp.clicked.connect(self.combineSubDirectories)
 
-    def clicked_selectImageFile(self):
-        filename, filter = QFileDialog.getOpenFileName(self, 'Open file', '.', '')
-        self.label_filename.setText(filename)
+    def selectDirectory(self):
+        directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
+        print(123)
+        self.lineEdit_directory.setText('Directory: '+'"'+directoryName+'"')
         # self.image = QImage()
         # self.image.load(filename) # another way to import image
-        pixtmp = QPixmap(filename)
-        piximg = pixtmp.scaled(200,200,Qt.KeepAspectRatio)
-        self.label_image.setPixmap(piximg)#QPixmap.fromImage(self.image))
+
+        pixtmp = QPixmap(directoryName)
+        self.piximg = pixtmp.scaled(200,200,Qt.KeepAspectRatio)
+        self.label_image.setPixmap(self.piximg)#QPixmap.fromImage(self.image))
 
 
     def findDotPos(self,event):
@@ -46,16 +51,20 @@ class gui(QWidget):
         self.label_image.update()
 
     def paintEvent(self, event):
-        qp = QPainter(self)
-        qp.setRenderHints(QPainter.Antialiasing)
-        pen = QPen(Qt.red,5)
-        brush = QBrush(Qt.red)
-        qp.setPen(pen)
-        qp.setBrush(brush)
-        qp.drawEllipse(self.label_image.mapToParent(self.center.point(0)),5,5)
-        # qp.raise()
-        print(self.label_image.mapToParent(self.center.point(0)))
+        super().paintEvent(event)
+        if self.piximg != None:
+            qp = QPainter(self)
+            qp.setRenderHints(QPainter.Antialiasing)
+            pen = QPen(Qt.red,5)
+            brush = QBrush(Qt.red)
+            qp.setPen(pen)
+            qp.setBrush(brush)
+            qp.drawPixmap(self.label_image.rect(), self.piximg)
+            qp.drawEllipse(self.label_image.mapToParent(self.center.point(0)),5,5)
+            print(self.label_image.mapToParent(self.center.point(0)))
 
+    def combineSubDirectories(self):
+        print(self.lineEdit_subdirectories.text())
 
 
 if __name__ == "__main__":
