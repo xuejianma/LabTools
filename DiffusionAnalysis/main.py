@@ -22,14 +22,13 @@ class gui(QWidget):
         uic.loadUi(path, self)
 
     def connect(self):
-        self.pushButton_selectImageFile.clicked.connect(self.selectDirectory)
+        self.pushButton_directory.clicked.connect(self.selectDirectory)
         self.label_image.mousePressEvent = self.findDotPos
         self.pushButton_tmp.clicked.connect(self.combineSubDirectories)
 
     def selectDirectory(self):
         directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
-        print(123)
-        self.lineEdit_directory.setText('Directory: '+'"'+directoryName+'"')
+        self.lineEdit_directory.setText(directoryName)
         # self.image = QImage()
         # self.image.load(filename) # another way to import image
 
@@ -62,6 +61,7 @@ class gui(QWidget):
             qp.drawPixmap(self.label_image.rect(), self.piximg)
             qp.drawEllipse(self.label_image.mapToParent(self.center.point(0)),5,5)
             print(self.label_image.mapToParent(self.center.point(0)))
+            print(self.piximg)
 
     def combineSubDirectories(self):
         print(self.lineEdit_subdirectories.text())

@@ -13,118 +13,207 @@
   <property name="windowTitle">
    <string>gui</string>
   </property>
-  <widget class="QLabel" name="label_image">
+  <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>220</y>
-     <width>201</width>
-     <height>201</height>
+     <x>26</x>
+     <y>9</y>
+     <width>741</width>
+     <height>571</height>
     </rect>
    </property>
-   <property name="frameShape">
-    <enum>QFrame::Box</enum>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap>../qttest4/img.jpg</pixmap>
-   </property>
-   <property name="margin">
+   <property name="currentIndex">
     <number>0</number>
    </property>
-  </widget>
-  <widget class="QLabel" name="label_directory">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>30</y>
-     <width>541</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Please input or select directory</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_selectImageFile">
-   <property name="geometry">
-    <rect>
-     <x>560</x>
-     <y>70</y>
-     <width>91</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>select directory</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_center">
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>430</y>
-     <width>46</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>TextLabel</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_subdirectories">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>120</y>
-     <width>651</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Please input Sub-directories (comma separated)</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_subdirectories">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>140</y>
-     <width>411</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>00004, 00007, 00013, 00022, 00044, 00073</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_tmp">
-   <property name="geometry">
-    <rect>
-     <x>570</x>
-     <y>130</y>
-     <width>75</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>PushButton</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_subdirectories_2">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>70</y>
-     <width>411</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>Tab 1</string>
+    </attribute>
+    <widget class="QLabel" name="label_center">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>440</y>
+       <width>46</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_subdirectories">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>130</y>
+       <width>651</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Please input Sub-directories (comma separated)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_directory">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>40</y>
+       <width>541</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Please input or select directory</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_directory">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>80</y>
+       <width>411</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>E:/Xuejian Ma/Perovskite_diffusion_KaiZhu_201911/1.1/1.1_50Vx50V/201912/pos2</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_tmp">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>190</y>
+       <width>75</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>PushButton</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_image">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>270</y>
+       <width>131</width>
+       <height>131</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap>../qttest4/img.jpg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_image_4">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>270</y>
+       <width>131</width>
+       <height>131</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap>../qttest4/img.jpg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_directory">
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>80</y>
+       <width>91</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>select directory</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_image_2">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>270</y>
+       <width>131</width>
+       <height>131</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap>../qttest4/img.jpg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_image_3">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>270</y>
+       <width>131</width>
+       <height>131</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap>../qttest4/img.jpg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_subdirectories">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>150</y>
+       <width>411</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>00004, 00007, 00013, 00022, 00044, 00073</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Tab 2</string>
+    </attribute>
+   </widget>
   </widget>
  </widget>
  <resources/>
