@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -135,7 +135,7 @@
       <string>select csv file</string>
      </property>
     </widget>
-    <widget class="PlotWidget" name="Widget_response" native="true">
+    <widget class="PlotWidget" name="widget_response" native="true">
      <property name="geometry">
       <rect>
        <x>70</x>
@@ -376,6 +376,145 @@
      </property>
      <property name="text">
       <string>Unit conversion of simulation </string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_3">
+    <attribute name="title">
+     <string>Laser Profile</string>
+    </attribute>
+    <widget class="QLabel" name="label_laserScreenshotText">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>40</y>
+       <width>141</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Laser Screenshot Image:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_laserScreenshot">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>100</y>
+       <width>201</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_laserScreenshot">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>60</y>
+       <width>541</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>C:/Work/Xuejian Ma/Perovskite/laserSpot.png</string>
+     </property>
+     <property name="placeholderText">
+      <string>eg: ~/laserSpot.png</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_laserScreenshot">
+     <property name="geometry">
+      <rect>
+       <x>610</x>
+       <y>60</y>
+       <width>75</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>select image</string>
+     </property>
+    </widget>
+    <widget class="PlotWidget" name="widget_laserScreenshot" native="true">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>100</y>
+       <width>221</width>
+       <height>201</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="PlotWidget" name="widget_laserFit" native="true">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>330</y>
+       <width>261</width>
+       <height>201</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_laserRadius">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>350</y>
+       <width>91</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Laser Radius (µm):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_laserRadius">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>350</y>
+       <width>41</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>2</string>
+     </property>
+     <property name="placeholderText">
+      <string>eg: 2</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_laserFit">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>460</y>
+       <width>71</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Plot
+ Laser Fit</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_laserFitClear">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>510</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Clear </string>
      </property>
     </widget>
    </widget>
