@@ -8,7 +8,7 @@ from PyQt5.QtCore import QFile, Qt
 # from PyQt5.QtUiTools import QUiLoader
 from PyQt5.QtGui import QPixmap,QImage, QPainter, QPen, QBrush, QPolygon
 import pyqtgraph as pg
-from utils import readSimulatedImReCSV
+from utils import readSimulatedImReCSV,readImRePhase
 import random
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvas
@@ -25,6 +25,11 @@ class gui(QWidget):
         self.directoryName = None
         self.responseFile = None
         self.Widget_response.setBackground('w')
+        self.im_sim_raw = None
+        self.re_sim_raw = None
+        self.cond_array = None
+        self.im_sim = None
+        self.re_sim = None
 
         # self.graphWidget = pg.PlotWidget()
         # # self.setCentralWidget(self.graphWidget)
@@ -66,7 +71,8 @@ class gui(QWidget):
         # self.pushButton_tmp.clicked.connect(self.combineSubDirectories)
         self.pushButton_response.clicked.connect(self.selectResponse)
         # self.pushButton_draw.clicked.connect(self.update_graph)
-        self.pushButton_scatter.clicked.connect(self.plotScatters)
+        # self.pushButton_scatter.clicked.connect(self.plotResponse)
+        self.pushButton_plotResponse.clicked.connect(self.plotResponse)
 
     def selectDirectory(self):
         self.directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
@@ -108,13 +114,9 @@ class gui(QWidget):
     # def combineSubDirectories(self):
     #     print(self.lineEdit_subdirectories.text())
 
-    def plotScatters(self):
-        path = self.lineEdit_directory.text()
-        sub_str = self.lineEdit_subdirectories.text()
-        sub_list = sub_str.split(',')
-        im_file_list = [path + '/' + item + '/' + self.lineEdit_im.text() for item in sub_list]
-        re_file_list = [path + '/' + item + '/' + self.lineEdit_re.text() for item in sub_list]
-        print(im_file_list)
+    # def plotScatters(self):
+
+        # self.Widget_response.plot(im_all, re_all, pen=None,symbol = 'o',symbolPen = pg.mkPen(color=(0, 0, 255), width=0),symbolSize=1)
 
     def selectResponse(self):
         self.responseFile = QFileDialog.getOpenFileName(self, 'Select response curve',)[0]
@@ -125,21 +127,38 @@ class gui(QWidget):
         # self.piximg = pixtmp.scaled(200,200,Qt.KeepAspectRatio)
         # self.label_response.setPixmap(self.piximg)#QPixmap.fromImage(self.image))
 
-        cond_array, im_sim, re_sim = readSimulatedImReCSV(self.responseFile,comsolScale=3.5*10)
-        self.updateResponse(im_sim,re_sim)
 
-    def updateResponse(self,x,y):
-        # self.Widget_response.canvas.axes.clear()
-        # self.Widget_response.canvas.axes.plot(x,y)
-        # # self.Widget_response.canvas.axes.set_xlabel('MIM-Im')
-        # # self.Widget_response.canvas.axes.set_ylabel('MIM-Re')
-        # # self.Widget_response.canvas.figure.tight_layout(pad=3)
-        # # self.Widget_response.canvas.axes.legend(('cosinus', 'sinus'), loc='upper right')
-        # # self.Widget_response.canvas.axes.set_title(' Cosinus - Sinus Signal')
-        #
-        # self.Widget_response.canvas.draw()
+        self.plotResponse()
+
+    # def updateResponse(self,x,y):
+    #     # self.Widget_response.canvas.axes.clear()
+    #     # self.Widget_response.canvas.axes.plot(x,y)
+    #     # # self.Widget_response.canvas.axes.set_xlabel('MIM-Im')
+    #     # # self.Widget_response.canvas.axes.set_ylabel('MIM-Re')
+    #     # # self.Widget_response.canvas.figure.tight_layout(pad=3)
+    #     # # self.Widget_response.canvas.axes.legend(('cosinus', 'sinus'), loc='upper right')
+    #     # # self.Widget_response.canvas.axes.set_title(' Cosinus - Sinus Signal')
+    #     #
+    #     # self.Widget_response.canvas.draw()
+    #     self.Widget_response.clear()
+    #     self.Widget_response.plot(x,y)
+
+    def plotResponse(self):
         self.Widget_response.clear()
-        self.Widget_response.plot(x,y)
+
+        path = self.lineEdit_directory.text()
+        sub_str = self.lineEdit_subdirectories.text()
+        sub_list = sub_str.split(',')
+        folderPathList = [path + '/' + item + '/' for item in sub_list]
+        im_all, re_all = readImRePhase(folderPathList, fileNameIm=self.lineEdit_im.text(), fileNameRe=self.lineEdit_re.text(), naiveScale=float(self.lineEdit_unitConversionData.text()))
+        self.Widget_response.plot(im_all, re_all,pen=pg.mkPen('b', width=1))
+
+        self.cond_array, self.im_sim_raw, self.re_sim_raw = readSimulatedImReCSV(self.lineEdit_response.text(), comsolScale=float(self.lineEdit_unitConversionSimulation.text()))
+        self.im_sim = self.im_sim_raw*float(self.lineEdit_xrefactor.text())
+        self.re_sim = self.re_sim_raw*float(self.lineEdit_yrefactor.text())
+        self.Widget_response.plot(self.im_sim, self.re_sim)
+        print(12234)
+
 
 
 
