@@ -185,6 +185,7 @@ class gui(QWidget):
 
     def plotLaserScreenshot(self):
         pixmap = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(200, 200, Qt.KeepAspectRatio)
+        print(pixmap)
         self.label_laserScreenshot.setPixmap(pixmap)
 
     def plotLaserFit(self):
@@ -195,7 +196,7 @@ class gui(QWidget):
         z_axis_fit = z[round(z.shape[0] / 2)]
         z0 = np.max(z_axis_fit)  # or np.max(z). They are the same
         # plt.plot(x_axis_fit, z_axis_fit / z0, label='L={}μm'.format(int(L)), color='black')
-        self.widget_laserFit.plot(x_axis_fit,z_axis_fit/z0)
+        self.widget_laserFit.plot(x_axis_fit,z_axis_fit/z0,pen=pg.mkPen(width=3))
 
         laserimg_cropped = np.asarray(Image.open(self.lineEdit_laserScreenshot.text()))
         laser_X_cropped = np.linspace(-15,15,np.shape(laserimg_cropped)[1])
@@ -204,11 +205,13 @@ class gui(QWidget):
         laser_rList, laser_zList, laser_rDict = radialAverageByLinecuts(laserimg_cropped, (0, 0), laser_X_cropped,
                                                                         laser_Y_cropped, radialSteps=300,
                                                                         threshold=1 / 6 * 1, angleSteps=10)
-        print(laser_rDict)
+
+        selectxyarray = np.asarray(radialAverageByLinecuts.selectxy)
+        print(selectxyarray.reshape(-1,2))
         laser_zList_norm = laser_zList / np.max(laser_zList)
         laser_zList_edgesupress = np.asarray(
             [item / (abs(laser_rList[i]) ** 2 * 0.065 + 1) for i, item in enumerate(laser_zList_norm)])
-        self.widget_laserFit.plot(laser_rList[::4],laser_zList_edgesupress[::4])
+        self.widget_laserFit.plot(laser_rList[::4],laser_zList_edgesupress[::4],symbol='o',pen=None,symbolPen = pg.mkPen(color=(0, 0, 255)),symbolSize=5)#pen=pg.mkPen('b'))
         # plt.scatter(laser_rList[::4], laser_zList_edgesupress[::4], marker='o', color='blue', s=50, zorder=5, alpha=1,
         #             label='Laser profile')
 

@@ -359,8 +359,10 @@ def radialAverageByLinecuts(graph,center,xAxis_or_xMeshgrid,yAxis_or_yMeshgrid,r
         angleUnit = np.pi/angleSteps # changed to 2*np.pi instead of np.pi for radialAverageByLinecuts. Different from radialAverageByLines with opposite lists sperately.
         angleArray = np.array([angleUnit*ind for ind in range(angleSteps)])
 #     print(angleArray)
+    radialAverageByLinecuts.selectxy = []
     for angle in angleArray:
         tilted_rList_coords = [(r*np.cos(angle),r*np.sin(angle)) for r in rList]
+        radialAverageByLinecuts.selectxy.append(tilted_rList_coords)
         for ind,(tilted_x,tilted_y) in enumerate(tilted_rList_coords):
             if np.min(xx) <= tilted_x <= np.max(xx) and np.min(yy) <= tilted_y <=np.max(yy):
                 #rDict[rList[ind]].append(graph_interpolated(tilted_y,tilted_x)[0][0]) #RectBivariateSpline: y before x. interp2d: x before y. (for both function before and function usage)
