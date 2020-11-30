@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.13.2, 2020-11-29T18:06:25. -->
+<!-- Written by QtCreator 4.13.2, 2020-11-21T22:27:52. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
-  <value type="QByteArray">{9f79dcea-66e9-4007-8424-3e9fc3cf8a00}</value>
+  <value type="QByteArray">{0f7d8ede-a03a-4027-96dc-31bddd715251}</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -75,7 +75,7 @@
    <valuemap type="QVariantMap" key="ClangTools">
     <value type="bool" key="ClangTools.BuildBeforeAnalysis">true</value>
     <value type="QString" key="ClangTools.DiagnosticConfig">Builtin.DefaultTidyAndClazy</value>
-    <value type="int" key="ClangTools.ParallelJobs">2</value>
+    <value type="int" key="ClangTools.ParallelJobs">4</value>
     <valuelist type="QVariantList" key="ClangTools.SelectedDirs"/>
     <valuelist type="QVariantList" key="ClangTools.SelectedFiles"/>
     <valuelist type="QVariantList" key="ClangTools.SuppressedDiagnostics"/>
@@ -89,7 +89,7 @@
    <value type="QString" key="DeviceType">Desktop</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Desktop</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Desktop</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{df12bd1d-319a-4129-b92f-b659089a0952}</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{c545835b-c2e7-44c8-84a2-2b998360d630}</value>
    <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">-1</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>
@@ -170,11 +170,11 @@
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">main</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration.C:/Work/Xuejian Ma/LabTools/DiffusionAnalysis/main.py</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Work/Xuejian Ma/LabTools/DiffusionAnalysis/main.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration.E:/Xuejian Ma/LabTools/DiffusionAnalysis/main.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">E:/Xuejian Ma/LabTools/DiffusionAnalysis/main.py</value>
     <value type="bool" key="PythonEditor.RunConfiguation.Buffered">false</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{4c698e62-2955-4db5-9017-9a9c75b6dc2f}</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">C:\Work\Xuejian Ma\LabTools\DiffusionAnalysis\main.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{17c413be-572a-4876-9cba-98945ce37638}</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">E:\Xuejian Ma\LabTools\DiffusionAnalysis\main.py</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -184,7 +184,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Work/Xuejian Ma/LabTools/DiffusionAnalysis</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">E:/Xuejian Ma/LabTools/DiffusionAnalysis</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>
