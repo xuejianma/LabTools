@@ -81,6 +81,7 @@ class gui(QWidget):
         self.pushButton_laserScreenshot.clicked.connect(self.selectLaserScreenshot)
         self.pushButton_laserFit.clicked.connect(self.plotLaserFit)
         self.pushButton_laserFitClear.clicked.connect(self.widget_laserFit.clear)
+        self.pushButton_plotImage.clicked.connect(self.plotLaserScreenshot)
 
     def selectDirectory(self):
         self.directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
@@ -135,8 +136,8 @@ class gui(QWidget):
         # self.piximg = pixtmp.scaled(200,200,Qt.KeepAspectRatio)
         # self.label_response.setPixmap(self.piximg)#QPixmap.fromImage(self.image))
 
+        # self.plotResponse()
 
-        self.plotResponse()
 
     # def updateResponse(self,x,y):
     #     # self.widget_response.canvas.axes.clear()
@@ -170,14 +171,21 @@ class gui(QWidget):
     def selectLaserScreenshot(self):
         self.laserScreenshot = QFileDialog.getOpenFileName(self, 'Select Laser Screenshot Image', )[0]
         self.lineEdit_laserScreenshot.setText(self.laserScreenshot)
-        pixmap = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(200, 200, Qt.KeepAspectRatio)
-        self.label_laserScreenshot.setPixmap(pixmap)
+        # pixmap = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(200, 200, Qt.KeepAspectRatio)
+        # self.label_laserScreenshot.setPixmap(pixmap)
+
+        # self.plotLaserScreenshot()
+
         # print(self.lineEdit_laserScreenshot.text())
         # image_array = pg.QtGui.QGraphicsPixmapItem(pg.QtGui.QPixmap(self.lineEdit_laserScreenshot.text()))#np.asarray(Image.open(self.lineEdit_laserScreenshot.text()))
         # print(image_array)
         # self.widget_laserScreenshot.addItem(image_array)
 
         # self.piximg = pixtmp.scaled(200, 200, Qt.KeepAspectRatio)
+
+    def plotLaserScreenshot(self):
+        pixmap = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(200, 200, Qt.KeepAspectRatio)
+        self.label_laserScreenshot.setPixmap(pixmap)
 
     def plotLaserFit(self):
         xx,yy,z = diffusion_map(1e-100,float(self.lineEdit_laserRadius.text())*np.sqrt(2),point_num=100,pos_max=15)
@@ -189,9 +197,20 @@ class gui(QWidget):
         # plt.plot(x_axis_fit, z_axis_fit / z0, label='L={}μm'.format(int(L)), color='black')
         self.widget_laserFit.plot(x_axis_fit,z_axis_fit/z0)
 
+        laserimg_cropped = np.asarray(Image.open(self.lineEdit_laserScreenshot.text()))
+        laser_X_cropped = np.linspace(-15,15,np.shape(laserimg_cropped)[1])
+        laser_Y_cropped = np.linspace(-15,15,np.shape(laserimg_cropped)[0])
+
         laser_rList, laser_zList, laser_rDict = radialAverageByLinecuts(laserimg_cropped, (0, 0), laser_X_cropped,
                                                                         laser_Y_cropped, radialSteps=300,
                                                                         threshold=1 / 6 * 1, angleSteps=10)
+        print(laser_rDict)
+        laser_zList_norm = laser_zList / np.max(laser_zList)
+        laser_zList_edgesupress = np.asarray(
+            [item / (abs(laser_rList[i]) ** 2 * 0.065 + 1) for i, item in enumerate(laser_zList_norm)])
+        self.widget_laserFit.plot(laser_rList[::4],laser_zList_edgesupress[::4])
+        # plt.scatter(laser_rList[::4], laser_zList_edgesupress[::4], marker='o', color='blue', s=50, zorder=5, alpha=1,
+        #             label='Laser profile')
 
 
 if __name__ == "__main__":
