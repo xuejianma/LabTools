@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.13.2, 2020-11-30T14:05:13. -->
+<!-- Written by QtCreator 4.13.2, 2020-11-30T14:04:59. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -169,12 +169,12 @@
     <valuelist type="QVariantList" key="CustomOutputParsers"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">main</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration.C:/Work/Xuejian Ma/LabTools/DiffusionAnalysis/main.py</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Work/Xuejian Ma/LabTools/DiffusionAnalysis/main.py</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">qttest5</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration.C:/Work/Xuejian Ma/LabTools/qttest5/untitled/qttest5.py</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Work/Xuejian Ma/LabTools/qttest5/untitled/qttest5.py</value>
     <value type="bool" key="PythonEditor.RunConfiguation.Buffered">false</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{4c698e62-2955-4db5-9017-9a9c75b6dc2f}</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">C:\Work\Xuejian Ma\LabTools\DiffusionAnalysis\main.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Script">C:\Work\Xuejian Ma\LabTools\qttest5\untitled\qttest5.py</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -184,7 +184,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Work/Xuejian Ma/LabTools/DiffusionAnalysis</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Work/Xuejian Ma/LabTools/qttest5/untitled</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

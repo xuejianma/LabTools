@@ -10,7 +10,7 @@ from PyQt5.QtGui import QPixmap,QImage, QPainter, QPen, QBrush, QPolygon
 import pyqtgraph as pg
 from utils import readSimulatedImReCSV,readImRePhase,diffusion_map,radialAverageByLinecuts
 from PIL import Image
-import random
+# import randomQtUiTools
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.figure import Figure
@@ -24,8 +24,8 @@ class gui(QWidget):
         self.connect()
         self.center = QPolygon()
         self.piximg = None
-        self.directoryName = None
-        self.responseFile = None
+        # directoryName = None
+        # responseFile = None
         self.widget_response.setBackground('w')
         self.widget_laserScreenshot.setBackground('w')
         self.widget_laserFit.setBackground('w')
@@ -84,12 +84,12 @@ class gui(QWidget):
         self.pushButton_plotImage.clicked.connect(self.plotLaserScreenshot)
 
     def selectDirectory(self):
-        self.directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
-        self.lineEdit_directory.setText(self.directoryName)
+        directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
+        self.lineEdit_directory.setText(directoryName)
         # self.image = QImage()
         # self.image.load(filename) # another way to import image
 
-        # pixtmp = QPixmap(self.directoryName)
+        # pixtmp = QPixmap(directoryName)
         # self.piximg = pixtmp.scaled(200,200,Qt.KeepAspectRatio)
         # self.label_image.setPixmap(self.piximg)#QPixmap.fromImage(self.image))
 
@@ -128,11 +128,11 @@ class gui(QWidget):
         # self.widget_response.plot(im_all, re_all, pen=None,symbol = 'o',symbolPen = pg.mkPen(color=(0, 0, 255), width=0),symbolSize=1)
 
     def selectResponse(self):
-        self.responseFile = QFileDialog.getOpenFileName(self, 'Select response curve',)[0]
-        # print(self.responseFile[0])
-        self.lineEdit_response.setText(self.responseFile)
+        responseFile = QFileDialog.getOpenFileName(self, 'Select response curve',)[0]
+        # print(responseFile[0])
+        self.lineEdit_response.setText(responseFile)
 
-        # pixtmp = QPixmap(self.responseFile)
+        # pixtmp = QPixmap(responseFile)
         # self.piximg = pixtmp.scaled(200,200,Qt.KeepAspectRatio)
         # self.label_response.setPixmap(self.piximg)#QPixmap.fromImage(self.image))
 
