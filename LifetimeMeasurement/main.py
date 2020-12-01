@@ -17,7 +17,7 @@ from PyQt5 import uic,QtTest
 from PyQt5.QtWidgets import QApplication, QWidget,QFrame, QFileDialog
 from PyQt5.QtCore import QTimer
 # from PyQt5.QtUiTools import QUiLoader
-from utils import getDS6_rawdata
+from utils import getDS6_rawdata,getDS6_rawdata_run,getDS6_rawdata_stop
 
 
 class lifetimeMeasurement(QWidget):
@@ -36,6 +36,9 @@ class lifetimeMeasurement(QWidget):
         self.widget_averagedDecay.setBackground('w')
         self.widget_currentDecay.setFrameShape(QFrame.Box)
         self.widget_averagedDecay.setFrameShape(QFrame.Box)
+
+        self.on_list = []
+        self.off_list = []
 
 
     def connectAll(self):
@@ -74,19 +77,91 @@ class lifetimeMeasurement(QWidget):
         laser_controller = self.rm.open_resource(self.comboBox_laserController.currentText())
         oscilloscope = self.rm.open_resource(self.comboBox_oscilloscope.currentText())
         steps = self.spinBox_turns.value()
+        stepsDouble = steps*2
         waiting_time = self.spinBox_acquiringTime.value()
         timeBetweenTurns = self.spinBox_timeBetweenTurns.value()
+
+        self.spinBox_turns.setEnabled(False)
+        self.spinBox_acquiringTime.setEnabled(False)
+        self.spinBox_timeBetweenTurns.setEnabled(False)
+
         print(steps,waiting_time,timeBetweenTurns)
         # onoff_list = repeat(laser_controller, oscilloscope, steps = 10, waiting_time = 6)
 
         last_time = None
         onoff_list = []
-        for i in range(steps):
-            [rawdata_on, rawdata_off],last_time = self.measureEachTurn(i,laser_controller,oscilloscope,last_time,steps,waiting_time=waiting_time,timeBetweenTurns=timeBetweenTurns)
-            currentDecay = np.asarray([item1-item2 for item1,item2 in zip(rawdata_on,rawdata_off)])
-            self.widget_currentDecay.plot(currentDecay)
+        # for i in range(steps):
+        #     [rawdata_on, rawdata_off],last_time = self.measureEachTurn1(i,laser_controller,oscilloscope,last_time,steps,waiting_time=waiting_time,timeBetweenTurns=timeBetweenTurns)
+        #     currentDecay = np.asarray([item1-item2 for item1,item2 in zip(rawdata_on,rawdata_off)])
+        #     self.widget_currentDecay.plot(currentDecay)
+        self.measureEachTurn(-1,laser_controller,oscilloscope,stepsDouble,waiting_time=waiting_time,timeBetweenTurns=timeBetweenTurns)
 
-    def measureEachTurn(self,i,laser_controller,oscilloscope,last_time,steps,waiting_time=6,timeBetweenTurns=10):
+        self.spinBox_turns.lineEdit().setEnabled(True)
+        self.spinBox_acquiringTime.lineEdit().setEnabled(True)
+        self.spinBox_timeBetweenTurns.lineEdit().setEnabled(True)
+
+
+    def getDS6_rawdata_stop(self):
+        return getDS6_rawdata_stop()
+
+
+    def measureOn(self,laser_controller,oscilloscope,waiting_time):
+        # rawdata_on = []
+        laser_controller.write("OUTP ON")
+        # getDS6_rawdata_run(oscilloscope)
+        # print(waiting_time)
+        # time1 = time.time()
+        QTimer.singleShot(int(waiting_time*1e3),lambda:getDS6_rawdata_stop(oscilloscope, rawdata_list=self.on_list))
+        # rawdata_on = getDS6_rawdata_stop(oscilloscope)
+        # time2 = time.time()
+        # print(time2-time1)
+        # print(rawdata_on)
+        # rawdata_on = getDS6_rawdata_stop(oscilloscope, waiting_time=waiting_time)
+        # return rawdata_on
+
+    def measureOff(self,laser_controller,oscilloscope,waiting_time):
+        # rawdata_off = []
+        laser_controller.write("OUTP OFF")
+        # getDS6_rawdata_run(oscilloscope)
+        QTimer.singleShot(int(waiting_time*1e3),lambda:getDS6_rawdata_stop(oscilloscope, rawdata_list=self.off_list))
+        # rawdata_off = getDS6_rawdata_stop(oscilloscope)
+        # rawdata_off = getDS6_rawdata(oscilloscope, waiting_time=waiting_time)
+        # return rawdata_off
+
+
+        QTimer.singleShot(int(waiting_time * 1e3)+int(0.5e3),self.plotDecay)
+
+    def plotDecay(self):
+        currentDecay = np.asarray([item1 - item2 for item1, item2 in zip(self.on_list[-1], self.off_list[-1])])
+        self.widget_currentDecay.clear()
+        self.widget_currentDecay.plot(currentDecay)
+
+    def measureEachTurn(self,i,laser_controller,oscilloscope,stepsDouble,waiting_time,timeBetweenTurns):
+        if i<=stepsDouble:
+
+            getDS6_rawdata_run(oscilloscope)
+
+            QTimer.singleShot(int(timeBetweenTurns * 1e3),
+                              lambda: self.measureEachTurn(i+1, laser_controller,oscilloscope,stepsDouble,
+                                                           waiting_time,timeBetweenTurns))
+            if i >= 0:
+                self.progressBar.setValue(int(i/stepsDouble*100))
+                if i%2==0:
+                    self.measureOn(laser_controller, oscilloscope,waiting_time=waiting_time)
+                    # self.on_list.append(rawdata_on)
+                    # print(i)
+                    # print(self.on_list)
+                else:
+                    self.measureOff(laser_controller, oscilloscope,waiting_time=waiting_time)
+                    # self.on_list.append(rawdata_off)
+                    # print(i)
+                    # print(self.off_list)
+                    # currentDecay = np.asarray([item1 - item2 for item1, item2 in zip(self.on_list[-1], self.off_list[-1])])
+                    # self.widget_currentDecay.plot(currentDecay)
+
+
+
+    def measureEachTurn1(self,i,laser_controller,oscilloscope,last_time,steps,waiting_time=6,timeBetweenTurns=10):
         curr_time = time.time()
 
         print("Step: " + str(i + 1) + "/" + str(steps), end="\t")

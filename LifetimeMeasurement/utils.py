@@ -8,6 +8,42 @@ from datetime import timedelta
 
 
 
+def getDS6_rawdata_run(inst):
+    try:
+        inst.write(":RUN")
+    except:
+        print("Error Running Oscilloscope")
+
+def getDS6_rawdata_stop(inst, start=1, points=70000000, waiting_time=6,rawdata_list=None):
+    try:
+        wt = 0;
+        inst.write(":STOP")
+        inst.write(":WAV:MODE NORM")  # RAW means deeper raw data. NORM means displayed data
+        time.sleep(wt)
+        inst.write(":WAV:STAR " + str(start))
+        time.sleep(wt)
+        inst.write(":WAV:STOP " + str(points + start))
+        time.sleep(wt)
+        inst.write(":WAV:POIN " + str(points))
+        time.sleep(wt)
+        inst.write(":WAV:SOUR CHAN1")
+        time.sleep(wt)
+        inst.write(":WAV:RES")
+        time.sleep(wt)
+        inst.write(":WAV:BEG")
+        time.sleep(wt)
+        rawdata = inst.query_binary_values(':WAV:DATA?', datatype='B', is_big_endian=False)
+        #         print("Memory depth is: %s"%inst.query(":ACQ:MDEP?"))
+        #         print("Real number of data: %d"%len(rawdata))
+        #         plt.plot(rawdata)
+        #         plt.show()
+        if rawdata_list!=None:
+            # rawdata_list[:] = rawdata
+            rawdata_list.append(rawdata)
+        return rawdata
+    except:
+        print("Error getting rawdata")
+
 def getDS6_rawdata(inst, start=1, points=70000000, waiting_time=6):
     try:
         wt = 0;
