@@ -107,15 +107,21 @@
      <height>21</height>
     </rect>
    </property>
+   <property name="text">
+    <string>C:/Work/Xuejian Ma/Perovskite/tmp</string>
+   </property>
   </widget>
   <widget class="QLineEdit" name="lineEdit_file">
    <property name="geometry">
     <rect>
      <x>480</x>
      <y>140</y>
-     <width>211</width>
+     <width>101</width>
      <height>21</height>
     </rect>
+   </property>
+   <property name="text">
+    <string>test</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_dataSavedAt">
@@ -300,6 +306,9 @@
      <height>22</height>
     </rect>
    </property>
+   <property name="minimum">
+    <number>1</number>
+   </property>
    <property name="maximum">
     <number>9999</number>
    </property>
@@ -344,6 +353,32 @@
    </property>
    <property name="text">
     <string>Time Left:    00 : 00 : 00 (hh : mm : ss)</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_turnsLeft">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>290</y>
+     <width>121</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Turns Finished: 0/0</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_filenameSuffix">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>140</y>
+     <width>71</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>.csv</string>
    </property>
   </widget>
  </widget>

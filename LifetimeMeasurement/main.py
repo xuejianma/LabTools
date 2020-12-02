@@ -8,6 +8,7 @@ import sys
 import os
 import time
 import numpy as np
+from pandas import DataFrame
 
 from datetime import timedelta
 
@@ -15,7 +16,7 @@ from pyvisa import ResourceManager
 
 from PyQt5 import uic,QtTest
 from PyQt5.QtWidgets import QApplication, QWidget,QFrame, QFileDialog
-from PyQt5.QtCore import QTimer,QThread
+from PyQt5.QtCore import QTimer,QThread,QProcess
 # from PyQt5.QtUiTools import QUiLoader
 from utils import getDS6_rawdata,getDS6_rawdata_run,getDS6_rawdata_stop
 
@@ -69,6 +70,11 @@ class lifetimeMeasurement(QWidget):
         for item in usb_list:
             self.comboBox_laserController.addItem(item)
             self.comboBox_oscilloscope.addItem(item)
+            if "DS6D150100004" in item:
+                self.comboBox_oscilloscope.setCurrentText(item)  # find and define oscilloscope USB port
+            elif "M00460823" in item:
+                self.comboBox_laserController.setCurrentText(item)  # find and define laser controller USB port
+
         # print(__file__)
     def refreshResources(self):
         self.comboBox_laserController.clear()
@@ -79,34 +85,43 @@ class lifetimeMeasurement(QWidget):
         filename = QFileDialog.getExistingDirectory(self,'select directory')
         self.lineEdit_folder.setText(filename)
 
+    # def abort(self):
+    #     pass
+
     def startMeasure(self):
         laser_controller = self.rm.open_resource(self.comboBox_laserController.currentText())
         oscilloscope = self.rm.open_resource(self.comboBox_oscilloscope.currentText())
-        steps = self.spinBox_turns.value()
-        self.stepsDouble = steps*2
+        self.steps = self.spinBox_turns.value()
+        self.stepsDouble = self.steps*2
         waiting_time = self.spinBox_acquiringTime.value()
         timeBetweenTurns = self.spinBox_timeBetweenTurns.value()
 
         self.spinBox_turns.setEnabled(False)
         self.spinBox_acquiringTime.setEnabled(False)
         self.spinBox_timeBetweenTurns.setEnabled(False)
+        # self.pushButton_start.setText('Abort')
 
-        print(steps,waiting_time,timeBetweenTurns)
-        # onoff_list = repeat(laser_controller, oscilloscope, steps = 10, waiting_time = 6)
 
-        last_time = None
-        onoff_list = []
-        # for i in range(steps):
-        #     [rawdata_on, rawdata_off],last_time = self.measureEachTurn1(i,laser_controller,oscilloscope,last_time,steps,waiting_time=waiting_time,timeBetweenTurns=timeBetweenTurns)
-        #     currentDecay = np.asarray([item1-item2 for item1,item2 in zip(rawdata_on,rawdata_off)])
-        #     self.widget_currentDecay.plot(currentDecay)
 
-        self.timeLeft = int((self.stepsDouble) * (waiting_time + timeBetweenTurns))-timeBetweenTurns
+
+        # self.process = QProcess(self)
+        # # QProcess emits `readyRead` when there is data to be read
+        # self.process.readyRead.connect(self.dataReady)
+        # self.runButton1.clicked.connect(self.process.kill)
+
+
+
+        print(self.steps,waiting_time,timeBetweenTurns)
+
+        self.label_turnsLeft.setText('Turns Finished: 0/'+str(self.steps))
+
+        self.totalTime = int((self.stepsDouble) * (waiting_time + timeBetweenTurns))-timeBetweenTurns+1
+        self.timeLeft = self.totalTime
         print(self.timeLeft)
         self.countdown(intervalSecond=1)
         self.progressBar.setValue(0)
-        self.on_list=[]
-        self.off_list=[]
+        self.on_list = []
+        self.off_list = []
 
         # self.measureEachTurn(-1,laser_controller,oscilloscope,stepsDouble,waiting_time=waiting_time,timeBetweenTurns=timeBetweenTurns)
 
@@ -135,11 +150,9 @@ class lifetimeMeasurement(QWidget):
         self.spinBox_timeBetweenTurns.lineEdit().setEnabled(True)
 
     def laserControl(self,laser_controller):
-
         if self.currTurn % 2 == 0:
             laser_controller.write("OUTP ON")
             print('laser on')
-
         else:
             laser_controller.write("OUTP OFF")
             print('laser off')
@@ -170,7 +183,17 @@ class lifetimeMeasurement(QWidget):
         time.sleep(wt)
         oscilloscope.write(":WAV:BEG")
         time.sleep(wt)
-        # rawdata = oscilloscope.query_binary_values(':WAV:DATA?', datatype='B', is_big_endian=False)
+        rawdata = oscilloscope.query_binary_values(':WAV:DATA?', datatype='B', is_big_endian=False)
+        if self.currTurn % 2 == 0:
+            self.on_list.append(rawdata)
+            print('onlist append')
+        else:
+            self.off_list.append(rawdata)
+            print('offlist append')
+            self.label_turnsLeft.setText('Turns Finished: ' + str(int(np.floor((self.currTurn+1)/2))) + '/' + str(int(self.steps)))
+            QTimer.singleShot(500,self.plotDecay)
+            QTimer.singleShot(500,lambda:print('plotDecay'))
+
         self.currTurn += 1
         print('oscilloscopeStop')
 
@@ -184,6 +207,7 @@ class lifetimeMeasurement(QWidget):
 
     def updateCountdown(self,intervalSecond):
         self.timeLeft -= intervalSecond
+        self.progressBar.setValue(int((self.totalTime-self.timeLeft)/self.totalTime*100))
         newtime = time.strftime('%H : %M : %S', time.gmtime(self.timeLeft))
         self.label_countdown.setText("Time Left:    " + newtime + " (hh : mm : ss)")
         print(newtime)
@@ -191,93 +215,35 @@ class lifetimeMeasurement(QWidget):
             self.timerCountdown.stop()
         # "Time Left:    00 : 00 : 00 (hh : mm : ss)"
 
-
-    def getDS6_rawdata_stop(self):
-        return getDS6_rawdata_stop()
-
-
-    def measureOn(self,laser_controller,oscilloscope,waiting_time):
-        # rawdata_on = []
-        laser_controller.write("OUTP ON")
-        # getDS6_rawdata_run(oscilloscope)
-        # print(waiting_time)
-        # time1 = time.time()
-        QTimer.singleShot(int(waiting_time*1e3),lambda:getDS6_rawdata_stop(oscilloscope, rawdata_list=self.on_list))
-        # rawdata_on = getDS6_rawdata_stop(oscilloscope)
-        # time2 = time.time()
-        # print(time2-time1)
-        # print(rawdata_on)
-        # rawdata_on = getDS6_rawdata_stop(oscilloscope, waiting_time=waiting_time)
-        # return rawdata_on
-
-    def measureOff(self,laser_controller,oscilloscope,waiting_time):
-        # rawdata_off = []
-        laser_controller.write("OUTP OFF")
-        # getDS6_rawdata_run(oscilloscope)
-        QTimer.singleShot(int(waiting_time*1e3),lambda:getDS6_rawdata_stop(oscilloscope, rawdata_list=self.off_list))
-        # rawdata_off = getDS6_rawdata_stop(oscilloscope)
-        # rawdata_off = getDS6_rawdata(oscilloscope, waiting_time=waiting_time)
-        # return rawdata_off
-
-
-        QTimer.singleShot(int(waiting_time * 1e3)+int(0.5e3),self.plotDecay)
-
     def plotDecay(self):
         currentDecay = np.asarray([item1 - item2 for item1, item2 in zip(self.on_list[-1], self.off_list[-1])])
         self.widget_currentDecay.clear()
         self.widget_currentDecay.plot(currentDecay)
 
+        on_mean = np.mean(self.on_list, axis=0)
+        off_mean = np.mean(self.off_list, axis=0)
+        averagedDecay = np.array([item1 - item2 for item1, item2 in zip(on_mean, off_mean)])
+        self.widget_averagedDecay.clear()
+        self.widget_averagedDecay.plot(averagedDecay)
+
+        path = self.lineEdit_folder.text()
+        filename = self.lineEdit_file.text()
+        self.saveFiles(path,filename,self.on_list,self.off_list,averagedDecay)
+
+    def saveFiles(self,path,filename,rawdata_on,rawdata_off,averaged):
+
+        df1 = DataFrame(rawdata_on).T
+        df2 = DataFrame(rawdata_off).T
+        df3 = DataFrame(averaged)
+
+        df1.to_csv(path+'/'+filename+'_on.csv')
+        df2.to_csv(path + '/' + filename + '_off.csv')
+        df3.to_csv(path + '/' + filename + '_averaged.csv')
 
 
 
-    def measureEachTurn(self,i,laser_controller,oscilloscope,stepsDouble,waiting_time,timeBetweenTurns):
-        if i<stepsDouble:
-
-            getDS6_rawdata_run(oscilloscope)
-
-            QTimer.singleShot(int(timeBetweenTurns * 1e3),
-                              lambda: self.measureEachTurn(i+1, laser_controller,oscilloscope,stepsDouble,
-                                                           waiting_time,timeBetweenTurns+waiting_time))
-            if i >= 0:
-
-                if i%2==0:
-                    self.measureOn(laser_controller, oscilloscope,waiting_time=waiting_time)
-                    # self.on_list.append(rawdata_on)
-                    # print(i)
-                    # print(self.on_list)
-                else:
-                    self.measureOff(laser_controller, oscilloscope,waiting_time=waiting_time)
-                    # self.on_list.append(rawdata_off)
-                    # print(i)
-                    # print(self.off_list)
-                    # currentDecay = np.asarray([item1 - item2 for item1, item2 in zip(self.on_list[-1], self.off_list[-1])])
-                    # self.widget_currentDecay.plot(currentDecay)
-                QTimer.singleShot(int(waiting_time * 1e3),lambda:self.progressBar.setValue(int((i + 1) / stepsDouble * 100)))
 
 
-
-    def measureEachTurn1(self,i,laser_controller,oscilloscope,last_time,steps,waiting_time=6,timeBetweenTurns=10):
-        curr_time = time.time()
-
-        print("Step: " + str(i + 1) + "/" + str(steps), end="\t")
-        if last_time == None:
-            print("Time left: Loading")
-        else:
-            print("Time left: " + str(timedelta(seconds=round((curr_time - last_time) * (steps - i)))))
-        last_time = time.time()
-        time.sleep(timeBetweenTurns)  # to make sure the controller does not turn on/off laser too frequently
-        # QtTest.QTest.qWait(timeBetweenTurns*1e3)
-        QThread.sleep(timeBetweenTurns)
-        laser_controller.write("OUTP ON")
-        # rawdata_on = getDS6_rawdata(oscilloscope, waiting_time=waiting_time)
-        # time.sleep(timeBetweenTurns)  # to make sure the controller does not turn on/off laser too frequently
-        # QtTest.QTest.qWait(timeBetweenTurns * 1e3)
-        QThread.sleep(timeBetweenTurns)
-
-        laser_controller.write("OUTP OFF")
-        # rawdata_off = getDS6_rawdata(oscilloscope, waiting_time=waiting_time)
-        # onoff_list.append([rawdata_on, rawdata_off])
-        # return [rawdata_on, rawdata_off],last_time
 
 if __name__ == "__main__":
     app = QApplication([])
