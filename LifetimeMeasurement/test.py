@@ -37,7 +37,7 @@ app = QApplication(sys.argv)
 # print(time2-time1)
 #QtCore.QTimer.singleShot(2000, lambda:num(1))
 
-def output(text):
+def output():
     print('in',time.time())
 
 class testclass():
@@ -49,11 +49,32 @@ class testclass():
         self.x = 0
         happy()
 
+    def output(self):
+        print('in', time.time())
+
+    def test2(self):
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(output)
+        # time.sleep(5)
+        self.timer.start(5000)#,QtCore.pyqtSlot("output()"))
+        # time.sleep(5)
+        print(1234)
+
+    def test3(self):
+        print(3333)
+
+
+
+
 
 a = testclass()
-a.test()
+a.test2()
+# for _ in range(3):
+#     QtCore.QThread.sleep(1)
+#     a.test3()
 
 
+# test2()
 
 sys.exit(app.exec_())
 # app.exec_()
