@@ -15,7 +15,7 @@ from datetime import timedelta
 from pyvisa import ResourceManager
 
 from PyQt5 import uic,QtTest
-from PyQt5.QtWidgets import QApplication, QWidget,QFrame, QFileDialog
+from PyQt5.QtWidgets import QApplication, QWidget,QFrame, QFileDialog,QMessageBox
 from PyQt5.QtCore import QTimer,QThread,QProcess
 # from PyQt5.QtUiTools import QUiLoader
 from utils import getDS6_rawdata,getDS6_rawdata_run,getDS6_rawdata_stop
@@ -29,7 +29,8 @@ class lifetimeMeasurement(QWidget):
 
         self.rm = ResourceManager()
         self.listResources()
-
+        # self.laser_controller = self.rm.open_resource(self.comboBox_laserController.currentText())
+        # self.oscilloscope = self.rm.open_resource(self.comboBox_oscilloscope.currentText())
 
         # self.laserController = None
         # self.oscilloscope = None
@@ -50,14 +51,20 @@ class lifetimeMeasurement(QWidget):
         self.pushButton_selectFolder.clicked.connect(self.selectFolder)
         self.pushButton_start.clicked.connect(self.startMeasure)
         self.pushButton_tmp.clicked.connect(self.clickTmp)
-
+        # without singleShot, weird error occurs for pyvisa self.rm.open_resource for oscilloscope
+        self.comboBox_laserController.currentIndexChanged.connect(lambda:QTimer.singleShot(0,self.updateResources))
+        # without singleShot, weird error occurs for pyvisa self.rm.open_resource for oscilloscope
+        self.comboBox_oscilloscope.currentIndexChanged.connect(lambda:QTimer.singleShot(0,self.updateResources))
+        self.pushButton_laserOn.clicked.connect(lambda:self.laser_controller.write("OUTP ON"))
+        self.pushButton_laserOff.clicked.connect(lambda: self.laser_controller.write("OUTP OFF"))
+        self.lineEdit_setpoint.editingFinished.connect(self.currentSetpoint)
     # def selectResources(self):
     #     self.laserController = self.comboBox_laserController.currentText()
     #     self.oscilloscope = self.comboBox_oscilloscope.currentText()
 
     def clickTmp(self):
         print('on: ',np.shape(self.on_list))
-        print('off',np.shape(self.off_list))
+        print('off: ',np.shape(self.off_list))
 
     def load_ui(self):
         path = os.path.join(os.path.dirname(__file__),"form.ui")
@@ -87,10 +94,45 @@ class lifetimeMeasurement(QWidget):
 
     # def abort(self):
     #     pass
+    
+    def updateResources(self):
+        # self.rm.close()
+        # self.rm = ResourceManager()
+        # print(self.comboBox_laserController.currentText())
+
+        self.laser_controller = self.rm.open_resource(self.comboBox_laserController.currentText())
+        # print(self.comboBox_oscilloscope.currentText())
+        self.oscilloscope = self.rm.open_resource(self.comboBox_oscilloscope.currentText())
+        print('update resources: laser_controller:',self.comboBox_laserController.currentText(),' oscilloscope:',self.comboBox_oscilloscope.currentText())
+
+    def currentSetpoint(self):
+        currSetpoint = self.lineEdit_setpoint.text()
+        try:
+            currSetpointValue = int(currSetpoint)
+            print(currSetpointValue)
+            self.laser_controller.write("SOUR:CURR {}".format(currSetpointValue / 1e4))
+        except:
+            self.lineEdit_setpoint.editingFinished.disconnect()
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+
+            msg.setText("Laser Current Setpoint must be integers")
+            # msg.setInformativeText("This is additional information")
+            msg.setWindowTitle("Warning")
+            # msg.setDetailedText("The details are as follows:")
+            # msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            # msg.buttonClicked.connect(msgbtn)
+            msg.exec_()
+            self.lineEdit_setpoint.editingFinished.connect(self.currentSetpoint)
+            # print
+            # "value of pressed message box button:", retval
+
 
     def startMeasure(self):
-        laser_controller = self.rm.open_resource(self.comboBox_laserController.currentText())
-        oscilloscope = self.rm.open_resource(self.comboBox_oscilloscope.currentText())
+        # self.rm.close()
+        # self.rm = ResourceManager()
+        self.laser_controller = self.rm.open_resource(self.comboBox_laserController.currentText())
+        self.oscilloscope = self.rm.open_resource(self.comboBox_oscilloscope.currentText())
         self.steps = self.spinBox_turns.value()
         self.stepsDouble = self.steps*2
         waiting_time = self.spinBox_acquiringTime.value()
@@ -131,13 +173,13 @@ class lifetimeMeasurement(QWidget):
         #
         self.currTurn = 0
         #
-        self.timerLaserControl.timeout.connect(lambda:self.laserControl(laser_controller))
-        self.timerOscilloscopeRun.timeout.connect(lambda:self.oscilloscopeRun(oscilloscope))
-        self.timerOscilloscopeStop.timeout.connect(lambda:self.oscilloscopeStop(oscilloscope))
+        self.timerLaserControl.timeout.connect(lambda:self.laserControl(self.laser_controller))
+        self.timerOscilloscopeRun.timeout.connect(lambda:self.oscilloscopeRun(self.oscilloscope))
+        self.timerOscilloscopeStop.timeout.connect(lambda:self.oscilloscopeStop(self.oscilloscope))
 
-        self.laserControl(laser_controller)
-        self.oscilloscopeRun(oscilloscope)
-        QTimer.singleShot(int(waiting_time*1e3),lambda:self.oscilloscopeStop(oscilloscope))
+        self.laserControl(self.laser_controller)
+        self.oscilloscopeRun(self.oscilloscope)
+        QTimer.singleShot(int(waiting_time*1e3),lambda:self.oscilloscopeStop(self.oscilloscope))
 
 
         self.timerLaserControl.start(int((waiting_time+timeBetweenTurns)*1e3))
