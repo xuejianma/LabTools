@@ -141,6 +141,7 @@ class lifetimeMeasurement(QWidget):
         self.spinBox_turns.setEnabled(False)
         self.spinBox_acquiringTime.setEnabled(False)
         self.spinBox_timeBetweenTurns.setEnabled(False)
+        self.spinBox_xaxis.setEnabled(False)
         # self.pushButton_start.setText('Abort')
 
 
@@ -186,12 +187,16 @@ class lifetimeMeasurement(QWidget):
         self.timerOscilloscopeRun.start(int((waiting_time+timeBetweenTurns)*1e3))
         QTimer.singleShot(int(waiting_time*1e3),lambda:self.timerOscilloscopeStop.start(int((waiting_time+timeBetweenTurns)*1e3)))
 
+        QTimer.singleShot(int((self.totalTime)*1e3),self.restartSpinBoxes)
 
-        self.spinBox_turns.lineEdit().setEnabled(True)
-        self.spinBox_acquiringTime.lineEdit().setEnabled(True)
-        self.spinBox_timeBetweenTurns.lineEdit().setEnabled(True)
+    def restartSpinBoxes(self):
+        self.spinBox_turns.setEnabled(True)
+        self.spinBox_acquiringTime.setEnabled(True)
+        self.spinBox_timeBetweenTurns.setEnabled(True)
+        self.spinBox_xaxis.setEnabled(True)
 
     def laserControl(self,laser_controller):
+        # print(self.currTurn)
         if self.currTurn % 2 == 0:
             laser_controller.write("OUTP ON")
             print('laser on')
@@ -205,6 +210,7 @@ class lifetimeMeasurement(QWidget):
 
     def oscilloscopeStop(self,oscilloscope ,start=1, points=70000000,):
         if self.currTurn == self.stepsDouble-1:
+            print('stop properly')
             self.timerLaserControl.stop()
             self.timerOscilloscopeRun.stop()
             self.timerOscilloscopeStop.stop()
@@ -235,8 +241,8 @@ class lifetimeMeasurement(QWidget):
             self.label_turnsLeft.setText('Turns Finished: ' + str(int(np.floor((self.currTurn+1)/2))) + '/' + str(int(self.steps)))
             QTimer.singleShot(500,self.plotDecay)
             QTimer.singleShot(500,lambda:print('plotDecay'))
-
         self.currTurn += 1
+
         print('oscilloscopeStop')
 
     def countdown(self,intervalSecond):
@@ -258,15 +264,16 @@ class lifetimeMeasurement(QWidget):
         # "Time Left:    00 : 00 : 00 (hh : mm : ss)"
 
     def plotDecay(self):
+        unitTime = int(self.spinBox_xaxis.value())
         currentDecay = np.asarray([item1 - item2 for item1, item2 in zip(self.on_list[-1], self.off_list[-1])])
         self.widget_currentDecay.clear()
-        self.widget_currentDecay.plot(currentDecay)
+        self.widget_currentDecay.plot(unitTime*14/len(currentDecay)*np.asarray(range(len(currentDecay))),currentDecay)
 
         on_mean = np.mean(self.on_list, axis=0)
         off_mean = np.mean(self.off_list, axis=0)
         averagedDecay = np.array([item1 - item2 for item1, item2 in zip(on_mean, off_mean)])
         self.widget_averagedDecay.clear()
-        self.widget_averagedDecay.plot(averagedDecay)
+        self.widget_averagedDecay.plot(unitTime*14/len(averagedDecay)*np.asarray(range(len(averagedDecay))),averagedDecay)
 
         path = self.lineEdit_folder.text()
         filename = self.lineEdit_file.text()
