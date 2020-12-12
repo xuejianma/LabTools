@@ -102,3 +102,18 @@ def averager(onoff_list):
     off_mean = np.mean(np.array(onoff_list)[:, 1], axis=0)
     result_mean = np.array([item1 - item2 for item1, item2 in zip(on_mean, off_mean)])
     return result_mean, on_mean, off_mean
+
+def normalize(data):
+    return (data-np.min(data))/(np.max(data)-np.min(data))*10 # factor of 10 prevents weird incapability to fit normally with x from 0 to 1
+
+def denormalize(newData,data):
+    return newData*(np.max(data)-np.min(data))/10+np.min(data) # factor of 10 prevents weird incapability to fit normally with x from 0 to 1
+
+def decay1(t,A,tau,y0):
+    return A*np.exp(-t/tau)+y0
+
+def decay2(t,A1,A2,tau1,tau2,y0):
+    return A1*np.exp(-t/tau1)+A2*np.exp(-t/tau2)+y0
+
+def decay3(t,A1,A2,A3,tau1,tau2,tau3,y0):
+    return A1*np.exp(-t/tau1)+A2*np.exp(-t/tau2)+A3*np.exp(-t/tau3)+y0

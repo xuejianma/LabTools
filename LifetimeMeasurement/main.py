@@ -8,7 +8,7 @@ import sys
 import os
 import time
 import numpy as np
-from pandas import DataFrame
+from pandas import DataFrame, read_csv
 
 from datetime import timedelta
 
@@ -17,8 +17,12 @@ from pyvisa import ResourceManager
 from PyQt5 import uic,QtTest
 from PyQt5.QtWidgets import QApplication, QWidget,QFrame, QFileDialog,QMessageBox
 from PyQt5.QtCore import QTimer,QThread,QProcess
+from utils import decay1,decay2,decay3,normalize,denormalize
+from scipy.optimize import curve_fit
+from pyqtgraph import mkPen
+
 # from PyQt5.QtUiTools import QUiLoader
-from utils import getDS6_rawdata,getDS6_rawdata_run,getDS6_rawdata_stop
+# from utils import getDS6_rawdata,getDS6_rawdata_run,getDS6_rawdata_stop
 
 
 class lifetimeMeasurement(QWidget):
@@ -36,13 +40,21 @@ class lifetimeMeasurement(QWidget):
         # self.oscilloscope = None
         self.widget_currentDecay.setBackground('w')
         self.widget_averagedDecay.setBackground('w')
+        self.widget_fitting.setBackground('w')
         self.widget_currentDecay.setFrameShape(QFrame.Box)
         self.widget_averagedDecay.setFrameShape(QFrame.Box)
+        self.widget_fitting.setFrameShape(QFrame.Box)
 
         self.on_list = []
         self.off_list = []
+        self.averagedDecay = []
+        self.xaxis = []
         self.timerCountdown = None
         self.timeLeft = None
+        self.dataLoadedX = None
+        self.dataLoadedY = None
+
+
 
 
     def connectAll(self):
@@ -58,6 +70,10 @@ class lifetimeMeasurement(QWidget):
         self.pushButton_laserOn.clicked.connect(lambda:self.laser_controller.write("OUTP ON"))
         self.pushButton_laserOff.clicked.connect(lambda: self.laser_controller.write("OUTP OFF"))
         self.lineEdit_setpoint.editingFinished.connect(self.currentSetpoint)
+        self.pushButton_selectFileFit.clicked.connect(self.selectFileFit)
+        self.pushButton_fromFile.clicked.connect(self.loadDataFromCsv)
+        self.pushButton_fromMeasurement.clicked.connect(self.loadDataFromMeasurement)
+        self.pushButton_fitDecay.clicked.connect(self.fitDecay)
     # def selectResources(self):
     #     self.laserController = self.comboBox_laserController.currentText()
     #     self.oscilloscope = self.comboBox_oscilloscope.currentText()
@@ -267,31 +283,71 @@ class lifetimeMeasurement(QWidget):
         unitTime = int(self.spinBox_xaxis.value())
         currentDecay = np.asarray([item1 - item2 for item1, item2 in zip(self.on_list[-1], self.off_list[-1])])
         self.widget_currentDecay.clear()
-        self.widget_currentDecay.plot(unitTime*14/len(currentDecay)*np.asarray(range(len(currentDecay))),currentDecay)
+        self.xaxis = unitTime*14/len(currentDecay)*np.asarray(range(len(currentDecay)))
+        self.widget_currentDecay.plot(self.xaxis,currentDecay)
 
         on_mean = np.mean(self.on_list, axis=0)
         off_mean = np.mean(self.off_list, axis=0)
-        averagedDecay = np.array([item1 - item2 for item1, item2 in zip(on_mean, off_mean)])
+        self.averagedDecay = np.array([item1 - item2 for item1, item2 in zip(on_mean, off_mean)])
         self.widget_averagedDecay.clear()
-        self.widget_averagedDecay.plot(unitTime*14/len(averagedDecay)*np.asarray(range(len(averagedDecay))),averagedDecay)
+        self.widget_averagedDecay.plot(self.xaxis,self.averagedDecay)
 
         path = self.lineEdit_folder.text()
         filename = self.lineEdit_file.text()
-        self.saveFiles(path,filename,self.on_list,self.off_list,averagedDecay)
+        self.saveFiles(path,filename,self.on_list,self.off_list,self.averagedDecay,self.xaxis)
 
-    def saveFiles(self,path,filename,rawdata_on,rawdata_off,averaged):
+    def saveFiles(self,path,filename,rawdata_on,rawdata_off,averaged,xaxis):
 
         df1 = DataFrame(rawdata_on).T
         df2 = DataFrame(rawdata_off).T
         df3 = DataFrame(averaged)
+        df1 = df1.rename(columns={0: 'signal'})
+        df2 = df2.rename(columns={0: 'signal'})
+        df3 = df3.rename(columns={0: 'signal'})
+        df1.index = xaxis
+        df2.index = xaxis
+        df3.index = xaxis
 
         df1.to_csv(path+'/'+filename+'_on.csv')
         df2.to_csv(path + '/' + filename + '_off.csv')
         df3.to_csv(path + '/' + filename + '_averaged.csv')
 
+    def selectFileFit(self):
+        filename,_ = QFileDialog.getOpenFileName(self,'select *_averaged.csv file')
+        self.lineEdit_selectFileFit.setText(filename)
 
+    def loadDataFromCsv(self):
+        self.widget_fitting.clear()
+        dataLoaded = read_csv(self.lineEdit_selectFileFit.text(),index_col=0)
+        self.dataLoadedX = np.asarray(dataLoaded.index)
+        self.dataLoadedY = np.asarray(dataLoaded['signal'])
+        # print(self.dataLoaded)
+        self.widget_fitting.plot(self.dataLoadedX,self.dataLoadedY)
 
+    def loadDataFromMeasurement(self):
+        self.widget_fitting.clear()
+        self.dataLoadedX = self.xaxis
+        self.dataLoadedY = self.averagedDecay
+        self.widget_fitting.plot(self.dataLoadedX, self.dataLoadedY)
 
+    def fitDecay(self):
+        self.widget_fitting.clear()
+        self.widget_fitting.plot(self.dataLoadedX, self.dataLoadedY)
+        if self.radioButton_decay1.isChecked():
+            decay = decay1
+        elif self.radioButton_decay2.isChecked():
+            decay = decay2
+        elif self.radioButton_decay3.isChecked():
+            decay = decay3
+        starting = self.doubleSpinBox_starting.value()
+        ending = self.doubleSpinBox_ending.value()
+        selectedIndices = np.where(np.logical_and(self.dataLoadedX>starting,self.dataLoadedX<ending))[0]
+        xSelected = self.dataLoadedX[selectedIndices]
+        ySelected = self.dataLoadedY[selectedIndices]
+        xFit = normalize(xSelected)
+        params, corrs = curve_fit(decay, xFit, ySelected)
+        yFitted = decay(xFit, *params)
+        self.widget_fitting.plot(denormalize(xFit,xSelected),yFitted,pen=mkPen(color='r'))
 
 
 if __name__ == "__main__":
