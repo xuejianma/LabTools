@@ -347,7 +347,7 @@ class lifetimeMeasurement(QWidget):
         xFit = normalize(xSelected)
         params, corrs = curve_fit(decay, xFit, ySelected)
         yFitted = decay(xFit, *params)
-        self.widget_fitting.plot(denormalize(xFit,xSelected),yFitted,pen=mkPen(color='r'))
+        self.widget_fitting.plot(np.round(denormalize(xFit,xSelected),2),yFitted,pen=mkPen(color='r'))
 
 
 if __name__ == "__main__":
