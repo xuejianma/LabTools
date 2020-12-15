@@ -738,7 +738,7 @@
     <widget class="QPushButton" name="pushButton_fitDecay">
      <property name="geometry">
       <rect>
-       <x>440</x>
+       <x>460</x>
        <y>170</y>
        <width>75</width>
        <height>51</height>
@@ -753,20 +753,10 @@
       <string>Fit</string>
      </property>
     </widget>
-    <widget class="QTextEdit" name="textEdit_result">
-     <property name="geometry">
-      <rect>
-       <x>530</x>
-       <y>170</y>
-       <width>111</width>
-       <height>51</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_result">
      <property name="geometry">
       <rect>
-       <x>530</x>
+       <x>560</x>
        <y>150</y>
        <width>46</width>
        <height>16</height>
@@ -781,18 +771,18 @@
       <rect>
        <x>280</x>
        <y>200</y>
-       <width>151</width>
+       <width>171</width>
        <height>20</height>
       </rect>
      </property>
      <property name="text">
-      <string>Curve 2: t1, t2, t3; A1, A2, A3</string>
+      <string>Curve 3: t1, t2, t3; A1, A2, A3</string>
      </property>
      <property name="checked">
       <bool>false</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_saveFit">
+    <widget class="QPushButton" name="pushButton_saveFittedCurve">
      <property name="geometry">
       <rect>
        <x>630</x>
@@ -808,6 +798,29 @@
      </property>
      <property name="text">
       <string>save fitted curve</string>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="textBrowser_result">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>170</y>
+       <width>151</width>
+       <height>51</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_inversed">
+     <property name="geometry">
+      <rect>
+       <x>650</x>
+       <y>130</y>
+       <width>69</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Inversed</string>
      </property>
     </widget>
    </widget>

@@ -53,6 +53,8 @@ class lifetimeMeasurement(QWidget):
         self.timeLeft = None
         self.dataLoadedX = None
         self.dataLoadedY = None
+        self.yFitted = None
+        self.xFitReal = None
 
 
 
@@ -74,6 +76,7 @@ class lifetimeMeasurement(QWidget):
         self.pushButton_fromFile.clicked.connect(self.loadDataFromCsv)
         self.pushButton_fromMeasurement.clicked.connect(self.loadDataFromMeasurement)
         self.pushButton_fitDecay.clicked.connect(self.fitDecay)
+        self.pushButton_saveFittedCurve.clicked.connect(self.saveFittedCurve)
     # def selectResources(self):
     #     self.laserController = self.comboBox_laserController.currentText()
     #     self.oscilloscope = self.comboBox_oscilloscope.currentText()
@@ -307,6 +310,9 @@ class lifetimeMeasurement(QWidget):
         df1.index = xaxis
         df2.index = xaxis
         df3.index = xaxis
+        df1.index.name = 'Time(ns)'
+        df2.index.name = 'Time(ns)'
+        df3.index.name = 'Time(ns)'
 
         df1.to_csv(path+'/'+filename+'_on.csv')
         df2.to_csv(path + '/' + filename + '_off.csv')
@@ -320,14 +326,20 @@ class lifetimeMeasurement(QWidget):
         self.widget_fitting.clear()
         dataLoaded = read_csv(self.lineEdit_selectFileFit.text(),index_col=0)
         self.dataLoadedX = np.asarray(dataLoaded.index)
-        self.dataLoadedY = np.asarray(dataLoaded['signal'])
+        if self.checkBox_inversed.isChecked():
+            self.dataLoadedY = -np.asarray(dataLoaded['signal'])
+        else:
+            self.dataLoadedY = np.asarray(dataLoaded['signal'])
         # print(self.dataLoaded)
         self.widget_fitting.plot(self.dataLoadedX,self.dataLoadedY)
 
     def loadDataFromMeasurement(self):
         self.widget_fitting.clear()
         self.dataLoadedX = self.xaxis
-        self.dataLoadedY = self.averagedDecay
+        if self.checkBox_inversed.isChecked():
+            self.dataLoadedY = -self.averagedDecay
+        else:
+            self.dataLoadedY = self.averagedDecay
         self.widget_fitting.plot(self.dataLoadedX, self.dataLoadedY)
 
     def fitDecay(self):
@@ -335,20 +347,52 @@ class lifetimeMeasurement(QWidget):
         self.widget_fitting.plot(self.dataLoadedX, self.dataLoadedY)
         if self.radioButton_decay1.isChecked():
             decay = decay1
+            bounds = [[0,0,-np.inf],np.inf]
         elif self.radioButton_decay2.isChecked():
             decay = decay2
+            bounds = [[0, 0, 0, 0, -np.inf], np.inf]
         elif self.radioButton_decay3.isChecked():
             decay = decay3
+            bounds = [[0, 0, 0, 0, 0, 0, -np.inf], np.inf]
         starting = self.doubleSpinBox_starting.value()
         ending = self.doubleSpinBox_ending.value()
         selectedIndices = np.where(np.logical_and(self.dataLoadedX>starting,self.dataLoadedX<ending))[0]
         xSelected = self.dataLoadedX[selectedIndices]
         ySelected = self.dataLoadedY[selectedIndices]
         xFit = normalize(xSelected)
-        params, corrs = curve_fit(decay, xFit, ySelected)
-        yFitted = decay(xFit, *params)
-        self.widget_fitting.plot(np.round(denormalize(xFit,xSelected),2),yFitted,pen=mkPen(color='r'))
+        params, corrs = curve_fit(decay, xFit, ySelected,bounds=bounds)
+        self.yFitted = decay(xFit, *params)
+        self.xFitReal = np.round(denormalize(xFit,xSelected),2)
+        self.widget_fitting.plot(self.xFitReal,self.yFitted,pen=mkPen(color='r'))
 
+        if decay == decay1:
+            self.textBrowser_result.setText(
+                'A=' + str(np.round(params[0],5)) + ', t=' + str(np.round(denormalize(params[1],xSelected),5)) +
+                ', y0=' + str(np.round(params[2],5)))
+        elif decay == decay2:
+            # paramIndices = np.argsort([params[1],params[2]])
+            self.textBrowser_result.setText(
+                'A1=' + str(np.round(params[0],5)) + ', A2=' + str(np.round(params[1],5)) + ', t1='
+                + str(np.round(denormalize(params[2],xSelected),5))
+                +', t2=' + str(np.round(denormalize(params[3],xSelected),5)) + ', y0=' + str(np.round(params[4],5)))
+        elif decay == decay3:
+            self.textBrowser_result.setText(
+                'A1=' + str(np.round(params[0], 5)) + ', A2=' + str(np.round(params[1], 5)) + ', A3=' +
+                str(np.round(params[2], 5))+', t1=' + str(np.round(denormalize(params[3], xSelected), 5))
+                + ', t2=' + str(np.round(denormalize(params[4], xSelected), 5)) +
+                ', t3=' + str(np.round(denormalize(params[5], xSelected), 5))+', y0=' + str(np.round(params[6], 5)))
+
+    def saveFittedCurve(self):
+        path = QFileDialog.getSaveFileName(self,'Save Fitted Curve with Data','./',"csv Files (*.csv);;All Files (*)")[0]
+        df1 = DataFrame(self.dataLoadedY).rename(columns={0:'signal'})
+        df1.index = self.dataLoadedX
+        df2 = DataFrame(self.yFitted).rename(columns={0:'fitting'})
+        df2.index = self.xFitReal
+        df = df1.join(df2)
+        df.index.name = 'Time(ns)'
+        print(path)
+        # print(df)
+        df.to_csv(path)
 
 if __name__ == "__main__":
     app = QApplication([])
