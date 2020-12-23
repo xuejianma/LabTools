@@ -439,9 +439,11 @@ class lifetimeMeasurement(QWidget):
         print('scanning started',self.scanTimer)
 
     def getPower(self,currentDelta,current_list,power_list,starting,ending,steps):
+        flag = False
         if self.tmpIndexScan>=steps:#self.scanCurrent>ending:
             self.scanTimer.stop()
             self.progressBar_currentScan.setValue(100)
+            flag=True
             # del self.tmpIndexScan
         # current input
         self.laser_controller.write("SOUR:CURR {}".format(self.scanCurrent))
@@ -456,7 +458,9 @@ class lifetimeMeasurement(QWidget):
         self.tmpIndexScan += 1
 
         self.progressBar_currentScan.setValue(int((self.scanCurrent-starting)/(ending-starting)*100))
-        
+      
+        if flag==True:#self.scanCurrent>ending:
+            self.laser_controller.write("SOUR:CURR {}".format(0))
         print(self.scanCurrent,power)
 
     def fillScanTable(self,tableWidget,scan_current_list,scan_power_list):
