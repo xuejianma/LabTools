@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab_measurement">
     <attribute name="title">
@@ -821,6 +821,358 @@
      </property>
      <property name="text">
       <string>Inversed</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_scanLaserCurrent">
+    <attribute name="title">
+     <string>Scan Laser Current</string>
+    </attribute>
+    <widget class="QSpinBox" name="spinBox_currentStart">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>60</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>999999999</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinBox_currentEnd">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>60</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>999999999</number>
+     </property>
+     <property name="value">
+      <number>300</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_currentStart">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>60</y>
+       <width>81</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Starting </string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_currentEnd">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>60</y>
+       <width>81</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Ending </string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_current">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>20</y>
+       <width>391</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Laser Current Scan Range: (safe values: 0-500 x 10&lt;span style=&quot; vertical-align:super;&quot;&gt;-4&lt;/span&gt; A)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_setpoint_unit_2">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>60</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;x 10&lt;/span&gt;&lt;span style=&quot; font-size:10pt; vertical-align:super;&quot;&gt;-4&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; A&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_setpoint_unit_3">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>60</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;x 10&lt;/span&gt;&lt;span style=&quot; font-size:10pt; vertical-align:super;&quot;&gt;-4&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; A&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_currentStep">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>60</y>
+       <width>46</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Steps:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinBox_currentSteps">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>60</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>999999999</number>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinBox_currentTime">
+     <property name="geometry">
+      <rect>
+       <x>650</x>
+       <y>60</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>999999999</number>
+     </property>
+     <property name="value">
+      <number>30</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_currentTime">
+     <property name="geometry">
+      <rect>
+       <x>580</x>
+       <y>60</y>
+       <width>61</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Scan Time(s):</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_startScanning">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>190</y>
+       <width>91</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Start Scanning</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_powerMeter">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>130</y>
+       <width>241</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_powerMeter">
+     <property name="geometry">
+      <rect>
+       <x>600</x>
+       <y>120</y>
+       <width>51</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Refresh</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_powerMeter">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>130</y>
+       <width>81</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>eg: M00460823</string>
+     </property>
+     <property name="text">
+      <string>Power Meter:</string>
+     </property>
+    </widget>
+    <widget class="QProgressBar" name="progressBar_currentScan">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>200</y>
+       <width>181</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+    </widget>
+    <widget class="QTableWidget" name="tableWidget_scanCurrent">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>240</y>
+       <width>271</width>
+       <height>271</height>
+      </rect>
+     </property>
+     <property name="rowCount">
+      <number>0</number>
+     </property>
+     <property name="columnCount">
+      <number>2</number>
+     </property>
+     <column>
+      <property name="text">
+       <string>Current (x10^4 A)</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Power (µW)</string>
+      </property>
+     </column>
+    </widget>
+    <widget class="QPushButton" name="pushButton_scanFromMeasure">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>520</y>
+       <width>181</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Load data from last measurement</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_scanFromFile">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>550</y>
+       <width>111</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Load data from file...</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_scanSave">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>550</y>
+       <width>81</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Save data...</string>
+     </property>
+    </widget>
+    <widget class="QTableWidget" name="tableWidget_scanCurrent_2">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>240</y>
+       <width>271</width>
+       <height>271</height>
+      </rect>
+     </property>
+     <property name="rowCount">
+      <number>0</number>
+     </property>
+     <property name="columnCount">
+      <number>2</number>
+     </property>
+     <column>
+      <property name="text">
+       <string>Current (x10^4 A)</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Power (µW)</string>
+      </property>
+     </column>
+    </widget>
+    <widget class="QLabel" name="label_helperTable">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>220</y>
+       <width>91</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Helper Table:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_scanFromFile_2">
+     <property name="geometry">
+      <rect>
+       <x>510</x>
+       <y>550</y>
+       <width>111</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Load data from file...</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_scanFromMeasure_2">
+     <property name="geometry">
+      <rect>
+       <x>510</x>
+       <y>520</y>
+       <width>181</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Load data from last measurement</string>
      </property>
     </widget>
    </widget>

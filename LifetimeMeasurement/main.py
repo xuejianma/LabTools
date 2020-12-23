@@ -15,7 +15,7 @@ from datetime import timedelta
 from pyvisa import ResourceManager
 
 from PyQt5 import uic,QtTest
-from PyQt5.QtWidgets import QApplication, QWidget,QFrame, QFileDialog,QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget,QFrame, QFileDialog,QMessageBox, QTableWidgetItem
 from PyQt5.QtCore import QTimer,QThread,QProcess
 from utils import decay1,decay2,decay3,normalize,denormalize
 from scipy.optimize import curve_fit
@@ -49,12 +49,15 @@ class lifetimeMeasurement(QWidget):
         self.off_list = []
         self.averagedDecay = []
         self.xaxis = []
+        self.current_list = []
+        self.power_list = []
         self.timerCountdown = None
         self.timeLeft = None
         self.dataLoadedX = None
         self.dataLoadedY = None
         self.yFitted = None
         self.xFitReal = None
+        self.scanCurrent = 0.
 
 
 
@@ -62,6 +65,7 @@ class lifetimeMeasurement(QWidget):
     def connectAll(self):
         # self.comboBox_laserController.currentTextChanged.connect(self.selectResources)
         self.pushButton_refresh.clicked.connect(self.refreshResources)
+        self.pushButton_powerMeter.clicked.connect(self.refreshResourcesPowerMeter)
         self.pushButton_selectFolder.clicked.connect(self.selectFolder)
         self.pushButton_start.clicked.connect(self.startMeasure)
         self.pushButton_tmp.clicked.connect(self.clickTmp)
@@ -69,6 +73,7 @@ class lifetimeMeasurement(QWidget):
         self.comboBox_laserController.currentIndexChanged.connect(lambda:QTimer.singleShot(0,self.updateResources))
         # without singleShot, weird error occurs for pyvisa self.rm.open_resource for oscilloscope
         self.comboBox_oscilloscope.currentIndexChanged.connect(lambda:QTimer.singleShot(0,self.updateResources))
+        self.comboBox_powerMeter.currentIndexChanged.connect(lambda: QTimer.singleShot(0, self.updateResourcesPowerMeter))
         self.pushButton_laserOn.clicked.connect(lambda:self.laser_controller.write("OUTP ON"))
         self.pushButton_laserOff.clicked.connect(lambda: self.laser_controller.write("OUTP OFF"))
         self.lineEdit_setpoint.editingFinished.connect(self.currentSetpoint)
@@ -77,6 +82,12 @@ class lifetimeMeasurement(QWidget):
         self.pushButton_fromMeasurement.clicked.connect(self.loadDataFromMeasurement)
         self.pushButton_fitDecay.clicked.connect(self.fitDecay)
         self.pushButton_saveFittedCurve.clicked.connect(self.saveFittedCurve)
+        self.pushButton_startScanning.clicked.connect(self.startScanning)
+        self.pushButton_scanFromMeasure.clicked.connect(self.loadScanDataFromMeasurement)
+        self.pushButton_scanSave.clicked.connect(self.saveScanData)
+        self.pushButton_scanFromFile.clicked.connect(self.loadScanDataFromFile)
+        self.pushButton_scanFromMeasure_2.clicked.connect(self.loadScanDataFromMeasurement2)
+        self.pushButton_scanFromFile_2.clicked.connect(self.loadScanDataFromFile2)
     # def selectResources(self):
     #     self.laserController = self.comboBox_laserController.currentText()
     #     self.oscilloscope = self.comboBox_oscilloscope.currentText()
@@ -96,15 +107,22 @@ class lifetimeMeasurement(QWidget):
         for item in usb_list:
             self.comboBox_laserController.addItem(item)
             self.comboBox_oscilloscope.addItem(item)
+            self.comboBox_powerMeter.addItem(item)
             if "DS6D150100004" in item:
                 self.comboBox_oscilloscope.setCurrentText(item)  # find and define oscilloscope USB port
             elif "M00460823" in item:
                 self.comboBox_laserController.setCurrentText(item)  # find and define laser controller USB port
+            elif "P0016683" in item:
+                self.comboBox_powerMeter.setCurrentText(item)  # find and define laser controller USB port
 
         # print(__file__)
     def refreshResources(self):
         self.comboBox_laserController.clear()
         self.comboBox_oscilloscope.clear()
+        self.listResources()
+
+    def refreshResourcesPowerMeter(self):
+        self.comboBox_powerMeter.clear()
         self.listResources()
 
     def selectFolder(self):
@@ -123,6 +141,11 @@ class lifetimeMeasurement(QWidget):
         # print(self.comboBox_oscilloscope.currentText())
         self.oscilloscope = self.rm.open_resource(self.comboBox_oscilloscope.currentText())
         print('update resources: laser_controller:',self.comboBox_laserController.currentText(),' oscilloscope:',self.comboBox_oscilloscope.currentText())
+
+    def updateResourcesPowerMeter(self):
+        self.powerMeter = self.rm.open_resource(self.comboBox_powerMeter.currentText())
+        print('update resources: powerMeter:',self.comboBox_powerMeter.currentText())
+
 
     def currentSetpoint(self):
         currSetpoint = self.lineEdit_setpoint.text()
@@ -393,6 +416,91 @@ class lifetimeMeasurement(QWidget):
         print(path)
         # print(df)
         df.to_csv(path)
+
+    def startScanning(self):
+        self.tableWidget_scanCurrent.setRowCount(0)
+        self.progressBar_currentScan.setValue(0)
+        self.current_list = []
+        self.power_list = []
+        self.laser_controller = self.rm.open_resource(self.comboBox_laserController.currentText())
+        self.powerMeter = self.rm.open_resource(self.comboBox_powerMeter.currentText())
+
+        starting = self.spinBox_currentStart.value()*1e-4
+        self.scanCurrent = np.round(starting,6)
+        ending = self.spinBox_currentEnd.value()*1e-4
+        steps = self.spinBox_currentSteps.value()
+        currentDelta = float(ending-starting)/steps
+        time = self.spinBox_currentTime.value()
+        step_time = int(float(time)/steps*1e3)
+        self.tmpIndexScan = 0
+        self.scanTimer = QTimer()
+        self.scanTimer.timeout.connect(lambda:self.getPower(currentDelta,self.current_list,self.power_list,starting,ending,steps))
+        self.scanTimer.start(step_time)
+        print('scanning started',self.scanTimer)
+
+    def getPower(self,currentDelta,current_list,power_list,starting,ending,steps):
+        if self.tmpIndexScan>=steps:#self.scanCurrent>ending:
+            self.scanTimer.stop()
+            self.progressBar_currentScan.setValue(100)
+            # del self.tmpIndexScan
+        # current input
+        self.laser_controller.write("SOUR:CURR {}".format(self.scanCurrent))
+        power = self.powerMeter.query('Measure:Scalar:POWer?')
+        self.tableWidget_scanCurrent.insertRow(self.tableWidget_scanCurrent.rowCount())
+        self.tableWidget_scanCurrent.setItem(self.tmpIndexScan, 0, QTableWidgetItem(str(int(self.scanCurrent * 1e4))))
+        self.tableWidget_scanCurrent.setItem(self.tmpIndexScan, 1, QTableWidgetItem(str(float(power)*1e6)))
+        current_list.append(np.float(self.scanCurrent))
+        power_list.append(np.float(power))
+        self.scanCurrent += currentDelta
+        self.scanCurrent = np.round(self.scanCurrent, 6)
+        self.tmpIndexScan += 1
+
+        self.progressBar_currentScan.setValue(int((self.scanCurrent-starting)/(ending-starting)*100))
+        
+        print(self.scanCurrent,power)
+
+    def fillScanTable(self,tableWidget,scan_current_list,scan_power_list):
+        tableWidget.setRowCount(0)
+        tableWidget.setRowCount(len(scan_current_list))
+        for ind in range(len(scan_current_list)):
+            tableWidget.setItem(ind, 0, QTableWidgetItem(str(int(scan_current_list[ind] * 1e4))))
+            tableWidget.setItem(ind, 1, QTableWidgetItem(str(float(scan_power_list[ind]) * 1e6)))
+
+    def loadScanDataFromMeasurement(self):
+        self.fillScanTable(self.tableWidget_scanCurrent,self.current_list,self.power_list)
+
+    def loadScanDataFromMeasurement2(self):
+        self.fillScanTable(self.tableWidget_scanCurrent_2,self.current_list,self.power_list)
+
+    def saveScanData(self):
+        path = QFileDialog.getSaveFileName(self,'Save Measured Powers with Currents','./',"csv Files (*.csv);;All Files (*)")[0]
+        df = DataFrame({'Current (A)':self.current_list,'Power (W)':self.power_list})
+        df.to_csv(path,index=False)
+
+    def loadScanDataFromFile(self):
+        path = QFileDialog.getOpenFileName(self,'Selected Saved *csv File')[0]
+        df = read_csv(path,index_col=None)
+        file_current_list = df.iloc[:,0].values
+        file_power_list = df.iloc[:,1].values
+        self.fillScanTable(self.tableWidget_scanCurrent, file_current_list, file_power_list)
+
+    def loadScanDataFromFile2(self):
+        path = QFileDialog.getOpenFileName(self,'Selected Saved *csv File')[0]
+        df = read_csv(path,index_col=None)
+        file_current_list = df.iloc[:,0].values
+        file_power_list = df.iloc[:,1].values
+        self.fillScanTable(self.tableWidget_scanCurrent_2, file_current_list, file_power_list)
+
+    # def test(self):
+    #     print('test')
+
+
+
+        #       self.timerCountdown.timeout.connect(lambda:self.updateCountdown(intervalSecond))
+        #       self.timerCountdown.start(int(intervalSecond*1e3))
+
+        
+
 
 if __name__ == "__main__":
     app = QApplication([])
