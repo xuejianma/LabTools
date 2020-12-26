@@ -15,20 +15,19 @@ import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.figure import Figure
 
-
 class gui(QWidget):
     def __init__(self):
         super(gui, self).__init__()
         self.load_ui()
         # self.extraConfiguration()
-        self.connect()
+        self.connectAll()
         self.center = QPolygon()
         self.piximg = None
         # directoryName = None
         # responseFile = None
-        self.widget_response.setBackground('w')
-        self.widget_laserScreenshot.setBackground('w')
-        self.widget_laserFit.setBackground('w')
+        # self.widget_response.setBackground('w')
+        # self.widget_laserScreenshot.setBackground('w')
+        # self.widget_laserFit.setBackground('w')
         self.im_sim_raw = None
         self.re_sim_raw = None
         self.cond_array = None
@@ -70,7 +69,7 @@ class gui(QWidget):
     #     # self.label_ylabel.rotate(90)
 
 
-    def connect(self):
+    def connectAll(self):
         self.pushButton_directory.clicked.connect(self.selectDirectory)
         # self.label_image.mousePressEvent = self.findDotPos
         # self.pushButton_tmp.clicked.connect(self.combineSubDirectories)
@@ -82,7 +81,8 @@ class gui(QWidget):
         self.pushButton_laserFit.clicked.connect(self.plotLaserFit)
         self.pushButton_laserFitClear.clicked.connect(self.widget_laserFit.clear)
         self.pushButton_plotImage.clicked.connect(self.plotLaserScreenshot)
-
+        # self.label_laserScreenshot.mousePressEvent = self.findDotPos
+        # self.label_laserScreenshot.paintEvent = self.paintEvent2
     def selectDirectory(self):
         directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
         self.lineEdit_directory.setText(directoryName)
@@ -94,31 +94,6 @@ class gui(QWidget):
         # self.label_image.setPixmap(self.piximg)#QPixmap.fromImage(self.image))
 
 
-    def findDotPos(self,event):
-        pos = event.pos()
-        x = pos.x()
-        y = pos.y()
-        # print(x,y)
-        self.center.clear()
-        self.center << pos
-        self.pos = pos
-        self.label_center.setText(str(x)+' ,'+str(y))
-        self.update()
-        self.label_image.update()
-
-    # def paintEvent(self, event):
-    #     super().paintEvent(event)
-    #     if self.piximg != None:
-    #         qp = QPainter(self)
-    #         qp.setRenderHints(QPainter.Antialiasing)
-    #         pen = QPen(Qt.red,5)
-    #         brush = QBrush(Qt.red)
-    #         qp.setPen(pen)
-    #         qp.setBrush(brush)
-    #         qp.drawPixmap(self.label_image.rect(), self.piximg)
-    #         qp.drawEllipse(self.label_image.mapToParent(self.center.point(0)),5,5)
-    #         print(self.label_image.mapToParent(self.center.point(0)))
-    #         print(self.piximg)
 
     # def combineSubDirectories(self):
     #     print(self.lineEdit_subdirectories.text())
@@ -184,9 +159,15 @@ class gui(QWidget):
         # self.piximg = pixtmp.scaled(200, 200, Qt.KeepAspectRatio)
 
     def plotLaserScreenshot(self):
-        pixmap = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(200, 200, Qt.KeepAspectRatio)
-        print(pixmap)
-        self.label_laserScreenshot.setPixmap(pixmap)
+        self.pixmap_laser = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(200, 200, Qt.KeepAspectRatio)
+        # print(self.pixmap_laser)
+        self.label_laserScreenshot.setPixmap(self.pixmap_laser)
+        self.label_laserScreenshot.pixmap_laser = self.pixmap_laser
+        # self.update()
+        # self.label_laserScreenshot.clear()
+        # import time
+        # time.sleep(1)
+        # self.label_laserScreenshot.clear()
 
     def plotLaserFit(self):
         xx,yy,z = diffusion_map(1e-100,float(self.lineEdit_laserRadius.text())*np.sqrt(2),point_num=100,pos_max=15)
