@@ -16,10 +16,10 @@
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>60</y>
-     <width>781</width>
-     <height>581</height>
+     <x>20</x>
+     <y>10</y>
+     <width>791</width>
+     <height>641</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -425,31 +425,21 @@
       <string>select image file</string>
      </property>
     </widget>
-    <widget class="PlotWidget" name="widget_laserScreenshot" native="true">
-     <property name="geometry">
-      <rect>
-       <x>350</x>
-       <y>130</y>
-       <width>221</width>
-       <height>201</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="PlotWidget" name="widget_laserFit" native="true">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>330</y>
-       <width>261</width>
-       <height>201</height>
+       <x>460</x>
+       <y>200</y>
+       <width>321</width>
+       <height>261</height>
       </rect>
      </property>
     </widget>
     <widget class="QLabel" name="label_laserRadius">
      <property name="geometry">
       <rect>
-       <x>310</x>
-       <y>350</y>
+       <x>470</x>
+       <y>480</y>
        <width>91</width>
        <height>20</height>
       </rect>
@@ -461,8 +451,8 @@
     <widget class="QLineEdit" name="lineEdit_laserRadius">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>350</y>
+       <x>580</x>
+       <y>480</y>
        <width>41</width>
        <height>22</height>
       </rect>
@@ -477,8 +467,8 @@
     <widget class="QPushButton" name="pushButton_laserFit">
      <property name="geometry">
       <rect>
-       <x>310</x>
-       <y>460</y>
+       <x>630</x>
+       <y>470</y>
        <width>71</width>
        <height>41</height>
       </rect>
@@ -491,8 +481,8 @@
     <widget class="QPushButton" name="pushButton_laserFitClear">
      <property name="geometry">
       <rect>
-       <x>310</x>
-       <y>510</y>
+       <x>710</x>
+       <y>480</y>
        <width>71</width>
        <height>21</height>
       </rect>
@@ -532,8 +522,8 @@
       <rect>
        <x>50</x>
        <y>130</y>
-       <width>201</width>
-       <height>201</height>
+       <width>401</width>
+       <height>401</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -541,6 +531,20 @@
      </property>
      <property name="text">
       <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_laserLinecut">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>550</y>
+       <width>71</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Plot
+ Laser Linecut</string>
      </property>
     </widget>
    </widget>

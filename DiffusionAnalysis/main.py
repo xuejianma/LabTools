@@ -25,9 +25,9 @@ class gui(QWidget):
         self.piximg = None
         # directoryName = None
         # responseFile = None
-        # self.widget_response.setBackground('w')
+        self.widget_response.setBackground('w')
         # self.widget_laserScreenshot.setBackground('w')
-        # self.widget_laserFit.setBackground('w')
+        self.widget_laserFit.setBackground('w')
         self.im_sim_raw = None
         self.re_sim_raw = None
         self.cond_array = None
@@ -83,6 +83,7 @@ class gui(QWidget):
         self.pushButton_plotImage.clicked.connect(self.plotLaserScreenshot)
         # self.label_laserScreenshot.mousePressEvent = self.findDotPos
         # self.label_laserScreenshot.paintEvent = self.paintEvent2
+        self.pushButton_laserLinecut.clicked.connect(self.plotLaserLinecut)
     def selectDirectory(self):
         directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
         self.lineEdit_directory.setText(directoryName)
@@ -159,7 +160,8 @@ class gui(QWidget):
         # self.piximg = pixtmp.scaled(200, 200, Qt.KeepAspectRatio)
 
     def plotLaserScreenshot(self):
-        self.pixmap_laser = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(200, 200, Qt.KeepAspectRatio)
+
+        self.pixmap_laser = QPixmap(self.lineEdit_laserScreenshot.text())#.scaled(200, 200, Qt.KeepAspectRatio)
         # print(self.pixmap_laser)
         self.label_laserScreenshot.setPixmap(self.pixmap_laser)
         self.label_laserScreenshot.pixmap_laser = self.pixmap_laser
@@ -169,16 +171,9 @@ class gui(QWidget):
         # time.sleep(1)
         # self.label_laserScreenshot.clear()
 
-    def plotLaserFit(self):
-        xx,yy,z = diffusion_map(1e-100,float(self.lineEdit_laserRadius.text())*np.sqrt(2),point_num=100,pos_max=15)
-        x_axis_fit = xx[0]
-        total = np.sum(z)
-        z /= total
-        z_axis_fit = z[round(z.shape[0] / 2)]
-        z0 = np.max(z_axis_fit)  # or np.max(z). They are the same
-        # plt.plot(x_axis_fit, z_axis_fit / z0, label='L={}μm'.format(int(L)), color='black')
-        self.widget_laserFit.plot(x_axis_fit,z_axis_fit/z0,pen=pg.mkPen(width=3))
 
+    def plotLaserLinecut(self):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
         laserimg_cropped = np.asarray(Image.open(self.lineEdit_laserScreenshot.text()))
         laser_X_cropped = np.linspace(-15,15,np.shape(laserimg_cropped)[1])
         laser_Y_cropped = np.linspace(-15,15,np.shape(laserimg_cropped)[0])
@@ -196,6 +191,21 @@ class gui(QWidget):
         # plt.scatter(laser_rList[::4], laser_zList_edgesupress[::4], marker='o', color='blue', s=50, zorder=5, alpha=1,
         #             label='Laser profile')
 
+        QApplication.restoreOverrideCursor()
+
+    def plotLaserFit(self):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        xx,yy,z = diffusion_map(1e-100,float(self.lineEdit_laserRadius.text())*np.sqrt(2),point_num=100,pos_max=15)
+        x_axis_fit = xx[0]
+        total = np.sum(z)
+        z /= total
+        z_axis_fit = z[round(z.shape[0] / 2)]
+        z0 = np.max(z_axis_fit)  # or np.max(z). They are the same
+        # plt.plot(x_axis_fit, z_axis_fit / z0, label='L={}μm'.format(int(L)), color='black')
+        self.widget_laserFit.plot(x_axis_fit,z_axis_fit/z0,pen=pg.mkPen(width=3))
+
+
+        QApplication.restoreOverrideCursor()
 
 if __name__ == "__main__":
     app = QApplication([])

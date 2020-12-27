@@ -331,8 +331,8 @@ def radialAverageByLinecuts(graph,center,xAxis_or_xMeshgrid,yAxis_or_yMeshgrid,r
         x_list = xAxis_or_xMeshgrid[0]
         y_list = yAxis_or_yMeshgrid[:,0]
 #     print(np.shape(xx),np.shape(yy),graphShape)
-    if not np.shape(xx)==np.shape(yy)==graphShape:
-        raise ValueError("image size is not equal to x size times y size")
+#     if not np.shape(xx)==np.shape(yy)==graphShape:
+#         raise ValueError("image size is not equal to x size times y size")
     #print(y_list)
     graph_interpolated = interpolate.RectBivariateSpline(y_list, x_list, graph) #RectBivariateSpline: y before x. interp2d: x before y. (for both function before and function usage)
     #graph_interpolated = interpolate.interp2d(xAxis_or_xMeshgrid, yAxis_or_yMeshgrid, graph)
