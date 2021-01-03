@@ -10,7 +10,7 @@ class LabelDots(QLabel):
     def mousePressEvent(self,event):
         super().mousePressEvent(event)
         # self.label_laserScreenshot.clear()
-        self.clear()
+        # self.clear()
         pos = event.pos()
         x = pos.x()
         y = pos.y()
@@ -21,6 +21,7 @@ class LabelDots(QLabel):
         # self.label_center.setText(str(x) + ' , ' + str(y))
         print(x, y, 111)
         print(self.center.point(0), 222)
+        self.update()
     def paintEvent(self, event):
         super().paintEvent(event)
         print('tttt')
@@ -33,11 +34,12 @@ class LabelDots(QLabel):
             brush = QBrush(Qt.red)
             qp.setPen(pen)
             qp.setBrush(brush)
-            qp.drawPixmap(event.rect(), self.pixmap_laser)
+            # qp.drawPixmap(event.rect(), self.pixmap_laser)
+            # self.setPixmap(self.pixmap_laser)
             qp.drawEllipse(self.center.point(0),1,1)
             qp.end()
             # print(self.label_laserScreenshot.mapToParent(self.center.point(0)))
-            print(event.rect())
+            # print(event.rect())
 
 
 

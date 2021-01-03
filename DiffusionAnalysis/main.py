@@ -3,8 +3,8 @@ import sys
 import os
 
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QGridLayout, QLabel, QVBoxLayout
-from PyQt5.QtCore import QFile, Qt
+from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QGridLayout, QLabel, QVBoxLayout, QSizePolicy
+from PyQt5.QtCore import QFile, Qt, QSize
 # from PyQt5.QtUiTools import QUiLoader
 from PyQt5.QtGui import QPixmap,QImage, QPainter, QPen, QBrush, QPolygon
 import pyqtgraph as pg
@@ -160,16 +160,18 @@ class gui(QWidget):
         # self.piximg = pixtmp.scaled(200, 200, Qt.KeepAspectRatio)
 
     def plotLaserScreenshot(self):
+        self.xyminmax=np.array([self.lineEdit_xmin.text(),self.lineEdit_xmax.text(),self.lineEdit_ymin.text(),
+                                self.lineEdit_ymax.text()]).astype(float)
+        xrange = self.xyminmax[1]-self.xyminmax[0]
+        yrange = self.xyminmax[3]-self.xyminmax[2]
+        height = self.label_laserScreenshot.height())
+        self.pixmap_laser = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(400, 100, Qt.IgnoreAspectRatio)
 
-        self.pixmap_laser = QPixmap(self.lineEdit_laserScreenshot.text())#.scaled(200, 200, Qt.KeepAspectRatio)
-        # print(self.pixmap_laser)
+        print(self.pixmap_laser.size())
+
         self.label_laserScreenshot.setPixmap(self.pixmap_laser)
         self.label_laserScreenshot.pixmap_laser = self.pixmap_laser
-        # self.update()
-        # self.label_laserScreenshot.clear()
-        # import time
-        # time.sleep(1)
-        # self.label_laserScreenshot.clear()
+
 
 
     def plotLaserLinecut(self):
