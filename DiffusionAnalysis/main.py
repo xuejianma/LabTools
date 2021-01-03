@@ -164,10 +164,15 @@ class gui(QWidget):
                                 self.lineEdit_ymax.text()]).astype(float)
         xrange = self.xyminmax[1]-self.xyminmax[0]
         yrange = self.xyminmax[3]-self.xyminmax[2]
-        height = self.label_laserScreenshot.height())
-        self.pixmap_laser = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(400, 100, Qt.IgnoreAspectRatio)
+        height = self.label_laserScreenshot.height()
+        width = self.label_laserScreenshot.width()
+        self.label_laserScreenshot.setAlignment(Qt.AlignCenter)
+        # if xrange/width < yrange/height:
+        ratio = np.min([width/xrange,height/yrange])
+        self.laserScreenshotWidth,self.laserScreenshotHeight = int(xrange*ratio), int(yrange*ratio)
+        self.pixmap_laser = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(self.laserScreenshotWidth,self.laserScreenshotHeight, Qt.IgnoreAspectRatio)
 
-        print(self.pixmap_laser.size())
+        # print(self.pixmap_laser.size())
 
         self.label_laserScreenshot.setPixmap(self.pixmap_laser)
         self.label_laserScreenshot.pixmap_laser = self.pixmap_laser
@@ -185,7 +190,7 @@ class gui(QWidget):
                                                                         threshold=1 / 6 * 1, angleSteps=10)
 
         selectxyarray = np.asarray(radialAverageByLinecuts.selectxy)
-        print(selectxyarray.reshape(-1,2))
+        # print(selectxyarray.reshape(-1,2))
         laser_zList_norm = laser_zList / np.max(laser_zList)
         laser_zList_edgesupress = np.asarray(
             [item / (abs(laser_rList[i]) ** 2 * 0.065 + 1) for i, item in enumerate(laser_zList_norm)])

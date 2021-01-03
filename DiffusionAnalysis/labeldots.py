@@ -14,17 +14,24 @@ class LabelDots(QLabel):
         pos = event.pos()
         x = pos.x()
         y = pos.y()
+        Parent = self.parent().parent().parent().parent()
+        Width, Height = self.width(),self.height()
+        width, height = Parent.laserScreenshotWidth, Parent.laserScreenshotHeight
+        widthDiff,heightDiff = Width-width, Height-height
+        xmin,xmax,ymin,ymax = Parent.xyminmax
+        xcoord,ycoord = (x-widthDiff/2)/width*(xmax-xmin)+xmin,(Height-y-heightDiff/2)/height*(ymax-ymin)+ymin
+        print(xcoord,ycoord)
         self.center.clear()
         self.center << pos
-        print(pos,9999999,self.center)
+        # print(pos,9999999,self.center)
         self.pos = pos
         # self.label_center.setText(str(x) + ' , ' + str(y))
-        print(x, y, 111)
-        print(self.center.point(0), 222)
+        # print(x, y, 111)
+        # print(self.center.point(0), 222)
         self.update()
     def paintEvent(self, event):
         super().paintEvent(event)
-        print('tttt')
+        # print('tttt')
         if self.pixmap_laser != None:
             # self.abel_laserScreenshotl.clear()
             qp = QPainter(self)
