@@ -18,7 +18,7 @@ rootPath records:
 '../../Perovskite/HTL_ETL/HTL_firstBatchAfterStayAtHome/20200617/' 2100
 '../../Perovskite/HTL_ETL/ETL_TiO2_firstBatchAfterStayAtHome_IncompletePiece_GloveBox/' 3500
 """
-rootPath = '../../Perovskite/3(among123456)/'#'../../Perovskite/diffusion_summary/mixer/pvk_maps2/'
+rootPath = '../../Perovskite/diffusion_summary/mixer/pvk_maps/'#'../../Perovskite/3(among123456)/'#'../../Perovskite/diffusion_summary/mixer/pvk_maps2/'
 savePath = rootPath+"/processFiles/"
 # savePath = rootPath+"/processFiles_new/"
 if not os.path.exists(savePath):
@@ -43,10 +43,10 @@ diffusionCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/diffTip1.csv"#sfdawe
 
 trCOMSOLCSV="../../Perovskite/simulation_Im_Re_curve/tr2.csv"
 # intensityListForPhaseDiagram = ["00004","00007","00013","00022","00044","00073"] #00007 is excluded due to a bad line
-intensityListForPhaseDiagram = ['00020','00031','00057','00083',]#["100","300","800","2000","5000","10000"] #00007 is excluded due to a bad line
+intensityListForPhaseDiagram = ["100","300","800","2000","5000","10000"]#['00020','00031','00057','00083',]#["100","300","800","2000","5000","10000"] #00007 is excluded due to a bad line
 
 
-power_label = ["1.0x10² mW/cm²","3.0x10² mW/cm²","8.0x10² mW/cm²","20x10² mW/cm²",]#"50x10² mW/cm²","100x10² mW/cm²"]
+power_label = ["1.0x10² mW/cm²","3.0x10² mW/cm²","8.0x10² mW/cm²","20x10² mW/cm²","50x10² mW/cm²","100x10² mW/cm²"]
 power_list =[100,300,800,2000]#,5000,10000]
 # power_label = ["100x10² mW/cm²"]
 # power_list =[10000]
@@ -90,8 +90,10 @@ Hisotry records:
 x_extra_shift_list = np.array([0.2, -0.6, 0.45, -0.85, -0.1, 0.15])
 y_extra_shift_list = np.array([-0.3, 0., -0.35, -0.1, 0.2, 0.4])
 """
-x_extra_shift_list = np.array([0,0,0,0])
-y_extra_shift_list = np.array([0.5,0.5,0.5,0.5])
+x_extra_shift_list = np.array([0.27, 0.09, -0.2, -0.3, 0.0 - 0.45, -0.75 - 0.45]) + np.asarray(
+    [-0.76276169, -0.45913387, -0.15354331, -0.15354331, 0., 2.36675187])
+y_extra_shift_list = np.array([-0.55, 0.75 - 0.3, 0.4 + 0.1, 0.5 + 0.2, 0.0 + 0.25, -0.25 - 0.05]) + np.asarray(
+    [1.05682016, -0.45771987, -0.91839836, -0.15224807, -0.6109478, 1.05682016])
 """
 Usually we set unskewFlag = 0. If you consider yourself a perfectionist, try set unskewFlag = 1, and change skew 
 parameters in convert2Unskewed_preRun.py. Run it first. It takes a while. Then the program will extract unskewed coordinates with 

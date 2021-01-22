@@ -32,7 +32,7 @@ extra_shift_list = [0, 0, 0, 0, 0, 0]  # [-0.2,-0.2,0,0,0,0]
 
 fig_x_range = 20
 trial = False
-extra_multiply_list = [0.95,0.95,0.95,0.95]#[0.994,0.994,0.95,0.994,0.994,0.994]
+extra_multiply_list = [1,1,1,1,1,1]#[0.95,0.95,0.95,0.95]#[0.994,0.994,0.95,0.994,0.994,0.994]
 
 #no transport layer:[0.994]*6#[0.994,0.994,0.94,0.994,0.994,0.994]
 #HTL: [0.96,0.97,0.98,0.97,0.97,0.97] wrong: [0.994]*6 #wrong HTL:[0.95,0.98,0.994,0.95,0.994,0.99]
@@ -102,6 +102,7 @@ for ind in range(len(zList_all)):
                                                                                               threshold = threshold,
                                                                                               fitrange=fitrange)
         print('threshold = {}'.format(threshold))
+
     except:
         lower_boundary, best_fit, upper_boundary, score_lower, score_best, score_upper = fit1(x_axis, z_axis,
                                                                                               diffusion_simulation_database,
@@ -110,6 +111,7 @@ for ind in range(len(zList_all)):
                                                                                               threshold=0.90,
                                                                                               fitrange=fitrange)#4 7
         print('threshold = 0.98')
+
     # temp = fit2(x_axis,z_axis,diffusion_simulation_database,extra_multiply=extra_multiply_list[ind])
 
     # diffusion_simulation_R2_score = dict.fromkeys(diffusion_simulation_database.keys(),None)
@@ -178,63 +180,63 @@ for ind in range(len(zList_all)):
         buffer_list.append(buffer)
 plt.savefig(savePath+"/diffusionFittings.png")
 
-import pandas as pd
-conductivityLinecut_list = []
-for ind,buffer in enumerate(buffer_list):
-    df = pd.DataFrame(buffer).T
-    # df.to_csv(savePath+'/conductivityLinecut_'+str(ind+1)+'.csv')
-    df = df.rename(
-        columns={'0': 'x1', '1': 'y1(data)', '2': 'x2', '3': 'y2(lower)', '4': 'x3', '5': 'y3(best)', '6': 'x4',
-                 '7': 'y4(upper)'})
-    conductivityLinecut_list.append(df)
-
-headerintensities=np.asarray(np.asarray(range(len(buffer_list)))+1).astype(str)
-header = pd.MultiIndex.from_product([power_list,
-                                     ['x1', 'y1(data)', 'x2', 'y2(lower)', 'x3', 'y3(best)', 'x4', 'y4(upper)']],
-                                    names=['intensities', 'entries'])
-df = pd.DataFrame(pd.concat(conductivityLinecut_list, axis=1).values, columns=header)
-df.to_excel(savePath + 'diffusionLinecuts.xlsx')
-
-
-
-"""
-diffusion length vs laser power curve
-"""
-plt.figure(figsize=(8,5))
-SMALL_SIZE = 8
-MEDIUM_SIZE = 15
-BIGGER_SIZE = 20
-
-plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
-plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=MEDIUM_SIZE)    # legend fontsize
-plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
-plt.rc('axes', linewidth=1.5)
-plt.rc('xtick.major',size=3,width=2)
-plt.rc('ytick.major',size=3,width=2)
-plt.rc('xtick.minor',size=2,width=1)
-plt.rc('ytick.minor',size=2,width=1)
-
-# power_list =[100,300,800,2000,5000,10000]
-# error_list = [[4.5,5.5],[3.7,4.7],[3.1,4.1],[2.6,4.3],[2.6,4.8],[2.5,4.5]]
-# diffusion_list_fit_list = [5,4.2,3.6,3.4,3.5,3.2]
-plt.scatter(power_list,diffusion_list_fit_list,marker='s',color='black',s=75,zorder=10)
-#plt.plot([100,800],[diffusion_list_fit_list[0]-0.2,diffusion_list_fit_list[2]-0.2],color='gray',linestyle='dashed')
-plt.plot(power_list,diffusion_list_fit_list,linestyle='dashed',color='gray',linewidth=3)
-for ind,power in enumerate(power_list):
-     plt.errorbar(power,error_list[ind],color = 'black',fmt='-_',linewidth=1,capsize=20)
-plt.yticks(np.arange(0, 10, step=1))
-plt.xscale('log')
-ymin = error_list[-1][0]-0.1-0.55
-ymax = error_list[0][1]+0.1+0.25
-plt.ylim(ymin,ymax)
-plt.xlabel("$P_c$ (mW/cm²)")
-plt.ylabel("Diffusion Length (µm)",labelpad=15)
-plt.tight_layout()
-plt.fill_between(power_list, np.array(error_list)[:,0],np.array(error_list)[:,1],color='oldlace')
-plt.savefig(savePath+"/diffusionLengthVSLaserPower.png")
-
-print(diffusion_list_fit_list,error_list)
+# import pandas as pd
+# conductivityLinecut_list = []
+# for ind,buffer in enumerate(buffer_list):
+#     df = pd.DataFrame(buffer).T
+#     # df.to_csv(savePath+'/conductivityLinecut_'+str(ind+1)+'.csv')
+#     df = df.rename(
+#         columns={'0': 'x1', '1': 'y1(data)', '2': 'x2', '3': 'y2(lower)', '4': 'x3', '5': 'y3(best)', '6': 'x4',
+#                  '7': 'y4(upper)'})
+#     conductivityLinecut_list.append(df)
+#
+# headerintensities=np.asarray(np.asarray(range(len(buffer_list)))+1).astype(str)
+# header = pd.MultiIndex.from_product([power_list,
+#                                      ['x1', 'y1(data)', 'x2', 'y2(lower)', 'x3', 'y3(best)', 'x4', 'y4(upper)']],
+#                                     names=['intensities', 'entries'])
+# df = pd.DataFrame(pd.concat(conductivityLinecut_list, axis=1).values, columns=header)
+# df.to_excel(savePath + 'diffusionLinecuts.xlsx')
+#
+#
+#
+# """
+# diffusion length vs laser power curve
+# """
+# plt.figure(figsize=(8,5))
+# SMALL_SIZE = 8
+# MEDIUM_SIZE = 15
+# BIGGER_SIZE = 20
+#
+# plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
+# plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
+# plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
+# plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+# plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+# plt.rc('legend', fontsize=MEDIUM_SIZE)    # legend fontsize
+# plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+# plt.rc('axes', linewidth=1.5)
+# plt.rc('xtick.major',size=3,width=2)
+# plt.rc('ytick.major',size=3,width=2)
+# plt.rc('xtick.minor',size=2,width=1)
+# plt.rc('ytick.minor',size=2,width=1)
+#
+# # power_list =[100,300,800,2000,5000,10000]
+# # error_list = [[4.5,5.5],[3.7,4.7],[3.1,4.1],[2.6,4.3],[2.6,4.8],[2.5,4.5]]
+# # diffusion_list_fit_list = [5,4.2,3.6,3.4,3.5,3.2]
+# plt.scatter(power_list,diffusion_list_fit_list,marker='s',color='black',s=75,zorder=10)
+# #plt.plot([100,800],[diffusion_list_fit_list[0]-0.2,diffusion_list_fit_list[2]-0.2],color='gray',linestyle='dashed')
+# plt.plot(power_list,diffusion_list_fit_list,linestyle='dashed',color='gray',linewidth=3)
+# for ind,power in enumerate(power_list):
+#      plt.errorbar(power,error_list[ind],color = 'black',fmt='-_',linewidth=1,capsize=20)
+# plt.yticks(np.arange(0, 10, step=1))
+# plt.xscale('log')
+# ymin = error_list[-1][0]-0.1-0.55
+# ymax = error_list[0][1]+0.1+0.25
+# plt.ylim(ymin,ymax)
+# plt.xlabel("$P_c$ (mW/cm²)")
+# plt.ylabel("Diffusion Length (µm)",labelpad=15)
+# plt.tight_layout()
+# plt.fill_between(power_list, np.array(error_list)[:,0],np.array(error_list)[:,1],color='oldlace')
+# plt.savefig(savePath+"/diffusionLengthVSLaserPower.png")
+#
+# print(diffusion_list_fit_list,error_list)

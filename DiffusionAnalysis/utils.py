@@ -453,6 +453,10 @@ def fit1(x_axis,z_axis,diffusion_simulation_database,extra_multiply,threshold = 
 #         print((z_axis_fit_for_R2))
         R2_score_list.append((R2_score,length))
 
+    plt.figure()
+    # print(len(x_axis_clip[index_list1]),len(z_axis_norm),len(z_axis_fit_for_R2))
+    plt.plot(x_axis_clip[index_list1],z_axis_norm)
+    plt.show()
     #threshold = 0.97 # you could adjust the threshold here to control the fitting range.
     R2_score_list_selected = []
     for R2_score,length in R2_score_list:
@@ -494,3 +498,108 @@ def fit2(x_axis,z_axis,diffusion_simulation_database,extra_multiply):
                 R2_score = R2(z_axis_norm,z_axis_fit_for_R2)
                 R2_score_list.append((R2_score,(c1,L1,c2,L2)))
     return R2_score_list
+
+
+def euclideanDistance(coord1,coord2):
+    return np.sqrt((coord1[0]-coord2[0])**2+(coord1[1]-coord2[1])**2)
+
+def getLinecut(image,X,Y,pt1,pt2):
+    row_col_1, row_col_2 = getRowCol(pt1,X,Y), getRowCol(pt2,X,Y)
+    row1,col1 = np.asarray(row_col_1).astype(float)
+    row2,col2 = np.asarray(row_col_2).astype(float)
+    dist = np.sqrt((pt1[0]-pt2[0])**2+(pt1[1]-pt2[1])**2)
+    N = int(euclideanDistance(row_col_1,row_col_2))#int(np.sqrt((row1-row2)**2+(col1-col2)**2))
+    rowList = [int(row1 + (row2-row1)/N*ind) for ind in range(N)]
+    colList = [int(col1 + (col2-col1)/N*ind) for ind in range(N)]
+    distList = [dist/N*ind for ind in range(N)]
+    return distList,image[rowList,colList]#rowList,colList
+
+def getRowCol(pt,X,Y):
+    if X.min()<=pt[0]<=X.max() and Y.min()<=pt[1]<=Y.max():
+        pass
+    else:
+        raise ValueError('The input center is not within the given scope.')
+    center_coord_rowCol = (np.argmin(abs(Y-pt[1])),np.argmin(abs(X-pt[0])))
+    return center_coord_rowCol
+
+def binarySearch(left,right,conditionFunction,threshold=1e-5):
+    if euclideanDistance(left,right)/euclideanDistance(right,(0,0))<=threshold:#np.sqrt((left[0]-right[0])**2+(left[1]-right[1])**2)/np.sqrt((right[0])**2+(right[1])**2) <= 1e-5:
+        return left
+    middle = (left+right)/2
+    if conditionFunction(middle) is False:
+        result = binarySearch(middle,right,conditionFunction)
+    else:
+        result = binarySearch(left,middle,conditionFunction)
+    return result
+
+def exclusionCondition(pt,X,Y):
+    if X.min()<=pt[0]<=X.max() and Y.min()<=pt[1]<=Y.max():
+        return False
+    else:
+        return True
+
+def getEdgePointsAcrossCenter(image,X,Y,center,angleDegree):
+    unitVector = np.asarray([np.cos(angleDegree*np.pi/180),np.sin(angleDegree*np.pi/180)])
+    unitVectorPos = unitVector
+    unitVectorNeg = unitVector
+    trialEdgePos = np.asarray(center).astype(float)
+    trialEdgeNeg = np.asarray(center).astype(float)
+    while not exclusionCondition(trialEdgeNeg,X,Y):
+        trialEdgeNeg -= unitVectorNeg
+        unitVectorNeg *= 2
+    left = trialEdgeNeg + unitVectorNeg/2
+    right = trialEdgeNeg
+    edgeNeg = binarySearch(left,right,lambda middle: exclusionCondition(middle,X,Y))
+    while not exclusionCondition(trialEdgePos,X,Y):
+        trialEdgePos += unitVectorPos
+        unitVectorPos *= 2
+    left = trialEdgePos - unitVectorPos/2
+    right = trialEdgePos
+    edgePos = binarySearch(left,right,lambda middle: exclusionCondition(middle,X,Y))
+    return edgeNeg,edgePos
+
+def radialAverage(graph,center,X,Y,angleSteps,angleOffsetDegree = 0):
+    image_copy = np.array(graph)
+    if angleSteps%2 == 0:
+        angleUnitDegree = 180/angleSteps # changed to 2*np.pi instead of np.pi for radialAverageByLinecuts. Different from radialAverageByLines with opposite lists sperately.
+    else:
+        angleUnitDegree = 360/angleSteps
+    angleArrayDegree = np.array([angleOffsetDegree + angleUnitDegree*ind for ind in range(angleSteps)])
+
+    interpDB = []
+    div = np.inf
+    minValue = np.inf
+    maxValue = -np.inf
+    edgePtsDB = []
+    for angleDegree in angleArrayDegree:
+        edgeNeg,edgePos = getEdgePointsAcrossCenter(image_copy,X,Y,center,angleDegree)
+        edgePtsDB.append([edgeNeg,edgePos])
+        distNeg = euclideanDistance(edgeNeg,center)
+        distList, linecut = getLinecut(image_copy,X,Y,edgeNeg,edgePos)
+        distArray = np.asarray(distList)-distNeg
+        interp = interp1d(distArray,linecut,kind='nearest')
+        interpDB.append(interp)
+        currDiv = distArray[1]-distArray[0]
+        if currDiv < div:
+            div = currDiv
+        if distArray[-1] > maxValue:
+            maxValue = distArray[-1]
+        if distArray[0] < minValue:
+            minValue = distArray[0]
+    combinedDistArray = np.linspace(minValue,maxValue,int((maxValue-minValue)/currDiv))
+    combinedCountArray = np.zeros(combinedDistArray.shape)
+    combinedLinecut = np.zeros(combinedDistArray.shape)
+    for ind in range(len(interpDB)):
+        interp = interpDB[ind]
+        xmax = np.max(interp.x)
+        xmin = np.min(interp.x)
+        selectCondition = (combinedDistArray<=xmax) & (combinedDistArray>=xmin)
+        rangedCombinedDistArray = np.clip(combinedDistArray,xmin,xmax)#combinedDistArray[selectCondition]
+        countArray = np.zeros(combinedDistArray.shape)
+        countArray[selectCondition] = 1
+        combinedCountArray += countArray
+        linecut = interp(rangedCombinedDistArray)
+        linecut[np.invert(selectCondition)] = 0.
+        combinedLinecut += linecut
+    combinedLinecut /= combinedCountArray
+    return combinedDistArray,combinedLinecut,edgePtsDB
