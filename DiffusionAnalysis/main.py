@@ -35,39 +35,9 @@ class gui(QWidget):
         self.re_sim = None
         self.laserScreenshot = None
 
-        # self.graphWidget = pg.PlotWidget()
-        # # self.setCentralWidget(self.graphWidget)
-        #
-        # hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        # temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
-        #
-        # # plot data: x, y values
-        # self.graphWidget.plot(hour, temperature)
-        # self.widget_response = self.graphWidget
-
-
     def load_ui(self):
         path = os.path.join(os.path.dirname(__file__), "form.ui")
         uic.loadUi(path, self)
-
-
-    # def extraConfiguration(self):
-    #     self.widget_response.canvas = FigureCanvas(Figure())
-    #     # self.widget_response.canvas.resize(2,1)
-    #     vertical_layout = QVBoxLayout()
-    #     vertical_layout.addWidget(self.widget_response.canvas)
-    #
-    #
-    #
-    #     self.widget_response.canvas.axes = self.widget_response.canvas.figure.add_subplot(111)
-    #     self.widget_response.canvas.axes.set_xlabel('MIM-Im')
-    #     self.widget_response.canvas.axes.set_ylabel('MIM-Re')
-    #     # self.widget_response.canvas.figure.tight_layout(pad=5)
-    #     # self.widget_response.canvas.axes.set_size(1,2)
-    #     self.widget_response.setLayout(vertical_layout)
-    #
-    #     # self.label_ylabel.rotate(90)
-
 
     def connectAll(self):
         self.pushButton_directory.clicked.connect(self.selectDirectory)
@@ -108,26 +78,6 @@ class gui(QWidget):
         # print(responseFile[0])
         self.lineEdit_response.setText(responseFile)
 
-        # pixtmp = QPixmap(responseFile)
-        # self.piximg = pixtmp.scaled(200,200,Qt.KeepAspectRatio)
-        # self.label_response.setPixmap(self.piximg)#QPixmap.fromImage(self.image))
-
-        # self.plotResponse()
-
-
-    # def updateResponse(self,x,y):
-    #     # self.widget_response.canvas.axes.clear()
-    #     # self.widget_response.canvas.axes.plot(x,y)
-    #     # # self.widget_response.canvas.axes.set_xlabel('MIM-Im')
-    #     # # self.widget_response.canvas.axes.set_ylabel('MIM-Re')
-    #     # # self.widget_response.canvas.figure.tight_layout(pad=3)
-    #     # # self.widget_response.canvas.axes.legend(('cosinus', 'sinus'), loc='upper right')
-    #     # # self.widget_response.canvas.axes.set_title(' Cosinus - Sinus Signal')
-    #     #
-    #     # self.widget_response.canvas.draw()
-    #     self.widget_response.clear()
-    #     self.widget_response.plot(x,y)
-
     def plotResponse(self):
         self.widget_response.clear()
 
@@ -147,17 +97,6 @@ class gui(QWidget):
     def selectLaserScreenshot(self):
         self.laserScreenshot = QFileDialog.getOpenFileName(self, 'Select Laser Screenshot Image', )[0]
         self.lineEdit_laserScreenshot.setText(self.laserScreenshot)
-        # pixmap = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(200, 200, Qt.KeepAspectRatio)
-        # self.label_laserScreenshot.setPixmap(pixmap)
-
-        # self.plotLaserScreenshot()
-
-        # print(self.lineEdit_laserScreenshot.text())
-        # image_array = pg.QtGui.QGraphicsPixmapItem(pg.QtGui.QPixmap(self.lineEdit_laserScreenshot.text()))#np.asarray(Image.open(self.lineEdit_laserScreenshot.text()))
-        # print(image_array)
-        # self.widget_laserScreenshot.addItem(image_array)
-
-        # self.piximg = pixtmp.scaled(200, 200, Qt.KeepAspectRatio)
 
     def plotLaserScreenshot(self):
         self.xyminmax=np.array([self.lineEdit_xmin.text(),self.lineEdit_xmax.text(),self.lineEdit_ymin.text(),
