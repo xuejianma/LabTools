@@ -7,6 +7,8 @@ class LabelDots(QLabel):
         super().__init__(parent=parent)
         self.center = QPolygon()
         self.pixmap_laser = None
+        self.centerCoords = None
+
     def mousePressEvent(self,event):
         super().mousePressEvent(event)
         # self.label_laserScreenshot.clear()
@@ -21,11 +23,12 @@ class LabelDots(QLabel):
         xmin,xmax,ymin,ymax = Parent.xyminmax
         xcoord,ycoord = (x-widthDiff/2)/width*(xmax-xmin)+xmin,(Height-y-heightDiff/2)/height*(ymax-ymin)+ymin
         print(xcoord,ycoord)
+        self.centerCoords = (xcoord,ycoord)
         self.center.clear()
         self.center << pos
         # print(pos,9999999,self.center)
         self.pos = pos
-        # self.label_center.setText(str(x) + ' , ' + str(y))
+        Parent.label_center.setText("Center Coordinate:\nx = "+str(xcoord) + "\ny = " + str(ycoord))
         # print(x, y, 111)
         # print(self.center.point(0), 222)
         self.update()

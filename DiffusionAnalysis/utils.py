@@ -560,6 +560,10 @@ def getEdgePointsAcrossCenter(image,X,Y,center,angleDegree):
 
 def radialAverage(graph,center,X,Y,angleSteps,angleOffsetDegree = 0):
     image_copy = np.array(graph)
+    if len(image_copy.shape) > 2:
+        print(image_copy.shape)
+        image_copy = image_copy[:,:,1]
+
     if angleSteps%2 == 0:
         angleUnitDegree = 180/angleSteps # changed to 2*np.pi instead of np.pi for radialAverageByLinecuts. Different from radialAverageByLines with opposite lists sperately.
     else:
@@ -577,6 +581,9 @@ def radialAverage(graph,center,X,Y,angleSteps,angleOffsetDegree = 0):
         distNeg = euclideanDistance(edgeNeg,center)
         distList, linecut = getLinecut(image_copy,X,Y,edgeNeg,edgePos)
         distArray = np.asarray(distList)-distNeg
+        # if len(linecut.shape) > 1:
+        #     linecut = np.sum(linecut,axis=1)#linecut[:,3]
+        print(distArray.shape,linecut.shape)
         interp = interp1d(distArray,linecut,kind='nearest')
         interpDB.append(interp)
         currDiv = distArray[1]-distArray[0]

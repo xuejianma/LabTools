@@ -8,7 +8,7 @@ from PyQt5.QtCore import QFile, Qt, QSize
 # from PyQt5.QtUiTools import QUiLoader
 from PyQt5.QtGui import QPixmap,QImage, QPainter, QPen, QBrush, QPolygon
 import pyqtgraph as pg
-from utils import readSimulatedImReCSV,readImRePhase,diffusion_map,radialAverageByLinecuts
+from utils import readSimulatedImReCSV,readImRePhase,diffusion_map,radialAverageByLinecuts,radialAverage
 from PIL import Image
 # import randomQtUiTools
 import numpy as np
@@ -121,18 +121,28 @@ class gui(QWidget):
     def plotLaserLinecut(self):
         QApplication.setOverrideCursor(Qt.WaitCursor)
         laserimg_cropped = np.asarray(Image.open(self.lineEdit_laserScreenshot.text()))
-        laser_X_cropped = np.linspace(-15,15,np.shape(laserimg_cropped)[1])
-        laser_Y_cropped = np.linspace(-15,15,np.shape(laserimg_cropped)[0])
+        laser_X_cropped = np.linspace(self.xyminmax[0],self.xyminmax[1],np.shape(laserimg_cropped)[1])
+        laser_Y_cropped = np.linspace(self.xyminmax[2],self.xyminmax[3],np.shape(laserimg_cropped)[0])
 
-        laser_rList, laser_zList, laser_rDict = radialAverageByLinecuts(laserimg_cropped, (0, 0), laser_X_cropped,
-                                                                        laser_Y_cropped, radialSteps=300,
-                                                                        threshold=1 / 6 * 1, angleSteps=10)
+        # laser_rList, laser_zList, laser_rDict = radialAverageByLinecuts(laserimg_cropped, (0, 0), laser_X_cropped,
+        #                                                                 laser_Y_cropped, radialSteps=300,
+        #                                                                 threshold=1 / 6 * 1, angleSteps=10)
 
-        selectxyarray = np.asarray(radialAverageByLinecuts.selectxy)
+        if self.label_laserScreenshot.centerCoords == None:
+            center = (0,0)
+        else:
+            center = self.label_laserScreenshot.centerCoords
+        laser_rList, laser_zList, _ = radialAverage(laserimg_cropped,center,laser_X_cropped,laser_Y_cropped,
+                                                    angleSteps=int(self.lineEdit_angleSteps.text()),
+                                                    angleOffsetDegree=int(self.lineEdit_offset.text()))
+        print(laser_X_cropped.min(), laser_X_cropped.max())
+        print(laser_Y_cropped.min(), laser_Y_cropped.max())
+
+        # selectxyarray = np.asarray(radialAverageByLinecuts.selectxy)
         # print(selectxyarray.reshape(-1,2))
         laser_zList_norm = laser_zList / np.max(laser_zList)
-        laser_zList_edgesupress = np.asarray(
-            [item / (abs(laser_rList[i]) ** 2 * 0.065 + 1) for i, item in enumerate(laser_zList_norm)])
+        laser_zList_edgesupress = laser_zList_norm#np.asarray(
+            # [item / (abs(laser_rList[i]) ** 2 * 0.065 + 1) for i, item in enumerate(laser_zList_norm)])
         self.widget_laserFit.plot(laser_rList[::4],laser_zList_edgesupress[::4],symbol='o',pen=None,symbolPen = pg.mkPen(color=(0, 0, 255)),symbolSize=5)#pen=pg.mkPen('b'))
         # plt.scatter(laser_rList[::4], laser_zList_edgesupress[::4], marker='o', color='blue', s=50, zorder=5, alpha=1,
         #             label='Laser profile')
@@ -149,8 +159,6 @@ class gui(QWidget):
         z0 = np.max(z_axis_fit)  # or np.max(z). They are the same
         # plt.plot(x_axis_fit, z_axis_fit / z0, label='L={}μm'.format(int(L)), color='black')
         self.widget_laserFit.plot(x_axis_fit,z_axis_fit/z0,pen=pg.mkPen(width=3))
-
-
         QApplication.restoreOverrideCursor()
 
 if __name__ == "__main__":
