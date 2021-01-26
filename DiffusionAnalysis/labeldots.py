@@ -69,7 +69,7 @@ class LabelDots(QLabel):
                 Parent = self.parent().parent().parent().parent()
                 width, height = Parent.laserScreenshotWidth, Parent.laserScreenshotHeight
                 self.center = QPolygon()
-                self.center << QPoint(width//2,height//2)
+                self.center << QPoint(*self.getPos(0,0))
             qp.drawEllipse(self.center.point(0),1,1)
             if self.pt_edges != None:
                 pen = QPen(Qt.gray, 1)
@@ -79,7 +79,7 @@ class LabelDots(QLabel):
                 # print(self.pt_edges)
                 # qp.drawLine(0,0,200,200);
                 for pt in self.pt_edges:
-                    print(*pt,123)
+                    # print(*pt,123)
                     pt1 = self.getPos(*pt[0])
                     pt2 = self.getPos(*pt[1])
                     qp.drawLine(*pt1, *pt2);

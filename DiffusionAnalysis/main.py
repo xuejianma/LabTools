@@ -140,8 +140,8 @@ class gui(QWidget):
         laser_rList, laser_zList, pt_edges = radialAverage(laserimg_cropped,center,laser_X_cropped,laser_Y_cropped,
                                                     angleSteps=int(self.lineEdit_angleSteps.text()),
                                                     angleOffsetDegree=int(self.lineEdit_offset.text()))
-        print(laser_X_cropped.min(), laser_X_cropped.max())
-        print(laser_Y_cropped.min(), laser_Y_cropped.max())
+        # print(laser_X_cropped.min(), laser_X_cropped.max())
+        # print(laser_Y_cropped.min(), laser_Y_cropped.max())
 
         # selectxyarray = np.asarray(radialAverageByLinecuts.selectxy)
         # print(selectxyarray.reshape(-1,2))
@@ -155,7 +155,6 @@ class gui(QWidget):
         self.label_laserScreenshot.update()#???
 
         QApplication.restoreOverrideCursor()
-        print(pt_edges);
 
     def plotLaserFit(self):
         QApplication.setOverrideCursor(Qt.WaitCursor)
