@@ -99,6 +99,11 @@ class gui(QWidget):
         self.lineEdit_laserScreenshot.setText(self.laserScreenshot)
 
     def plotLaserScreenshot(self):
+        self.label_laserScreenshot.pt_edges = None
+        self.label_laserScreenshot.center = None
+        self.label_center.setText("Center Coordinate:\nPlease click desired center position to get coordinates\nDefault: x = 0, y = 0")
+        self.label_laserScreenshot.clear()
+
         self.xyminmax=np.array([self.lineEdit_xmin.text(),self.lineEdit_xmax.text(),self.lineEdit_ymin.text(),
                                 self.lineEdit_ymax.text()]).astype(float)
         xrange = self.xyminmax[1]-self.xyminmax[0]
@@ -108,7 +113,7 @@ class gui(QWidget):
         self.label_laserScreenshot.setAlignment(Qt.AlignCenter)
         # if xrange/width < yrange/height:
         ratio = np.min([width/xrange,height/yrange])
-        self.laserScreenshotWidth,self.laserScreenshotHeight = int(xrange*ratio), int(yrange*ratio)
+        self.laserScreenshotWidth, self.laserScreenshotHeight = int(xrange*ratio), int(yrange*ratio)
         self.pixmap_laser = QPixmap(self.lineEdit_laserScreenshot.text()).scaled(self.laserScreenshotWidth,self.laserScreenshotHeight, Qt.IgnoreAspectRatio)
 
         # print(self.pixmap_laser.size())
@@ -132,7 +137,7 @@ class gui(QWidget):
             center = (0,0)
         else:
             center = self.label_laserScreenshot.centerCoords
-        laser_rList, laser_zList, _ = radialAverage(laserimg_cropped,center,laser_X_cropped,laser_Y_cropped,
+        laser_rList, laser_zList, pt_edges = radialAverage(laserimg_cropped,center,laser_X_cropped,laser_Y_cropped,
                                                     angleSteps=int(self.lineEdit_angleSteps.text()),
                                                     angleOffsetDegree=int(self.lineEdit_offset.text()))
         print(laser_X_cropped.min(), laser_X_cropped.max())
@@ -146,8 +151,11 @@ class gui(QWidget):
         self.widget_laserFit.plot(laser_rList[::4],laser_zList_edgesupress[::4],symbol='o',pen=None,symbolPen = pg.mkPen(color=(0, 0, 255)),symbolSize=5)#pen=pg.mkPen('b'))
         # plt.scatter(laser_rList[::4], laser_zList_edgesupress[::4], marker='o', color='blue', s=50, zorder=5, alpha=1,
         #             label='Laser profile')
+        self.label_laserScreenshot.pt_edges = pt_edges
+        self.label_laserScreenshot.update()#???
 
         QApplication.restoreOverrideCursor()
+        print(pt_edges);
 
     def plotLaserFit(self):
         QApplication.setOverrideCursor(Qt.WaitCursor)

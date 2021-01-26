@@ -12,7 +12,6 @@ from scipy.interpolate import interp1d
 from PyParkTiff import SaveParkTiff
 
 
-
 def readTXT(filePath):
     """
     Read diffusion data in default txt file to a 2d numpy array.
@@ -235,7 +234,7 @@ def mim2Conductivity(folderPath, fileNameIm, fileNameRe, csvFilePath, comsolScal
 
     np.savetxt(folderPath + "/conductivity.txt", conductivity_img_array)
     data = np.loadtxt(folderPath + "/conductivity.txt")
-    SaveParkTiff(data, data.shape[1], data.shape[0], folderPath+'/conductivity.tiff')
+    SaveParkTiff(data, data.shape[1], data.shape[0], folderPath + '/conductivity.tiff')
     return None
 
 
@@ -249,167 +248,177 @@ def readConductivity(folderPath):
             conductivity_f.append(np.array(line.split(" ")).astype(float))  # use space as splitter instead of /t
     return conductivity_f
 
-def undistort_1D(appear,coeff1,coeff2):
+
+def undistort_1D(appear, coeff1, coeff2):
     # appear = coeff1*real^2 + coeff2*real
     # coeff1*real**2 + coeff2*real - appear = 0
-    return (-coeff2+np.sqrt(coeff2**2-4*coeff1*-appear))/(2*coeff1)
+    return (-coeff2 + np.sqrt(coeff2 ** 2 - 4 * coeff1 * -appear)) / (2 * coeff1)
 
-def calibrate_xlist(xList,coeff1 = 0.06944444444444448, coeff2 = 2.4833333333333334, extra_scale_x = 1.0):
+
+def calibrate_xlist(xList, coeff1=0.06944444444444448, coeff2=2.4833333333333334, extra_scale_x=1.0):
     new_xList = []
     for x in xList:
-        new_xList.append(-undistort_1D(np.max(xList)-x,coeff1,coeff2)*extra_scale_x)
+        new_xList.append(-undistort_1D(np.max(xList) - x, coeff1, coeff2) * extra_scale_x)
     return new_xList
 
+
 # def calibrate_ylist(yList,coeff1 = 0.0152777777777777793, coeff2 = 5.250000000000001, extra_scale_y = 1.0):
-def calibrate_ylist(yList,coeff1 = 0.04583333333333334, coeff2 = 3.5000000000000004, extra_scale_y = 1.0):
+def calibrate_ylist(yList, coeff1=0.04583333333333334, coeff2=3.5000000000000004, extra_scale_y=1.0):
     new_yList = []
     for y in yList:
-        new_yList.append(undistort_1D(y,coeff1,coeff2)*extra_scale_y)
+        new_yList.append(undistort_1D(y, coeff1, coeff2) * extra_scale_y)
     return new_yList
 
 
-def resampleTraditionalMethod(img,X,Y,xmin,xmax,ymin,ymax,size):
-    x_list = np.linspace(xmin,xmax,size)
-    y_list = np.linspace(ymin,ymax,size)
-    new_X,new_Y = np.meshgrid(x_list,y_list)
+def resampleTraditionalMethod(img, X, Y, xmin, xmax, ymin, ymax, size):
+    x_list = np.linspace(xmin, xmax, size)
+    y_list = np.linspace(ymin, ymax, size)
+    new_X, new_Y = np.meshgrid(x_list, y_list)
     new_img = np.zeros(new_X.shape)
     for i in tqdm(range(new_img.shape[0])):
         for j in range(new_img.shape[1]):
             min_list = []
             for ii in range(img.shape[0]):
                 for jj in range(img.shape[1]):
-                    if xmin<=X[ii][jj]<=xmax and ymin<=Y[ii][jj]<=ymax:
-                        min_list.append([np.linalg.norm([new_X[i][j]-X[ii][jj],new_Y[i][j]-Y[ii][jj]]),[ii,jj]])
-            target_ii,target_jj = sorted(min_list)[0][1]
-            new_img[i,j] = img[target_ii,target_jj]
-    return new_img,x_list,y_list
+                    if xmin <= X[ii][jj] <= xmax and ymin <= Y[ii][jj] <= ymax:
+                        min_list.append([np.linalg.norm([new_X[i][j] - X[ii][jj], new_Y[i][j] - Y[ii][jj]]), [ii, jj]])
+            target_ii, target_jj = sorted(min_list)[0][1]
+            new_img[i, j] = img[target_ii, target_jj]
+    return new_img, x_list, y_list
 
-def resample(img,X,Y,xmin,xmax,ymin,ymax,size=None):
-    if size==None:
-        size=0
+
+def resample(img, X, Y, xmin, xmax, ymin, ymax, size=None):
+    if size == None:
+        size = 0
         for item in X[0]:
-            if xmin<=item<=xmax:
-                size+=1
-    #print(size)
-    x_list = np.linspace(xmin,xmax,size)
-    y_list = np.linspace(ymin,ymax,size)
-    new_X,new_Y = np.meshgrid(x_list,y_list)
+            if xmin <= item <= xmax:
+                size += 1
+    # print(size)
+    x_list = np.linspace(xmin, xmax, size)
+    y_list = np.linspace(ymin, ymax, size)
+    new_X, new_Y = np.meshgrid(x_list, y_list)
     new_img = np.zeros(new_X.shape)
-    new_img[:]=np.nan
+    new_img[:] = np.nan
     for ii in tqdm(range(img.shape[0])):
         for jj in range(img.shape[1]):
             xmin_list = []
             ymin_list = []
-            if xmin<=X[ii][jj]<=xmax and ymin<=Y[ii][jj]<=ymax:
+            if xmin <= X[ii][jj] <= xmax and ymin <= Y[ii][jj] <= ymax:
                 for i in range(len(x_list)):
-                    xmin_list.append([abs(X[ii][jj]-x_list[i]),i])
+                    xmin_list.append([abs(X[ii][jj] - x_list[i]), i])
                 for j in range(len(y_list)):
-                    ymin_list.append([abs(Y[ii][jj]-y_list[j]),j])
+                    ymin_list.append([abs(Y[ii][jj] - y_list[j]), j])
                 target_i = sorted(xmin_list)[0][1]
                 target_j = sorted(ymin_list)[0][1]
-                new_img[target_j,target_i] = img[ii,jj]
+                new_img[target_j, target_i] = img[ii, jj]
     for i in range(new_img.shape[0]):
         for j in range(new_img.shape[1]):
-            if np.isnan(new_img[i,j]):
-                new_img[i,j]=np.nanmean([new_img[(i-1)%size,j],new_img[(i+1)%size,j],new_img[i,(j-1)%size],new_img[i,(j+1)%size],
-                                        new_img[(i-1)%size,(j-1)%size],new_img[(i+1)%size,(j+1)%size],new_img[(i+1)%size,(j-1)%size],new_img[(i-1)%size,(j+1)%size]])
-                #print(new_img[i,j])
+            if np.isnan(new_img[i, j]):
+                new_img[i, j] = np.nanmean(
+                    [new_img[(i - 1) % size, j], new_img[(i + 1) % size, j], new_img[i, (j - 1) % size],
+                     new_img[i, (j + 1) % size],
+                     new_img[(i - 1) % size, (j - 1) % size], new_img[(i + 1) % size, (j + 1) % size],
+                     new_img[(i + 1) % size, (j - 1) % size], new_img[(i - 1) % size, (j + 1) % size]])
+                # print(new_img[i,j])
                 # new_img=np.nan_to_num(new_img)
-    return new_img,x_list,y_list
+    return new_img, x_list, y_list
 
-def radialAverageByLinecuts(graph,center,xAxis_or_xMeshgrid,yAxis_or_yMeshgrid,radialSteps=100,threshold=1.0,angleSteps = None,angleThreshold=0.01):
+
+def radialAverageByLinecuts(graph, center, xAxis_or_xMeshgrid, yAxis_or_yMeshgrid, radialSteps=100, threshold=1.0,
+                            angleSteps=None, angleThreshold=0.01):
     graph = np.asarray(graph)
     graphShape = np.shape(graph)
     xShape = np.shape(xAxis_or_xMeshgrid)
     yShape = np.shape(yAxis_or_yMeshgrid)
-    if len(xShape)==1 and len(yShape)==1:
-        xx,yy = np.meshgrid(xAxis_or_xMeshgrid,yAxis_or_yMeshgrid)
+    if len(xShape) == 1 and len(yShape) == 1:
+        xx, yy = np.meshgrid(xAxis_or_xMeshgrid, yAxis_or_yMeshgrid)
         x_list = xAxis_or_xMeshgrid
         y_list = yAxis_or_yMeshgrid
     else:
-        xx,yy = xAxis_or_xMeshgrid,yAxis_or_yMeshgrid
+        xx, yy = xAxis_or_xMeshgrid, yAxis_or_yMeshgrid
         x_list = xAxis_or_xMeshgrid[0]
-        y_list = yAxis_or_yMeshgrid[:,0]
-#     print(np.shape(xx),np.shape(yy),graphShape)
-#     if not np.shape(xx)==np.shape(yy)==graphShape:
-#         raise ValueError("image size is not equal to x size times y size")
-    #print(y_list)
-    graph_interpolated = interpolate.RectBivariateSpline(y_list, x_list, graph) #RectBivariateSpline: y before x. interp2d: x before y. (for both function before and function usage)
-    #graph_interpolated = interpolate.interp2d(xAxis_or_xMeshgrid, yAxis_or_yMeshgrid, graph)
-    bottomLeftPoint = np.array((xx[0][0],yy[0][0]))
-    bottomRightPoint = np.array((xx[0][-1],yy[0][-1]))
-    topLeftPoint = np.array((xx[-1][0],yy[-1][0]))
-    topRightPoint = np.array((xx[-1][-1],yy[-1][-1]))
-    radialMax = np.max([np.linalg.norm(center-bottomLeftPoint),np.linalg.norm(center-bottomRightPoint),\
-                       np.linalg.norm(center-topLeftPoint),np.linalg.norm(center-topRightPoint)])
-    rListPos = np.linspace(0,radialMax,radialSteps)
+        y_list = yAxis_or_yMeshgrid[:, 0]
+    #     print(np.shape(xx),np.shape(yy),graphShape)
+    #     if not np.shape(xx)==np.shape(yy)==graphShape:
+    #         raise ValueError("image size is not equal to x size times y size")
+    # print(y_list)
+    graph_interpolated = interpolate.RectBivariateSpline(y_list, x_list,
+                                                         graph)  # RectBivariateSpline: y before x. interp2d: x before y. (for both function before and function usage)
+    # graph_interpolated = interpolate.interp2d(xAxis_or_xMeshgrid, yAxis_or_yMeshgrid, graph)
+    bottomLeftPoint = np.array((xx[0][0], yy[0][0]))
+    bottomRightPoint = np.array((xx[0][-1], yy[0][-1]))
+    topLeftPoint = np.array((xx[-1][0], yy[-1][0]))
+    topRightPoint = np.array((xx[-1][-1], yy[-1][-1]))
+    radialMax = np.max([np.linalg.norm(center - bottomLeftPoint), np.linalg.norm(center - bottomRightPoint), \
+                        np.linalg.norm(center - topLeftPoint), np.linalg.norm(center - topRightPoint)])
+    rListPos = np.linspace(0, radialMax, radialSteps)
     rListNeg = (-rListPos[1:])[::-1]
-    rList = np.concatenate([rListNeg,rListPos])
+    rList = np.concatenate([rListNeg, rListPos])
     rDict = defaultdict(list)
     for r in rList:
-        rDict[r]=[]
-#     rDictNeg = defaultdict(list)
-#     for r in rListNeg:
-#         rDictNeg[r]=[]
+        rDict[r] = []
+    #     rDictNeg = defaultdict(list)
+    #     for r in rListNeg:
+    #         rDictNeg[r]=[]
     angle_unit = None
     angle_list = None
     if angleSteps is None:
         raise ValueError("angleSteps should not be None")
     else:
-        angleUnit = np.pi/angleSteps # changed to 2*np.pi instead of np.pi for radialAverageByLinecuts. Different from radialAverageByLines with opposite lists sperately.
-        angleArray = np.array([angleUnit*ind for ind in range(angleSteps)])
-#     print(angleArray)
+        angleUnit = np.pi / angleSteps  # changed to 2*np.pi instead of np.pi for radialAverageByLinecuts. Different from radialAverageByLines with opposite lists sperately.
+        angleArray = np.array([angleUnit * ind for ind in range(angleSteps)])
+    #     print(angleArray)
     radialAverageByLinecuts.selectxy = []
     for angle in angleArray:
-        tilted_rList_coords = [(r*np.cos(angle),r*np.sin(angle)) for r in rList]
+        tilted_rList_coords = [(r * np.cos(angle), r * np.sin(angle)) for r in rList]
         radialAverageByLinecuts.selectxy.append(tilted_rList_coords)
-        for ind,(tilted_x,tilted_y) in enumerate(tilted_rList_coords):
-            if np.min(xx) <= tilted_x <= np.max(xx) and np.min(yy) <= tilted_y <=np.max(yy):
-                #rDict[rList[ind]].append(graph_interpolated(tilted_y,tilted_x)[0][0]) #RectBivariateSpline: y before x. interp2d: x before y. (for both function before and function usage)
-                #print(graph_interpolated(tilted_x,tilted_y))
-                rDict[rList[ind]].append(graph_interpolated(tilted_x,tilted_y)[0])
+        for ind, (tilted_x, tilted_y) in enumerate(tilted_rList_coords):
+            if np.min(xx) <= tilted_x <= np.max(xx) and np.min(yy) <= tilted_y <= np.max(yy):
+                # rDict[rList[ind]].append(graph_interpolated(tilted_y,tilted_x)[0][0]) #RectBivariateSpline: y before x. interp2d: x before y. (for both function before and function usage)
+                # print(graph_interpolated(tilted_x,tilted_y))
+                rDict[rList[ind]].append(graph_interpolated(tilted_x, tilted_y)[0])
             else:
                 rDict[rList[ind]].append(np.nan)
     zList = [np.nanmean(rDict[key]) for key in rList]
     nan_list = [ind for ind in range(len(zList)) if np.isnan(zList[ind])]
-    rList = np.delete(rList,nan_list)
-    zList = np.delete(zList,nan_list)
-    return rList,zList,rDict
+    rList = np.delete(rList, nan_list)
+    zList = np.delete(zList, nan_list)
+    return rList, zList, rDict
 
 
-def diffusion_map(L,w0,pos_max=25,point_num=100,A=1):
+def diffusion_map(L, w0, pos_max=25, point_num=100, A=1):
     """
     By Zhaodong Chu via Matlab
     """
-    l = np.linspace(-pos_max,pos_max,point_num);
-    unit_length = 2*pos_max/point_num
+    l = np.linspace(-pos_max, pos_max, point_num);
+    unit_length = 2 * pos_max / point_num
     # l = (-0.1:0.1:0.1);
     num = len(l);  # number of pixels in one dimension
 
-    [xx, yy] = np.meshgrid(l,l);
-    R = np.sqrt(xx**2 + yy**2);  # distance matrix
-    N = A * np.exp(-2*R**2/w0**2);  # Gaussian beam Nin
+    [xx, yy] = np.meshgrid(l, l);
+    R = np.sqrt(xx ** 2 + yy ** 2);  # distance matrix
+    N = A * np.exp(-2 * R ** 2 / w0 ** 2);  # Gaussian beam Nin
 
-    z = np.zeros((num, num));   # initialize sum resuot
-    middle = round(num/2);
+    z = np.zeros((num, num));  # initialize sum resuot
+    middle = round(num / 2);
 
-    for  i in range(middle):
-#         print(i/middle)
+    for i in range(middle):
+        #         print(i/middle)
         for j in range(middle):
 
-            x = xx[i,j];
-            y = yy[i,j];
+            x = xx[i, j];
+            y = yy[i, j];
             # Nin = A * np.exp(-2*R(i,j)^2/w0^2);
-            Nin = N[i,j];
+            Nin = N[i, j];
 
-            r = np.sqrt((xx - x)**2 + (yy - y)**2);
+            r = np.sqrt((xx - x) ** 2 + (yy - y) ** 2);
 
-            Nr3 = Nin * unit_length **2 / (2 * np.pi * L**2) * np.exp(-r / L);   # Quadrant III
-            Nr1 = Nr3[::-1,::-1];  # Quadrant I
-            Nr2 = Nr3[::-1,:];  # Quadrnat III
-            Nr4 = Nr3[:,::-1];
+            Nr3 = Nin * unit_length ** 2 / (2 * np.pi * L ** 2) * np.exp(-r / L);  # Quadrant III
+            Nr1 = Nr3[::-1, ::-1];  # Quadrant I
+            Nr2 = Nr3[::-1, :];  # Quadrnat III
+            Nr4 = Nr3[:, ::-1];
 
-            if x == 0 and  y == 0:
+            if x == 0 and y == 0:
                 z = z + Nr3;
             elif x == 0:
                 z = z + Nr3 + Nr2;
@@ -417,158 +426,173 @@ def diffusion_map(L,w0,pos_max=25,point_num=100,A=1):
                 z = z + Nr3 + Nr4;
             else:
                 z = z + Nr1 + Nr2 + Nr3 + Nr4;
-    return xx,yy,z
+    return xx, yy, z
 
-def R2(y_real_list,y_fit_list):
+
+def R2(y_real_list, y_fit_list):
     y_mean = np.mean(y_real_list)
-    SS_tot = sum([(y_real - y_mean)**2 for y_real in y_real_list])
-    SS_res = sum([(y_fit - y_real)**2 for y_real,y_fit in zip(y_real_list,y_fit_list)])
-    R2 = 1 - SS_res/SS_tot
+    SS_tot = sum([(y_real - y_mean) ** 2 for y_real in y_real_list])
+    SS_res = sum([(y_fit - y_real) ** 2 for y_real, y_fit in zip(y_real_list, y_fit_list)])
+    R2 = 1 - SS_res / SS_tot
     return R2
 
-def fit1(x_axis,z_axis,diffusion_simulation_database,extra_multiply,threshold = 0.97,fitrange=None):
-    z_axis_norm = (np.array(z_axis)-np.min(z_axis))/(np.max(z_axis)-np.min(z_axis))/extra_multiply
+
+def fit1(x_axis, z_axis, diffusion_simulation_database, extra_multiply, threshold=0.97, fitrange=None):
+    z_axis_norm = (np.array(z_axis) - np.min(z_axis)) / (np.max(z_axis) - np.min(z_axis)) / extra_multiply
     R2_score_list = []
     if fitrange != None:
-        index_list1 = [item for item in range(len(x_axis)) if x_axis[item] >= fitrange[0] and x_axis[item] <= fitrange[1]]
+        index_list1 = [item for item in range(len(x_axis)) if
+                       x_axis[item] >= fitrange[0] and x_axis[item] <= fitrange[1]]
         z_axis_norm = z_axis_norm[index_list1]
     for length in diffusion_simulation_database:
-        xx,yy,z = diffusion_simulation_database[length]
+        xx, yy, z = diffusion_simulation_database[length]
         x_axis_fit = xx[0]
-#         z_axis_fit = extra_multiply*z[round(z.shape[0]/2)]/np.max(z)*(np.max(zList_all[ind])-np.min(zList_all[ind]))
-        z_axis_fit = (z[round(z.shape[0]/2)]-np.min(z[round(z.shape[0]/2)]))/(np.max(z[round(z.shape[0]/2)])-np.min(z[round(z.shape[0]/2)]))
-        fit_func = interp1d(x_axis_fit,z_axis_fit)
-#         print(x_axis)
-        x_axis_clip = x_axis.clip(np.min(x_axis_fit),np.max(x_axis_fit))
-#         print(x_axis_clip)
+        #         z_axis_fit = extra_multiply*z[round(z.shape[0]/2)]/np.max(z)*(np.max(zList_all[ind])-np.min(zList_all[ind]))
+        z_axis_fit = (z[round(z.shape[0] / 2)] - np.min(z[round(z.shape[0] / 2)])) / (
+                    np.max(z[round(z.shape[0] / 2)]) - np.min(z[round(z.shape[0] / 2)]))
+        fit_func = interp1d(x_axis_fit, z_axis_fit)
+        #         print(x_axis)
+        x_axis_clip = x_axis.clip(np.min(x_axis_fit), np.max(x_axis_fit))
+        #         print(x_axis_clip)
         z_axis_fit_for_R2 = fit_func(x_axis_clip)
-        if fitrange!= None:
-            index_list2 = [item for item in range(len(x_axis_clip)) if x_axis_clip[item]>=fitrange[0] and x_axis_clip[item]<=fitrange[1]]
-        # print(len(x_axis),len(x_axis_clip),len(z_axis_norm),len(z_axis_fit_for_R2))
-        # print(z_axis_norm[len(z_axis_norm)-1])
-        # z_axis_norm = z_axis_norm[index_list1]
+        if fitrange != None:
+            index_list2 = [item for item in range(len(x_axis_clip)) if
+                           x_axis_clip[item] >= fitrange[0] and x_axis_clip[item] <= fitrange[1]]
+            # print(len(x_axis),len(x_axis_clip),len(z_axis_norm),len(z_axis_fit_for_R2))
+            # print(z_axis_norm[len(z_axis_norm)-1])
+            # z_axis_norm = z_axis_norm[index_list1]
             z_axis_fit_for_R2 = z_axis_fit_for_R2[index_list2]
-        R2_score = R2(z_axis_norm,z_axis_fit_for_R2)
-#         diffusion_simulation_R2_score[length] = R2_score
-#         print((z_axis_fit_for_R2))
-        R2_score_list.append((R2_score,length))
+        R2_score = R2(z_axis_norm, z_axis_fit_for_R2)
+        #         diffusion_simulation_R2_score[length] = R2_score
+        #         print((z_axis_fit_for_R2))
+        R2_score_list.append((R2_score, length))
 
     plt.figure()
     # print(len(x_axis_clip[index_list1]),len(z_axis_norm),len(z_axis_fit_for_R2))
-    plt.plot(x_axis_clip[index_list1],z_axis_norm)
+    plt.plot(x_axis_clip[index_list1], z_axis_norm)
     plt.show()
-    #threshold = 0.97 # you could adjust the threshold here to control the fitting range.
+    # threshold = 0.97 # you could adjust the threshold here to control the fitting range.
     R2_score_list_selected = []
-    for R2_score,length in R2_score_list:
-        if R2_score>threshold:
-            R2_score_list_selected.append((R2_score,length))
+    for R2_score, length in R2_score_list:
+        if R2_score > threshold:
+            R2_score_list_selected.append((R2_score, length))
     print(R2_score_list)
     print(R2_score_list_selected)
-#     print(R2_score_list_selected,23333)
-    score_lower,lower_boundary = R2_score_list_selected[0]
-    score_upper,upper_boundary = R2_score_list_selected[-1]
-    score_best,best_fit = max(R2_score_list_selected)
-    print([lower_boundary,upper_boundary])
+    #     print(R2_score_list_selected,23333)
+    score_lower, lower_boundary = R2_score_list_selected[0]
+    score_upper, upper_boundary = R2_score_list_selected[-1]
+    score_best, best_fit = max(R2_score_list_selected)
+    print([lower_boundary, upper_boundary])
     print(best_fit)
-#     error_list.append([lower_boundary,upper_boundary])
-#     diffusion_list_fit_list.append(best_fit)
-    return lower_boundary,best_fit,upper_boundary,score_lower,score_best,score_upper
+    #     error_list.append([lower_boundary,upper_boundary])
+    #     diffusion_list_fit_list.append(best_fit)
+    return lower_boundary, best_fit, upper_boundary, score_lower, score_best, score_upper
 
-def fit2(x_axis,z_axis,diffusion_simulation_database,extra_multiply):
-    z_axis_norm = np.array(z_axis)/(np.max(z_axis)-np.min(z_axis))/extra_multiply
+
+def fit2(x_axis, z_axis, diffusion_simulation_database, extra_multiply):
+    z_axis_norm = np.array(z_axis) / (np.max(z_axis) - np.min(z_axis)) / extra_multiply
     R2_score_list = []
     diffusion_simulation_database_with_coeff = {}
-    for c1 in np.round(np.linspace(0,1,11),2):
+    for c1 in np.round(np.linspace(0, 1, 11), 2):
         print(c1)
-        c2 = np.round(1.0-c1,2)
+        c2 = np.round(1.0 - c1, 2)
         for L1 in diffusion_simulation_database:
             for L2 in diffusion_simulation_database:
-                xx,yy,_ = diffusion_simulation_database[L1] # either L1 or L2. Should be the same for xx and yy
+                xx, yy, _ = diffusion_simulation_database[L1]  # either L1 or L2. Should be the same for xx and yy
                 z1 = diffusion_simulation_database[L1][2]
-                z1_axis_fit = (z1[round(z1.shape[0]/2)]-np.min(z1[round(z1.shape[0]/2)]))/(np.max(z1[round(z1.shape[0]/2)])-np.min(z1[round(z1.shape[0]/2)]))
+                z1_axis_fit = (z1[round(z1.shape[0] / 2)] - np.min(z1[round(z1.shape[0] / 2)])) / (
+                            np.max(z1[round(z1.shape[0] / 2)]) - np.min(z1[round(z1.shape[0] / 2)]))
                 z2 = diffusion_simulation_database[L2][2]
-                z2_axis_fit = (z2[round(z2.shape[0]/2)]-np.min(z2[round(z2.shape[0]/2)]))/(np.max(z2[round(z2.shape[0]/2)])-np.min(z2[round(z2.shape[0]/2)]))
-                z_axis_fit = c1*z1_axis_fit+c2*z2_axis_fit
-                #plt.plot(z_axis_fit)
+                z2_axis_fit = (z2[round(z2.shape[0] / 2)] - np.min(z2[round(z2.shape[0] / 2)])) / (
+                            np.max(z2[round(z2.shape[0] / 2)]) - np.min(z2[round(z2.shape[0] / 2)]))
+                z_axis_fit = c1 * z1_axis_fit + c2 * z2_axis_fit
+                # plt.plot(z_axis_fit)
                 x_axis_fit = xx[0]
-#                 z_axis_fit = z[round(z.shape[0]/2)]#(z[round(z.shape[0]/2)]-np.min(z[round(z.shape[0]/2)]))/(np.max(z[round(z.shape[0]/2)])-np.min(z[round(z.shape[0]/2)]))
-                fit_func = interp1d(x_axis_fit,z_axis_fit)
-                x_axis_clip = x_axis.clip(np.min(x_axis_fit),np.max(x_axis_fit))
+                #                 z_axis_fit = z[round(z.shape[0]/2)]#(z[round(z.shape[0]/2)]-np.min(z[round(z.shape[0]/2)]))/(np.max(z[round(z.shape[0]/2)])-np.min(z[round(z.shape[0]/2)]))
+                fit_func = interp1d(x_axis_fit, z_axis_fit)
+                x_axis_clip = x_axis.clip(np.min(x_axis_fit), np.max(x_axis_fit))
                 z_axis_fit_for_R2 = fit_func(x_axis_clip)
-                R2_score = R2(z_axis_norm,z_axis_fit_for_R2)
-                R2_score_list.append((R2_score,(c1,L1,c2,L2)))
+                R2_score = R2(z_axis_norm, z_axis_fit_for_R2)
+                R2_score_list.append((R2_score, (c1, L1, c2, L2)))
     return R2_score_list
 
 
-def euclideanDistance(coord1,coord2):
-    return np.sqrt((coord1[0]-coord2[0])**2+(coord1[1]-coord2[1])**2)
+def euclideanDistance(coord1, coord2):
+    return np.sqrt((coord1[0] - coord2[0]) ** 2 + (coord1[1] - coord2[1]) ** 2)
 
-def getLinecut(image,X,Y,pt1,pt2):
-    row_col_1, row_col_2 = getRowCol(pt1,X,Y), getRowCol(pt2,X,Y)
-    row1,col1 = np.asarray(row_col_1).astype(float)
-    row2,col2 = np.asarray(row_col_2).astype(float)
-    dist = np.sqrt((pt1[0]-pt2[0])**2+(pt1[1]-pt2[1])**2)
-    N = int(euclideanDistance(row_col_1,row_col_2))#int(np.sqrt((row1-row2)**2+(col1-col2)**2))
-    rowList = [int(row1 + (row2-row1)/N*ind) for ind in range(N)]
-    colList = [int(col1 + (col2-col1)/N*ind) for ind in range(N)]
-    distList = [dist/N*ind for ind in range(N)]
-    return distList,image[rowList,colList]#rowList,colList
 
-def getRowCol(pt,X,Y):
-    if X.min()<=pt[0]<=X.max() and Y.min()<=pt[1]<=Y.max():
+def getLinecut(image, X, Y, pt1, pt2):
+    row_col_1, row_col_2 = getRowCol(pt1, X, Y), getRowCol(pt2, X, Y)
+    row1, col1 = np.asarray(row_col_1).astype(float)
+    row2, col2 = np.asarray(row_col_2).astype(float)
+    dist = np.sqrt((pt1[0] - pt2[0]) ** 2 + (pt1[1] - pt2[1]) ** 2)
+    N = int(euclideanDistance(row_col_1, row_col_2))  # int(np.sqrt((row1-row2)**2+(col1-col2)**2))
+    rowList = [int(row1 + (row2 - row1) / N * ind) for ind in range(N)]
+    colList = [int(col1 + (col2 - col1) / N * ind) for ind in range(N)]
+    distList = [dist / N * ind for ind in range(N)]
+    return distList, image[rowList, colList]  # rowList,colList
+
+
+def getRowCol(pt, X, Y):
+    if X.min() <= pt[0] <= X.max() and Y.min() <= pt[1] <= Y.max():
         pass
     else:
         raise ValueError('The input center is not within the given scope.')
-    center_coord_rowCol = (np.argmin(abs(Y-pt[1])),np.argmin(abs(X-pt[0])))
+    center_coord_rowCol = (np.argmin(abs(Y - pt[1])), np.argmin(abs(X - pt[0])))
     return center_coord_rowCol
 
-def binarySearch(left,right,conditionFunction,threshold=1e-5):
-    if euclideanDistance(left,right)/euclideanDistance(right,(0,0))<=threshold:#np.sqrt((left[0]-right[0])**2+(left[1]-right[1])**2)/np.sqrt((right[0])**2+(right[1])**2) <= 1e-5:
+
+def binarySearch(left, right, conditionFunction, threshold=1e-5):
+    if euclideanDistance(left, right) / euclideanDistance(right, (0,
+                                                                  0)) <= threshold:  # np.sqrt((left[0]-right[0])**2+(left[1]-right[1])**2)/np.sqrt((right[0])**2+(right[1])**2) <= 1e-5:
         return left
-    middle = (left+right)/2
+    middle = (left + right) / 2
     if conditionFunction(middle) is False:
-        result = binarySearch(middle,right,conditionFunction)
+        result = binarySearch(middle, right, conditionFunction)
     else:
-        result = binarySearch(left,middle,conditionFunction)
+        result = binarySearch(left, middle, conditionFunction)
     return result
 
-def exclusionCondition(pt,X,Y):
-    if X.min()<=pt[0]<=X.max() and Y.min()<=pt[1]<=Y.max():
+
+def exclusionCondition(pt, X, Y):
+    if X.min() <= pt[0] <= X.max() and Y.min() <= pt[1] <= Y.max():
         return False
     else:
         return True
 
-def getEdgePointsAcrossCenter(image,X,Y,center,angleDegree):
-    unitVector = np.asarray([np.cos(angleDegree*np.pi/180),np.sin(angleDegree*np.pi/180)])
+
+def getEdgePointsAcrossCenter(image, X, Y, center, angleDegree):
+    unitVector = np.asarray([np.cos(angleDegree * np.pi / 180), np.sin(angleDegree * np.pi / 180)])
     unitVectorPos = unitVector
     unitVectorNeg = unitVector
     trialEdgePos = np.asarray(center).astype(float)
     trialEdgeNeg = np.asarray(center).astype(float)
-    while not exclusionCondition(trialEdgeNeg,X,Y):
+    while not exclusionCondition(trialEdgeNeg, X, Y):
         trialEdgeNeg -= unitVectorNeg
         unitVectorNeg *= 2
-    left = trialEdgeNeg + unitVectorNeg/2
+    left = trialEdgeNeg + unitVectorNeg / 2
     right = trialEdgeNeg
-    edgeNeg = binarySearch(left,right,lambda middle: exclusionCondition(middle,X,Y))
-    while not exclusionCondition(trialEdgePos,X,Y):
+    edgeNeg = binarySearch(left, right, lambda middle: exclusionCondition(middle, X, Y))
+    while not exclusionCondition(trialEdgePos, X, Y):
         trialEdgePos += unitVectorPos
         unitVectorPos *= 2
-    left = trialEdgePos - unitVectorPos/2
+    left = trialEdgePos - unitVectorPos / 2
     right = trialEdgePos
-    edgePos = binarySearch(left,right,lambda middle: exclusionCondition(middle,X,Y))
-    return edgeNeg,edgePos
+    edgePos = binarySearch(left, right, lambda middle: exclusionCondition(middle, X, Y))
+    return edgeNeg, edgePos
 
-def radialAverage(graph,center,X,Y,angleSteps,angleOffsetDegree = 0):
+
+def radialAverage(graph, center, X, Y, angleSteps, angleOffsetDegree=0):
     image_copy = np.array(graph)
     if len(image_copy.shape) > 2:
         print(image_copy.shape)
-        image_copy = image_copy[:,:,1]
+        image_copy = image_copy[:, :, 1]
 
-    if angleSteps%2 == 0:
-        angleUnitDegree = 180/angleSteps # changed to 2*np.pi instead of np.pi for radialAverageByLinecuts. Different from radialAverageByLines with opposite lists sperately.
+    if angleSteps % 2 == 0:
+        angleUnitDegree = 180 / angleSteps  # changed to 2*np.pi instead of np.pi for radialAverageByLinecuts. Different from radialAverageByLines with opposite lists sperately.
     else:
-        angleUnitDegree = 360/angleSteps
-    angleArrayDegree = np.array([angleOffsetDegree + angleUnitDegree*ind for ind in range(angleSteps)])
+        angleUnitDegree = 360 / angleSteps
+    angleArrayDegree = np.array([angleOffsetDegree + angleUnitDegree * ind for ind in range(angleSteps)])
 
     interpDB = []
     div = np.inf
@@ -576,32 +600,32 @@ def radialAverage(graph,center,X,Y,angleSteps,angleOffsetDegree = 0):
     maxValue = -np.inf
     edgePtsDB = []
     for angleDegree in angleArrayDegree:
-        edgeNeg,edgePos = getEdgePointsAcrossCenter(image_copy,X,Y,center,angleDegree)
-        edgePtsDB.append([edgeNeg,edgePos])
-        distNeg = euclideanDistance(edgeNeg,center)
-        distList, linecut = getLinecut(image_copy,X,Y,edgeNeg,edgePos)
-        distArray = np.asarray(distList)-distNeg
+        edgeNeg, edgePos = getEdgePointsAcrossCenter(image_copy, X, Y, center, angleDegree)
+        edgePtsDB.append([edgeNeg, edgePos])
+        distNeg = euclideanDistance(edgeNeg, center)
+        distList, linecut = getLinecut(image_copy, X, Y, edgeNeg, edgePos)
+        distArray = np.asarray(distList) - distNeg
         # if len(linecut.shape) > 1:
         #     linecut = np.sum(linecut,axis=1)#linecut[:,3]
-        print(distArray.shape,linecut.shape)
-        interp = interp1d(distArray,linecut,kind='nearest')
+        print(distArray.shape, linecut.shape)
+        interp = interp1d(distArray, linecut, kind='nearest')
         interpDB.append(interp)
-        currDiv = distArray[1]-distArray[0]
+        currDiv = distArray[1] - distArray[0]
         if currDiv < div:
             div = currDiv
         if distArray[-1] > maxValue:
             maxValue = distArray[-1]
         if distArray[0] < minValue:
             minValue = distArray[0]
-    combinedDistArray = np.linspace(minValue,maxValue,int((maxValue-minValue)/currDiv))
+    combinedDistArray = np.linspace(minValue, maxValue, int((maxValue - minValue) / currDiv))
     combinedCountArray = np.zeros(combinedDistArray.shape)
     combinedLinecut = np.zeros(combinedDistArray.shape)
     for ind in range(len(interpDB)):
         interp = interpDB[ind]
         xmax = np.max(interp.x)
         xmin = np.min(interp.x)
-        selectCondition = (combinedDistArray<=xmax) & (combinedDistArray>=xmin)
-        rangedCombinedDistArray = np.clip(combinedDistArray,xmin,xmax)#combinedDistArray[selectCondition]
+        selectCondition = (combinedDistArray <= xmax) & (combinedDistArray >= xmin)
+        rangedCombinedDistArray = np.clip(combinedDistArray, xmin, xmax)  # combinedDistArray[selectCondition]
         countArray = np.zeros(combinedDistArray.shape)
         countArray[selectCondition] = 1
         combinedCountArray += countArray
@@ -609,4 +633,4 @@ def radialAverage(graph,center,X,Y,angleSteps,angleOffsetDegree = 0):
         linecut[np.invert(selectCondition)] = 0.
         combinedLinecut += linecut
     combinedLinecut /= combinedCountArray
-    return combinedDistArray,combinedLinecut,edgePtsDB
+    return combinedDistArray, combinedLinecut, edgePtsDB
