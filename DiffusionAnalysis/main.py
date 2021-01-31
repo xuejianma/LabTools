@@ -8,7 +8,7 @@ from PyQt5.QtCore import QFile, Qt, QSize
 # from PyQt5.QtUiTools import QUiLoader
 from PyQt5.QtGui import QPixmap,QImage, QPainter, QPen, QBrush, QPolygon
 import pyqtgraph as pg
-from utils import readSimulatedImReCSV,readImRePhase,diffusion_map,radialAverageByLinecuts,radialAverage, readTXT
+from utils import readSimulatedImReCSV,readImRePhase,diffusion_map,radialAverageByLinecuts,radialAverage, readTXT, calibrate_xlist, calibrate_ylist
 from PIL import Image
 # import randomQtUiTools
 import numpy as np
@@ -56,6 +56,7 @@ class gui(QWidget):
         self.pushButton_laserLinecut.clicked.connect(self.plotLaserLinecut)
         self.pushButton_selectCalibrationPreviewFile.clicked.connect(self.selectCalibratedPreviewTxt)
         self.pushButton_plotCalibrationPreview.clicked.connect(self.plotCalibrationPreviewRawData)
+        self.pushButton_plotCalibrationPreviewCalibrated.clicked.connect(self.plotCalibrationPreviewCalibrated)
 
     def selectDirectory(self):
         directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
@@ -146,7 +147,7 @@ class gui(QWidget):
             center = self.label_laserScreenshot.centerCoords
         laser_rList, laser_zList, pt_edges = radialAverage(laserimg_cropped,center,laser_X_cropped,laser_Y_cropped,
                                                     angleSteps=int(self.lineEdit_angleSteps.text()),
-                                                    angleOffsetDegree=int(self.lineEdit_offset.text()))
+                                                    angleOffsetDegree=float(self.lineEdit_offset.text()))
         # print(laser_X_cropped.min(), laser_X_cropped.max())
         # print(laser_Y_cropped.min(), laser_Y_cropped.max())
 
@@ -176,19 +177,49 @@ class gui(QWidget):
         QApplication.restoreOverrideCursor()
 
     def plotCalibrationPreviewRawData(self):
-        # self.label_calibrationPreview.setPixmap()
         array = readTXT(self.lineEdit_calibrationFile.text())
-        # self.graphicsView()
+        if hasattr(self.widget_calibrationPreviewRaw, "canvas"):
+            # ref: https://stackoverflow.com/questions/5899826/pyqt-how-to-remove-a-widget
+            self.verticalLayout_calibrationPreviewRaw.removeWidget(self.widget_calibrationPreviewRaw.canvas)
+            self.widget_calibrationPreviewRaw.canvas.deleteLater()
+            self.widget_calibrationPreviewRaw.canvas = None
         self.widget_calibrationPreviewRaw.canvas = FigureCanvas(Figure())
-        # self.widget_response.canvas.resize(2,1)
-        # vertical_layout = QVBoxLayout()
-        self.verticalLayout_2.addWidget(self.widget_calibrationPreviewRaw.canvas)
+        self.verticalLayout_calibrationPreviewRaw.addWidget(self.widget_calibrationPreviewRaw.canvas)
+
         self.widget_calibrationPreviewRaw.canvas.axes = self.widget_calibrationPreviewRaw.canvas.figure.add_subplot(111)
-        self.widget_calibrationPreviewRaw.canvas.axes.set_xlabel('MIM-Im')
-        self.widget_calibrationPreviewRaw.canvas.axes.set_ylabel('MIM-Re')
-        # self.widget_response.canvas.figure.tight_layout(pad=5)
-        # self.widget_response.canvas.axes.set_size(1,2)
-        # self.widget_calibrationPreviewRaw.setLayout(self.verticalLayout_2)
+        self.widget_calibrationPreviewRaw.canvas.axes.set_aspect(1)
+        X = np.linspace(float(self.lineEdit_CalibrationPreview_xmin.text()),
+                      float(self.lineEdit_CalibrationPreview_xmax.text()), array.shape[1])
+        Y = np.linspace(float(self.lineEdit_CalibrationPreview_ymin.text()),
+                      float(self.lineEdit_CalibrationPreview_ymax.text()), array.shape[0])
+        self.widget_calibrationPreviewRaw.canvas.axes.pcolormesh(X, Y, array, shading='auto')
+        self.widget_calibrationPreviewRaw.canvas.figure.tight_layout(pad = 4)
+
+    def plotCalibrationPreviewCalibrated(self):
+        array = readTXT(self.lineEdit_calibrationFile.text())
+        if hasattr(self.widget_calibrationPreviewCalibrated, "canvas"):
+            self.verticalLayout_calibrationPreviewCalibrated.removeWidget(self.widget_calibrationPreviewCalibrated.canvas)
+            self.widget_calibrationPreviewCalibrated.canvas.deleteLater()
+            self.widget_calibrationPreviewCalibrated.canvas = None
+
+        self.widget_calibrationPreviewCalibrated.canvas = FigureCanvas(Figure())
+        self.verticalLayout_calibrationPreviewCalibrated.addWidget(self.widget_calibrationPreviewCalibrated.canvas)
+
+        self.widget_calibrationPreviewCalibrated.canvas.axes = self.widget_calibrationPreviewCalibrated.canvas.figure.add_subplot(111)
+        self.widget_calibrationPreviewCalibrated.canvas.axes.set_aspect(1)
+        X = np.linspace(float(self.lineEdit_CalibrationPreview_xmin.text()),
+                      float(self.lineEdit_CalibrationPreview_xmax.text()), array.shape[1])
+        Y = np.linspace(float(self.lineEdit_CalibrationPreview_ymin.text()),
+                      float(self.lineEdit_CalibrationPreview_ymax.text()), array.shape[0])
+        X = calibrate_xlist(X, coeff1=float(self.lineEdit_xc1.text()), coeff2=float(self.lineEdit_xc2.text()),
+                            extra_scale_x=1.0)
+        Y = calibrate_xlist(Y, coeff1=float(self.lineEdit_yc1.text()), coeff2=float(self.lineEdit_yc2.text()),
+                            extra_scale_x=1.0)
+        self.widget_calibrationPreviewCalibrated.canvas.axes.pcolormesh(X, Y, array, shading='auto')
+        self.widget_calibrationPreviewCalibrated.canvas.figure.tight_layout(pad = 4)
+
+
+
 if __name__ == "__main__":
     app = QApplication([])
     widget = gui()
