@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab_fitResponseCurve">
     <attribute name="title">
@@ -736,17 +736,17 @@ Default: x = 0, y = 0</string>
       <string>0.07</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="label_calibrationPreviewLogo">
      <property name="geometry">
       <rect>
        <x>50</x>
        <y>100</y>
-       <width>71</width>
+       <width>151</width>
        <height>21</height>
       </rect>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Preview&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Calibration Preview&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_undistortx">
@@ -931,11 +931,11 @@ Default: x = 0, y = 0</string>
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
-    <widget class="LabelDots" name="label_laserScreenshot_2">
+    <widget class="LabelDots" name="label_calibrationPreviewRaw">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>130</y>
+       <x>90</x>
+       <y>200</y>
        <width>241</width>
        <height>241</height>
       </rect>
@@ -945,6 +945,111 @@ Default: x = 0, y = 0</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_calibrationFileNote">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>130</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>*.txt data file:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_calibrationFile">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>130</y>
+       <width>401</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>C:/Work/Xuejian Ma/Perovskite/calibration/Al_on_silicon_commonly_used/2/Ch1 retrace.txt</string>
+     </property>
+    </widget>
+    <widget class="LabelDots" name="label_calibrationPreviewConverted">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>200</y>
+       <width>241</width>
+       <height>241</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_plotCalibrationPreview">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>170</y>
+       <width>121</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>(re)plot raw data file</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_plotCalibrationPreviewCalibrated">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>170</y>
+       <width>151</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>(re)plot calibrated preview</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_selectCalibrationPreviewFile">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>130</y>
+       <width>75</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>select txt file</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="verticalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>340</y>
+       <width>311</width>
+       <height>251</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2"/>
+    </widget>
+    <widget class="QWidget" name="widget_calibrationPreviewRaw" native="true">
+     <property name="geometry">
+      <rect>
+       <x>410</x>
+       <y>130</y>
+       <width>309</width>
+       <height>249</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -1040,16 +1145,6 @@ Default: x = 0, y = 0</string>
       <number>0</number>
      </property>
     </widget>
-    <widget class="QGraphicsView" name="graphicsView">
-     <property name="geometry">
-      <rect>
-       <x>440</x>
-       <y>240</y>
-       <width>256</width>
-       <height>192</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_response">
      <property name="geometry">
       <rect>
@@ -1076,7 +1171,7 @@ Default: x = 0, y = 0</string>
   <customwidget>
    <class>PlotWidget</class>
    <extends>QWidget</extends>
-   <header>pyqtgraph</header>
+   <header location="global">pyqtgraph</header>
    <container>1</container>
   </customwidget>
   <customwidget>

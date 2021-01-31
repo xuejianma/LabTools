@@ -27,6 +27,7 @@ def readTXT(filePath):
             matrix.append(np.array(line.split("\t")).astype(float))
         except:
             matrix.append(np.array(line.split(" ")).astype(float))
+    f1.close()
     return np.asarray(matrix)
 
 

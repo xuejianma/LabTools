@@ -8,7 +8,7 @@ from PyQt5.QtCore import QFile, Qt, QSize
 # from PyQt5.QtUiTools import QUiLoader
 from PyQt5.QtGui import QPixmap,QImage, QPainter, QPen, QBrush, QPolygon
 import pyqtgraph as pg
-from utils import readSimulatedImReCSV,readImRePhase,diffusion_map,radialAverageByLinecuts,radialAverage
+from utils import readSimulatedImReCSV,readImRePhase,diffusion_map,radialAverageByLinecuts,radialAverage, readTXT
 from PIL import Image
 # import randomQtUiTools
 import numpy as np
@@ -33,7 +33,7 @@ class gui(QWidget):
         self.cond_array = None
         self.im_sim = None
         self.re_sim = None
-        self.laserScreenshot = None
+        # self.laserScreenshot = None
 
     def load_ui(self):
         path = os.path.join(os.path.dirname(__file__), "form.ui")
@@ -54,6 +54,9 @@ class gui(QWidget):
         # self.label_laserScreenshot.mousePressEvent = self.findDotPos
         # self.label_laserScreenshot.paintEvent = self.paintEvent2
         self.pushButton_laserLinecut.clicked.connect(self.plotLaserLinecut)
+        self.pushButton_selectCalibrationPreviewFile.clicked.connect(self.selectCalibratedPreviewTxt)
+        self.pushButton_plotCalibrationPreview.clicked.connect(self.plotCalibrationPreviewRawData)
+
     def selectDirectory(self):
         directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
         self.lineEdit_directory.setText(directoryName)
@@ -95,8 +98,12 @@ class gui(QWidget):
         # print(12234)
 
     def selectLaserScreenshot(self):
-        self.laserScreenshot = QFileDialog.getOpenFileName(self, 'Select Laser Screenshot Image', )[0]
-        self.lineEdit_laserScreenshot.setText(self.laserScreenshot)
+        laserScreenshot = QFileDialog.getOpenFileName(self, 'Select Laser Screenshot Image', )[0]
+        self.lineEdit_laserScreenshot.setText(laserScreenshot)
+
+    def selectCalibratedPreviewTxt(self):
+        calibratedPreviewTXT = QFileDialog.getOpenFileName(self, 'Select .txt Data File')[0]
+        self.lineEdit_calibrationFile.setText(calibratedPreviewTXT)
 
     def plotLaserScreenshot(self):
         self.label_laserScreenshot.pt_edges = None
@@ -168,6 +175,20 @@ class gui(QWidget):
         self.widget_laserFit.plot(x_axis_fit,z_axis_fit/z0,pen=pg.mkPen(width=3))
         QApplication.restoreOverrideCursor()
 
+    def plotCalibrationPreviewRawData(self):
+        # self.label_calibrationPreview.setPixmap()
+        array = readTXT(self.lineEdit_calibrationFile.text())
+        # self.graphicsView()
+        self.widget_calibrationPreviewRaw.canvas = FigureCanvas(Figure())
+        # self.widget_response.canvas.resize(2,1)
+        # vertical_layout = QVBoxLayout()
+        self.verticalLayout_2.addWidget(self.widget_calibrationPreviewRaw.canvas)
+        self.widget_calibrationPreviewRaw.canvas.axes = self.widget_calibrationPreviewRaw.canvas.figure.add_subplot(111)
+        self.widget_calibrationPreviewRaw.canvas.axes.set_xlabel('MIM-Im')
+        self.widget_calibrationPreviewRaw.canvas.axes.set_ylabel('MIM-Re')
+        # self.widget_response.canvas.figure.tight_layout(pad=5)
+        # self.widget_response.canvas.axes.set_size(1,2)
+        # self.widget_calibrationPreviewRaw.setLayout(self.verticalLayout_2)
 if __name__ == "__main__":
     app = QApplication([])
     widget = gui()
