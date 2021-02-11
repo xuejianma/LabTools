@@ -57,6 +57,10 @@ class gui(QWidget):
         self.pushButton_selectCalibrationPreviewFile.clicked.connect(self.selectCalibratedPreviewTxt)
         self.pushButton_plotCalibrationPreview.clicked.connect(self.plotCalibrationPreviewRawData)
         self.pushButton_plotCalibrationPreviewCalibrated.clicked.connect(self.plotCalibrationPreviewCalibrated)
+        self.lineEdit_directory_2.setText(self.lineEdit_directory.text())
+        self.lineEdit_subdirectories_2.setText(self.lineEdit_subdirectories.text())
+        self.lineEdit_directory.textChanged.connect(lambda: self.lineEdit_directory_2.setText(self.lineEdit_directory.text()))
+        self.lineEdit_subdirectories.textChanged.connect(lambda: self.lineEdit_subdirectories_2.setText(self.lineEdit_subdirectories.text()))
 
     def selectDirectory(self):
         directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
@@ -212,9 +216,9 @@ class gui(QWidget):
         Y = np.linspace(float(self.lineEdit_CalibrationPreview_ymin.text()),
                       float(self.lineEdit_CalibrationPreview_ymax.text()), array.shape[0])
         X = calibrate_xlist(X, coeff1=float(self.lineEdit_xc1.text()), coeff2=float(self.lineEdit_xc2.text()),
-                            extra_scale_x=1.0)
+                            extra_scale_x=float(self.lineEdit_xscaling.text()))
         Y = calibrate_xlist(Y, coeff1=float(self.lineEdit_yc1.text()), coeff2=float(self.lineEdit_yc2.text()),
-                            extra_scale_x=1.0)
+                            extra_scale_x=float(self.lineEdit_yscaling.text()))
         self.widget_calibrationPreviewCalibrated.canvas.axes.pcolormesh(X, Y, array, shading='auto')
         self.widget_calibrationPreviewCalibrated.canvas.figure.tight_layout(pad = 4)
 
