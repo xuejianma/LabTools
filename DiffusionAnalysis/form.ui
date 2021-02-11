@@ -1141,7 +1141,7 @@ Default: x = 0, y = 0</string>
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>30</x>
        <y>500</y>
        <width>411</width>
        <height>16</height>

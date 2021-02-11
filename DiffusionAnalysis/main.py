@@ -61,7 +61,7 @@ class gui(QWidget):
         self.lineEdit_subdirectories_2.setText(self.lineEdit_subdirectories.text())
         self.lineEdit_directory.textChanged.connect(lambda: self.lineEdit_directory_2.setText(self.lineEdit_directory.text()))
         self.lineEdit_subdirectories.textChanged.connect(lambda: self.lineEdit_subdirectories_2.setText(self.lineEdit_subdirectories.text()))
-
+        #dk
     def selectDirectory(self):
         directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
         self.lineEdit_directory.setText(directoryName)
