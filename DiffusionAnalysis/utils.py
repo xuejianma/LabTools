@@ -267,7 +267,7 @@ def calibrate_xlist(xList, coeff1=0.06944444444444448, coeff2=2.4833333333333334
 def calibrate_ylist(yList, coeff1=0.04583333333333334, coeff2=3.5000000000000004, extra_scale_y=1.0):
     new_yList = []
     for y in yList:
-        new_yList.append(undistort_1D(y, coeff1, coeff2) * extra_scale_y)
+        new_yList.append(undistort_1D(y - np.min(yList), coeff1, coeff2) * extra_scale_y)
     return new_yList
 
 
@@ -288,13 +288,13 @@ def resampleTraditionalMethod(img, X, Y, xmin, xmax, ymin, ymax, size):
     return new_img, x_list, y_list
 
 
-def resample(img, X, Y, xmin, xmax, ymin, ymax, size=None):
+def resampleUnimproved(img, X, Y, xmin, xmax, ymin, ymax, size=None):
     if size == None:
         size = 0
         for item in X[0]:
             if xmin <= item <= xmax:
                 size += 1
-    # print(size)
+    print(size)
     x_list = np.linspace(xmin, xmax, size)
     y_list = np.linspace(ymin, ymax, size)
     new_X, new_Y = np.meshgrid(x_list, y_list)
@@ -324,6 +324,43 @@ def resample(img, X, Y, xmin, xmax, ymin, ymax, size=None):
                 # new_img=np.nan_to_num(new_img)
     return new_img, x_list, y_list
 
+def resample(img, X, Y, xmin, xmax, ymin, ymax, size=None, parent = None):
+    if size == None:
+        size = 0
+        for item in X[0]:
+            if xmin <= item <= xmax:
+                size += 1
+    # print(size)
+    x_list = np.linspace(xmin, xmax, size)
+    y_list = np.linspace(ymin, ymax, size)
+    new_X, new_Y = np.meshgrid(x_list, y_list)
+    new_img = np.zeros(new_X.shape)
+    new_img[:] = np.nan
+    for ii in tqdm(range(img.shape[0])):
+        if parent != None and not parent.isRunning:
+            break
+        for jj in range(img.shape[1]):
+            if parent != None and not parent.isRunning:
+                break
+            if xmin <= X[ii][jj] <= xmax and ymin <= Y[ii][jj] <= ymax:
+                target_i = np.argmin(abs(X[ii][jj] - x_list))
+                target_j = np.argmin(abs(Y[ii][jj] - y_list))
+                new_img[target_j, target_i] = img[ii, jj]
+    for i in range(new_img.shape[0]):
+        if parent != None and not parent.isRunning:
+            break
+        for j in range(new_img.shape[1]):
+            if parent != None and not parent.isRunning:
+                break
+            if np.isnan(new_img[i, j]):
+                new_img[i, j] = np.nanmean(
+                    [new_img[(i - 1) % size, j], new_img[(i + 1) % size, j], new_img[i, (j - 1) % size],
+                     new_img[i, (j + 1) % size],
+                     new_img[(i - 1) % size, (j - 1) % size], new_img[(i + 1) % size, (j + 1) % size],
+                     new_img[(i + 1) % size, (j - 1) % size], new_img[(i - 1) % size, (j + 1) % size]])
+                # print(new_img[i,j])
+                # new_img=np.nan_to_num(new_img)
+    return new_img, x_list, y_list
 
 def radialAverageByLinecuts(graph, center, xAxis_or_xMeshgrid, yAxis_or_yMeshgrid, radialSteps=100, threshold=1.0,
                             angleSteps=None, angleThreshold=0.01):

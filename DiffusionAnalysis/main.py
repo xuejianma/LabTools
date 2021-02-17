@@ -4,16 +4,18 @@ import os
 
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QGridLayout, QLabel, QVBoxLayout, QSizePolicy
-from PyQt5.QtCore import QFile, Qt, QSize
+from PyQt5.QtCore import QFile, Qt, QSize, QObject, QThread, pyqtSignal
 # from PyQt5.QtUiTools import QUiLoader
 from PyQt5.QtGui import QPixmap,QImage, QPainter, QPen, QBrush, QPolygon
 import pyqtgraph as pg
-from utils import readSimulatedImReCSV,readImRePhase,diffusion_map,radialAverageByLinecuts,radialAverage, readTXT, calibrate_xlist, calibrate_ylist
+from utils import readSimulatedImReCSV,readImRePhase,diffusion_map,radialAverageByLinecuts,radialAverage, readTXT, calibrate_xlist, calibrate_ylist, resample
 from PIL import Image
 # import randomQtUiTools
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.figure import Figure
+from PyParkTiff import SaveParkTiff
+
 
 class gui(QWidget):
     def __init__(self):
@@ -61,6 +63,12 @@ class gui(QWidget):
         self.lineEdit_subdirectories_2.setText(self.lineEdit_subdirectories.text())
         self.lineEdit_directory.textChanged.connect(lambda: self.lineEdit_directory_2.setText(self.lineEdit_directory.text()))
         self.lineEdit_subdirectories.textChanged.connect(lambda: self.lineEdit_subdirectories_2.setText(self.lineEdit_subdirectories.text()))
+        self.pushButton_calibrateAll.clicked.connect(self.calibrateAll);
+        self.pushButton_calibrateAllStop.clicked.connect(self.calibrateAllStop);
+        self.lineEdit_calibrateAllFiles.setText(','.join([self.lineEdit_im.text(), self.lineEdit_re.text()]))
+        self.lineEdit_im.textChanged.connect(lambda: self.lineEdit_calibrateAllFiles.setText(','.join([self.lineEdit_im.text(), self.lineEdit_re.text()])))
+        self.lineEdit_re.textChanged.connect(lambda: self.lineEdit_calibrateAllFiles.setText(','.join([self.lineEdit_im.text(), self.lineEdit_re.text()])))
+
         #dk
     def selectDirectory(self):
         directoryName = QFileDialog.getExistingDirectory(self, 'Select directory')#getOpenFileName(self, 'Open file', '.', '')
@@ -217,10 +225,101 @@ class gui(QWidget):
                       float(self.lineEdit_CalibrationPreview_ymax.text()), array.shape[0])
         X = calibrate_xlist(X, coeff1=float(self.lineEdit_xc1.text()), coeff2=float(self.lineEdit_xc2.text()),
                             extra_scale_x=float(self.lineEdit_xscaling.text()))
-        Y = calibrate_xlist(Y, coeff1=float(self.lineEdit_yc1.text()), coeff2=float(self.lineEdit_yc2.text()),
-                            extra_scale_x=float(self.lineEdit_yscaling.text()))
+        Y = calibrate_ylist(Y, coeff1=float(self.lineEdit_yc1.text()), coeff2=float(self.lineEdit_yc2.text()),
+                            extra_scale_y=float(self.lineEdit_yscaling.text()))
+        X = X - np.min(X)
+        Y = Y - np.min(Y)
         self.widget_calibrationPreviewCalibrated.canvas.axes.pcolormesh(X, Y, array, shading='auto')
         self.widget_calibrationPreviewCalibrated.canvas.figure.tight_layout(pad = 4)
+
+    def calibrateAll(self):
+        self.pushButton_calibrateAll.setEnabled(False)
+        self.pushButton_calibrateAllStop.setEnabled(True)
+        self.progressBar_calibrateAll.setValue(0)
+        self.thread = QThread()
+        self.worker = Worker(self)
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.thread.quit)
+        self.lineEdit_calibrateAllFiles.setEnabled(False)
+        self.lineEdit_xmin_2.setEnabled(False)
+        self.lineEdit_ymin_2.setEnabled(False)
+        self.lineEdit_xmax_2.setEnabled(False)
+        self.lineEdit_ymax_2.setEnabled(False)
+        self.worker.finished.connect(lambda: (
+            self.lineEdit_calibrateAllFiles.setEnabled(True),
+            self.lineEdit_xmin_2.setEnabled(True),
+            self.lineEdit_ymin_2.setEnabled(True),
+            self.lineEdit_xmax_2.setEnabled(True),
+            self.lineEdit_ymax_2.setEnabled(True),
+            self.pushButton_calibrateAll.setEnabled(True),
+            self.pushButton_calibrateAllStop.setEnabled(False)
+        ))
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+
+        def report(n):
+            self.progressBar_calibrateAll.setValue(n)
+        self.worker.progress.connect(report)
+        self.thread.start()
+
+    def calibrateAllStop(self):
+        self.worker.isRunning = False
+        self.progressBar_calibrateAll.setValue(0)
+
+
+
+class Worker(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+    def __init__(self, parent):
+        super(Worker, self).__init__()
+        self.isRunning = True
+        self.parrent = parent
+    def run(self):
+        # for i in range(5):
+        #     sleep(1)
+            # print(i)
+        path = self.parrent.lineEdit_directory.text()
+        sub_str = self.parrent.lineEdit_subdirectories.text()
+        sub_list = sub_str.split(',')
+        folderPathList = [path + '/' + item + '/' for item in sub_list]
+        files = self.parrent.lineEdit_calibrateAllFiles.text().split(',')
+        files = [item for item in files if len(item) != 0]
+        # self.progressBar_calibrateAll.setValue(1)
+        for i, folder in enumerate(folderPathList):
+            if not self.isRunning:
+                break
+            for j, file in enumerate(files):
+                if not self.isRunning:
+                    break
+                array = readTXT(folder + file)
+                X = np.linspace(float(self.parrent.lineEdit_xmin_2.text()), float(self.parrent.lineEdit_xmax_2.text()), array.shape[1])
+                Y = np.linspace(float(self.parrent.lineEdit_ymin_2.text()), float(self.parrent.lineEdit_ymax_2.text()), array.shape[0])
+                X = calibrate_xlist(X, coeff1=float(self.parrent.lineEdit_xc1.text()), coeff2=float(self.parrent.lineEdit_xc2.text()),
+                                    extra_scale_x=float(self.parrent.lineEdit_xscaling.text()))
+
+                Y = calibrate_ylist(Y, coeff1=float(self.parrent.lineEdit_yc1.text()), coeff2=float(self.parrent.lineEdit_yc2.text()),
+                                    extra_scale_y=float(self.parrent.lineEdit_yscaling.text()))
+                X = X - np.min(X)
+                Y = Y - np.min(Y)
+                X, Y = np.meshgrid(X, Y)
+                tmp, _, _ = resample(array, X, Y, float(self.parrent.lineEdit_xmin_2.text()),
+                                     float(self.parrent.lineEdit_xmax_2.text()),
+                                     float(self.parrent.lineEdit_ymin_2.text()), float(self.parrent.lineEdit_ymax_2.text()), size=None, parent = self)
+
+                if not self.isRunning:
+                    break
+                print((i * len(files) + j + 1) / len(folderPathList) / len(files) * 100);
+                self.progress.emit((i * len(files) + j + 1) / len(folderPathList) / len(files) * 100)
+                # self.progressBar_calibrateAll.setValue(
+                #     (i * len(files) + j + 1) / len(folderPathList) / len(files) * 100)
+                np.savetxt(folder + file[:-4] + "_calibrated.txt", array)
+                SaveParkTiff(array, float(self.parrent.lineEdit_xmax_2.text())-float(self.parrent.lineEdit_xmin_2.text()),
+                             float(self.parrent.lineEdit_ymax_2.text())-float(self.parrent.lineEdit_ymin_2.text()), folder + file[:-4] + "_calibrated.tiff")
+
+        self.finished.emit()
+
 
 
 

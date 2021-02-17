@@ -19,7 +19,7 @@
      <x>20</x>
      <y>10</y>
      <width>791</width>
-     <height>641</height>
+     <height>651</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -68,7 +68,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>E:/Xuejian Ma/Perovskite_KaiZhu/diffusion/pos2/</string>
+      <string>/Users/maxuejian/Desktop/UT/LabData/Perovskite_KaiZhu/Pvk/</string>
      </property>
      <property name="placeholderText">
       <string>eg: ~/diffusion/</string>
@@ -116,7 +116,7 @@
       <string/>
      </property>
      <property name="text">
-      <string>E:/Xuejian Ma/Perovskite_KaiZhu/simulation_Im_Re_curve/diffTip.csv</string>
+      <string>/Users/maxuejian/Desktop/UT/LabData/Perovskite_KaiZhu/p60_100nm.csv</string>
      </property>
      <property name="placeholderText">
       <string>eg: ~/simulation_Im_Re_curve/diffTip.csv</string>
@@ -406,7 +406,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>C:/Work/Xuejian Ma/Perovskite/laserProfile_30um.png</string>
+      <string>/Users/maxuejian/Desktop/UT/LabData/Perovskite_KaiZhu/laserProfile_30um.png</string>
      </property>
      <property name="placeholderText">
       <string>eg: ~/laserSpot.png</string>
@@ -714,7 +714,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>20</y>
+       <y>0</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -727,20 +727,20 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>215</x>
-       <y>20</y>
+       <y>0</y>
        <width>81</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>0.07</string>
+      <string>0.011574</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_calibrationPreviewLogo">
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>100</y>
+       <y>80</y>
        <width>151</width>
        <height>21</height>
       </rect>
@@ -766,7 +766,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>320</x>
-       <y>20</y>
+       <y>0</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -779,20 +779,20 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>415</x>
-       <y>20</y>
+       <y>0</y>
        <width>81</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>2.48</string>
+      <string>0.4138888888</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_xscaling">
      <property name="geometry">
       <rect>
        <x>570</x>
-       <y>20</y>
+       <y>0</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -805,7 +805,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>520</x>
-       <y>20</y>
+       <y>0</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -818,7 +818,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>50</y>
+       <y>30</y>
        <width>21</width>
        <height>20</height>
       </rect>
@@ -831,20 +831,20 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>215</x>
-       <y>60</y>
+       <y>40</y>
        <width>81</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>0.05</string>
+      <string>0.0076388888</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_yc1">
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>60</y>
+       <y>40</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -857,20 +857,20 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>415</x>
-       <y>60</y>
+       <y>40</y>
        <width>81</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>3.50</string>
+      <string>0.5833333</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_yscaling">
      <property name="geometry">
       <rect>
        <x>570</x>
-       <y>60</y>
+       <y>40</y>
        <width>81</width>
        <height>22</height>
       </rect>
@@ -883,7 +883,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>520</x>
-       <y>60</y>
+       <y>40</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -896,7 +896,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>320</x>
-       <y>60</y>
+       <y>40</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -909,7 +909,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>40</y>
+       <y>20</y>
        <width>791</width>
        <height>20</height>
       </rect>
@@ -922,7 +922,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>80</y>
+       <y>60</y>
        <width>791</width>
        <height>20</height>
       </rect>
@@ -935,7 +935,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>130</y>
+       <y>110</y>
        <width>71</width>
        <height>16</height>
       </rect>
@@ -948,20 +948,20 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>130</y>
+       <y>110</y>
        <width>401</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>C:\Xuejian Ma\Perovskite_KaiZhu\calibration\calibration\Al_on_silicon_commonly_used/2/Ch1 retrace.txt</string>
+      <string>/Users/maxuejian/Desktop/UT/LabData/Perovskite_KaiZhu/Pvk/00073/Ch1 retrace.txt</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_plotCalibrationPreview">
      <property name="geometry">
       <rect>
        <x>140</x>
-       <y>170</y>
+       <y>150</y>
        <width>121</width>
        <height>24</height>
       </rect>
@@ -974,7 +974,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>440</x>
-       <y>170</y>
+       <y>150</y>
        <width>151</width>
        <height>24</height>
       </rect>
@@ -987,7 +987,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>550</x>
-       <y>130</y>
+       <y>110</y>
        <width>75</width>
        <height>24</height>
       </rect>
@@ -1000,7 +1000,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>200</y>
+       <y>180</y>
        <width>241</width>
        <height>241</height>
       </rect>
@@ -1019,59 +1019,59 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>60</x>
-       <y>450</y>
+       <y>430</y>
        <width>41</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>-15</string>
+      <string>0</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_CalibrationPreview_xmax">
      <property name="geometry">
       <rect>
        <x>290</x>
-       <y>450</y>
+       <y>430</y>
        <width>41</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>15</string>
+      <string>50</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_CalibrationPreview_ymax">
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>190</y>
+       <y>170</y>
        <width>41</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>15</string>
+      <string>50</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_CalibrationPreview_ymin">
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>410</y>
+       <y>390</y>
        <width>41</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>-15</string>
+      <string>0</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_calibrationPreview_xmin">
      <property name="geometry">
       <rect>
        <x>60</x>
-       <y>470</y>
+       <y>450</y>
        <width>61</width>
        <height>20</height>
       </rect>
@@ -1084,7 +1084,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>290</x>
-       <y>470</y>
+       <y>450</y>
        <width>61</width>
        <height>20</height>
       </rect>
@@ -1097,7 +1097,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>390</y>
+       <y>370</y>
        <width>61</width>
        <height>20</height>
       </rect>
@@ -1110,7 +1110,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>170</y>
+       <y>150</y>
        <width>61</width>
        <height>20</height>
       </rect>
@@ -1123,7 +1123,7 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>410</x>
-       <y>200</y>
+       <y>180</y>
        <width>241</width>
        <height>241</height>
       </rect>
@@ -1142,13 +1142,13 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>500</y>
+       <y>480</y>
        <width>411</width>
        <height>16</height>
       </rect>
      </property>
      <property name="text">
-      <string>Save calibrated maps as *_calibrated.txt from folders (Modify in the 1st tab):</string>
+      <string>Save calibrated maps as *_calibrated.txt/tiff from folders (Modify in the 1st tab):</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_directory_2">
@@ -1157,8 +1157,8 @@ Default: x = 0, y = 0</string>
      </property>
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>540</y>
+       <x>80</x>
+       <y>500</y>
        <width>411</width>
        <height>22</height>
       </rect>
@@ -1176,8 +1176,8 @@ Default: x = 0, y = 0</string>
      </property>
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>590</y>
+       <x>80</x>
+       <y>540</y>
        <width>411</width>
        <height>22</height>
       </rect>
@@ -1192,8 +1192,8 @@ Default: x = 0, y = 0</string>
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>520</y>
+       <x>0</x>
+       <y>500</y>
        <width>61</width>
        <height>16</height>
       </rect>
@@ -1205,27 +1205,209 @@ Default: x = 0, y = 0</string>
     <widget class="QLabel" name="label_3">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>570</y>
-       <width>151</width>
-       <height>16</height>
+       <x>0</x>
+       <y>530</y>
+       <width>71</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>Sub-directories:</string>
+      <string>Sub-
+directories:</string>
      </property>
     </widget>
     <widget class="Line" name="line_3">
      <property name="geometry">
       <rect>
        <x>-3</x>
-       <y>490</y>
+       <y>470</y>
        <width>791</width>
        <height>20</height>
       </rect>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_calibrateAll">
+     <property name="geometry">
+      <rect>
+       <x>670</x>
+       <y>560</y>
+       <width>113</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Calibrate All</string>
+     </property>
+    </widget>
+    <widget class="QProgressBar" name="progressBar_calibrateAll">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>560</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+     <property name="textVisible">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_xmin_2">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>490</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>x min (µm)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_ymax_2">
+     <property name="geometry">
+      <rect>
+       <x>640</x>
+       <y>520</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>y max (µm)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_xmax_2">
+     <property name="geometry">
+      <rect>
+       <x>640</x>
+       <y>490</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>x max (µm)</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_xmin_2">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>490</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_ymin_2">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>520</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_xmax_2">
+     <property name="geometry">
+      <rect>
+       <x>710</x>
+       <y>490</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>50</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_ymax_2">
+     <property name="geometry">
+      <rect>
+       <x>710</x>
+       <y>520</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>50</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_ymin_2">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>520</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>y min (µm)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>580</y>
+       <width>71</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Files (*.txt):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_calibrateAllFiles">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>580</y>
+       <width>411</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>eg: Ch1 retrace.txt, Ch2 retrace.txt,conductivity.txt, etc...</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_calibrateAllStop">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>670</x>
+       <y>590</y>
+       <width>113</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Stop</string>
      </property>
     </widget>
    </widget>
@@ -1236,8 +1418,8 @@ Default: x = 0, y = 0</string>
     <widget class="QLabel" name="label_image_3">
      <property name="geometry">
       <rect>
-       <x>280</x>
-       <y>60</y>
+       <x>570</x>
+       <y>460</y>
        <width>51</width>
        <height>51</height>
       </rect>
@@ -1258,8 +1440,8 @@ Default: x = 0, y = 0</string>
     <widget class="QLabel" name="label_image_2">
      <property name="geometry">
       <rect>
-       <x>230</x>
-       <y>60</y>
+       <x>520</x>
+       <y>460</y>
        <width>51</width>
        <height>51</height>
       </rect>
@@ -1281,9 +1463,9 @@ Default: x = 0, y = 0</string>
      <property name="geometry">
       <rect>
        <x>40</x>
-       <y>70</y>
+       <y>320</y>
        <width>741</width>
-       <height>481</height>
+       <height>231</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -1302,8 +1484,8 @@ Default: x = 0, y = 0</string>
     <widget class="QLabel" name="label_image_4">
      <property name="geometry">
       <rect>
-       <x>330</x>
-       <y>60</y>
+       <x>620</x>
+       <y>460</y>
        <width>51</width>
        <height>51</height>
       </rect>
@@ -1324,8 +1506,8 @@ Default: x = 0, y = 0</string>
     <widget class="QLabel" name="label_response">
      <property name="geometry">
       <rect>
-       <x>270</x>
-       <y>250</y>
+       <x>120</x>
+       <y>370</y>
        <width>181</width>
        <height>181</height>
       </rect>
@@ -1338,6 +1520,35 @@ Default: x = 0, y = 0</string>
      </property>
      <property name="margin">
       <number>0</number>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>50</y>
+       <width>711</width>
+       <height>271</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/maxuejian/Desktop/UT/LabData/Perovskite_KaiZhu/Pvk/&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;E:/Xuejian Ma/Perovskite_KaiZhu/diffusion/pos2/&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;00004,00007,00013,00022,00044,00073&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/maxuejian/Desktop/UT/LabData/Perovskite_KaiZhu/p60_100nm.csv&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;E:/Xuejian Ma/Perovskite_KaiZhu/simulation_Im_Re_curve/diffTip.csv&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/maxuejian/Desktop/UT/LabData/Perovskite_KaiZhu/laserProfile_30um.png&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;C:/Work/Xuejian Ma/Perovskite/laserProfile_30um.png&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;/Users/maxuejian/Desktop/UT/LabData/Perovskite_KaiZhu/Pvk/00073/Ch1 retrace.txt&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;C:\Xuejian Ma\Perovskite_KaiZhu\calibration\calibration\Al_on_silicon_commonly_used/2/Ch1 retrace.txt&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </widget>
