@@ -146,6 +146,9 @@ class gui(QWidget):
     def plotLaserLinecut(self):
         QApplication.setOverrideCursor(Qt.WaitCursor)
         laserimg_cropped = np.asarray(Image.open(self.lineEdit_laserScreenshot.text()))
+        if len(laserimg_cropped.shape) == 3:
+            laserimg_cropped = np.sum(laserimg_cropped, axis = 2)
+        # print(laserimg_cropped.shape)
         laser_X_cropped = np.linspace(self.xyminmax[0],self.xyminmax[1],np.shape(laserimg_cropped)[1])
         laser_Y_cropped = np.linspace(self.xyminmax[2],self.xyminmax[3],np.shape(laserimg_cropped)[0])
 
@@ -168,7 +171,14 @@ class gui(QWidget):
         laser_zList_norm = laser_zList / np.max(laser_zList)
         laser_zList_edgesupress = laser_zList_norm#np.asarray(
             # [item / (abs(laser_rList[i]) ** 2 * 0.065 + 1) for i, item in enumerate(laser_zList_norm)])
-        self.widget_laserFit.plot(laser_rList[::4],laser_zList_edgesupress[::4],symbol='o',pen=None,symbolPen = pg.mkPen(color=(0, 0, 255)),symbolSize=5)#pen=pg.mkPen('b'))
+        dataPointGap = int(self.lineEdit_dataPointGap.text())
+        normalizeMin = float(self.lineEdit_normalizeMin.text())
+        normalizeMax = float(self.lineEdit_normalizeMax.text())
+
+        laser_zList_edgesupress = (laser_zList_edgesupress - np.min(laser_zList_edgesupress)) / \
+                                  (np.max(laser_zList_edgesupress) - np.min(laser_zList_edgesupress)) * \
+                                  (normalizeMax - normalizeMin) + normalizeMin
+        self.widget_laserFit.plot(laser_rList[::dataPointGap],laser_zList_edgesupress[::dataPointGap],symbol='o',pen=None,symbolPen = pg.mkPen(color=(0, 0, 255)),symbolSize=5)#pen=pg.mkPen('b'))
         # plt.scatter(laser_rList[::4], laser_zList_edgesupress[::4], marker='o', color='blue', s=50, zorder=5, alpha=1,
         #             label='Laser profile')
         self.label_laserScreenshot.pt_edges = pt_edges
