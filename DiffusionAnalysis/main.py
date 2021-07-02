@@ -314,9 +314,9 @@ class Worker(QObject):
                 X = X - np.min(X)
                 Y = Y - np.min(Y)
                 X, Y = np.meshgrid(X, Y)
-                tmp, _, _ = resample(array, X, Y, float(self.parrent.lineEdit_xmin_2.text()),
-                                     float(self.parrent.lineEdit_xmax_2.text()),
-                                     float(self.parrent.lineEdit_ymin_2.text()), float(self.parrent.lineEdit_ymax_2.text()), size=None, parent = self)
+                tmp, _, _ = resample(array, X, Y, float(self.parrent.lineEdit_xmin_3.text()),
+                                     float(self.parrent.lineEdit_xmax_3.text()),
+                                     float(self.parrent.lineEdit_ymin_3.text()), float(self.parrent.lineEdit_ymax_3.text()), size=None, parent = self)
 
                 if not self.isRunning:
                     break
@@ -324,8 +324,8 @@ class Worker(QObject):
                 self.progress.emit((i * len(files) + j + 1) / len(folderPathList) / len(files) * 100)
                 # self.progressBar_calibrateAll.setValue(
                 #     (i * len(files) + j + 1) / len(folderPathList) / len(files) * 100)
-                np.savetxt(folder + file[:-4] + "_calibrated.txt", array)
-                SaveParkTiff(array, float(self.parrent.lineEdit_xmax_2.text())-float(self.parrent.lineEdit_xmin_2.text()),
+                np.savetxt(folder + file[:-4] + "_calibrated.txt", tmp)
+                SaveParkTiff(tmp, float(self.parrent.lineEdit_xmax_2.text())-float(self.parrent.lineEdit_xmin_2.text()),
                              float(self.parrent.lineEdit_ymax_2.text())-float(self.parrent.lineEdit_ymin_2.text()), folder + file[:-4] + "_calibrated.tiff")
 
         self.finished.emit()
